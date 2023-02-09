@@ -1,0 +1,257 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+        <variable
+            name="isLoading"
+            type="Boolean" />
+        <import type="android.view.View"/>
+    </data>
+
+    <androidx.drawerlayout.widget.DrawerLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/drawableLayout"
+        android:layoutAnimation="@anim/layout_animation"
+        android:background="@color/black2">
+        <androidx.coordinatorlayout.widget.CoordinatorLayout
+            android:layout_width="match_parent"
+            android:animateLayoutChanges="true"
+            android:layout_height="match_parent"
+            >
+
+            <com.google.android.material.appbar.AppBarLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/appbarLayout"
+                >
+
+                <com.google.android.material.appbar.CollapsingToolbarLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:layout_scrollFlags="scroll|enterAlways">
+
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        app:layout_collapseMode="pin"
+
+                        >
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="84dp"
+                            android:id="@+id/layoutHeader"
+                            android:gravity="start|bottom"
+                            android:paddingBottom="10dp"
+                            app:layout_constraintTop_toTopOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            android:background="#AA000000"
+                            android:orientation="horizontal"
+                            android:weightSum="10">
+
+                            <ImageView
+                                android:layout_width="25dp"
+                                android:layout_height="25dp"
+                                android:src="@drawable/ic_menu"
+                                android:layout_marginStart="15dp"
+                                android:id="@+id/menuImage"
+                                android:contentDescription="@string/app_name"
+                                app:tint="@color/white" />
+
+                            <TextView
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="10dp"
+                                android:layout_weight="9"
+                                android:fontFamily="@font/arizonia"
+                                android:text="@string/p0pc0rn_time"
+                                android:textSize="25sp"
+                                android:textColor="@color/white"
+                                android:textStyle="bold"
+                                android:includeFontPadding="false"
+                                android:ellipsize="none"
+                                android:maxLines="1"
+                                android:id="@+id/headerText"/>
+
+                            <EditText
+                                android:id="@+id/searchText"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="10dp"
+                                android:layout_weight="9"
+                                android:ellipsize="none"
+                                android:fontFamily="@font/adamina"
+                                android:hint="@string/enter_tv_show"
+                                android:imeOptions="actionDone"
+                                android:importantForAutofill="no"
+                                android:includeFontPadding="false"
+                                android:inputType="text"
+                                android:maxLines="1"
+                                android:textColor="@color/white"
+                                android:textColorHint="#7B81A3"
+                                android:textSize="19sp"
+                                android:textStyle="bold"
+                                android:visibility="gone" />
+
+                            <ImageView
+                                android:layout_width="25dp"
+                                android:layout_height="25dp"
+                                android:id="@+id/shareImage"
+                                android:contentDescription="@string/app_name"
+                                android:src="@drawable/ic_watch"
+                                app:tint="@color/white"
+                                android:layout_marginStart="50dp" />
+
+                            <ImageView
+                                android:layout_width="25dp"
+                                android:layout_height="25dp"
+                                android:id="@+id/searchImage"
+                                android:contentDescription="@string/app_name"
+                                android:src="@drawable/ic_search"
+                                android:layout_marginStart="20dp"
+                                app:tint="@color/white" />
+                        </LinearLayout>
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="124dp"
+                        app:layout_collapseMode="parallax"
+                        >
+
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="bottom"
+                            app:layout_collapseMode="pin"
+                            android:layout_marginBottom="2dp"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            android:orientation="horizontal"
+                            android:background="#AA000000"
+                            android:id="@+id/layoutButtons"
+                            >
+
+                            <Button
+                                android:id="@+id/movieButton"
+                                android:layout_width="110dp"
+                                android:layout_height="40dp"
+                                android:background="@android:color/transparent"
+                                android:contentDescription="@string/app_name"
+                                android:ellipsize="none"
+                                android:fontFamily="@font/berkshire_swash"
+                                android:includeFontPadding="false"
+                                android:maxLines="1"
+                                android:text="@string/movies"
+                                android:textSize="14sp" />
+
+
+                            <Button
+                                android:layout_width="110dp"
+                                android:layout_height="40dp"
+                                android:fontFamily="@font/berkshire_swash"
+                                android:text="@string/tv_show"
+                                android:background="@android:color/transparent"
+                                android:textSize="14sp"
+                                android:includeFontPadding="false"
+                                android:ellipsize="none"
+                                android:maxLines="1"
+                                android:id="@+id/tvShowButton"
+                                android:contentDescription="@string/app_name" />
+
+                        </LinearLayout>
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:id="@+id/viewLayout"
+                            android:background="#BB000000"
+                            app:layout_constraintTop_toBottomOf="@id/layoutButtons">
+
+                            <View
+                                android:layout_width="110dp"
+                                android:layout_height="2dp"
+                                app:layout_constraintTop_toBottomOf="@id/movieButton"
+                                app:layout_constraintStart_toStartOf="parent"
+                                android:id="@+id/movieButtonSelect"
+                                android:contentDescription="@string/app_name" />
+                            <View android:layout_width="110dp"
+                                android:layout_height="2dp"
+                                app:layout_constraintTop_toBottomOf="@id/tvShowButton"
+                                app:layout_constraintStart_toStartOf="@id/tvShowButton"
+                                android:id="@+id/tvShowButtonSelect"
+                                android:contentDescription="@string/app_name" />
+
+                        </LinearLayout>
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+
+                </com.google.android.material.appbar.CollapsingToolbarLayout>
+
+            </com.google.android.material.appbar.AppBarLayout>
+            <androidx.recyclerview.widget.RecyclerView
+                android:layout_width="match_parent"
+                android:id="@+id/moviesRecyclerView"
+                android:layout_height="match_parent"
+                app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior"/>
+            <ProgressBar
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_anchor="@id/moviesRecyclerView"
+                app:layout_anchorGravity="center"
+                android:visibility="@{isLoading?View.VISIBLE:View.INVISIBLE,default=invisible}"
+                android:id="@+id/progressBar"/>
+        </androidx.coordinatorlayout.widget.CoordinatorLayout>
+
+        <com.google.android.material.navigation.NavigationView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_gravity="start"
+            android:id="@+id/navigationView"
+            app:menu="@menu/navigation_menu"
+            app:headerLayout="@layout/navigation_header_layout"
+            app:itemIconTint="@color/white"
+            app:itemTextColor="@color/white"
+            app:subheaderColor="@color/white"
+            android:background="#9942B4FF"
+            >
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                android:paddingBottom="40dp"
+                android:layout_gravity="bottom"
+                android:background="#000000"
+                android:gravity="center_vertical"
+                >
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="15dp"
+                    android:layout_marginEnd="15dp"
+                    android:layout_weight="1"
+                    android:ellipsize="none"
+                    android:fontFamily="@font/arizonia"
+                    android:includeFontPadding="false"
+                    android:maxLines="1"
+                    android:text="@string/popcorn_time"
+                    android:textColor="@color/white"
+                    android:textSize="25sp" />
+                <ImageView
+                    android:layout_width="70dp"
+                    android:layout_height="70dp"
+                    android:src="@drawable/popcorn"
+                    app:riv_corner_radius="15dp"
+                    android:layout_marginEnd="15dp"
+                    />
+            </LinearLayout>
+
+        </com.google.android.material.navigation.NavigationView>
+    </androidx.drawerlayout.widget.DrawerLayout>
+</layout>
+

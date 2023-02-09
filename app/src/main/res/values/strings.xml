@@ -1,0 +1,20 @@
+<resources>
+    <string name="app_name">PopcornApp</string>
+    <string name="p0pc0rn_time">P0PC0RN Time</string>
+    <string name="movies">MOVIES</string>
+    <string name="tv_shows">TV SHOWS</string>
+    <string name="tv_show">TV SHOW</string>
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="index">Index</string>
+    <string name="genres">Genres</string>
+    <string name="sort_by">Sort By</string>
+    <string name="quality">Quality</string>
+    <string name="communications">Communications</string>
+    <string name="favorites">Favorites</string>
+    <string name="notifications">Notifications</string>
+    <string name="downloads">Downloads</string>
+    <string name="settings">Settings</string>
+    <string name="version_1_0">Version 1.0</string>
+    <string name="popcorn_time">POPCORN Time</string>
+    <string name="enter_tv_show">Enter Tv Show</string>
+</resources>
