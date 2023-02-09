@@ -6,6 +6,6 @@
 
     <fragment
         android:id="@+id/mainFragment"
-        android:name="com.fatih.popcorn.ui.MainFragment"
+        android:name="com.fatih.popcorn.ui.HomeFragment"
         android:label="MainFragment" />
 </navigation>

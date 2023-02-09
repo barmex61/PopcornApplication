@@ -17,6 +17,11 @@ android {
         versionName "1.0"
 
         testInstrumentationRunner "com.fatih.popcorn.HiltTestRunner"
+
+        Properties properties=new Properties()
+        properties.load(project.rootProject.file("local.properties").newDataInputStream())
+
+        buildConfigField "String","API_KEY","\"${properties.getProperty("API_KEY")}\""
     }
 
     buildTypes {
@@ -91,9 +96,7 @@ dependencies {
     implementation "androidx.navigation:navigation-fragment-ktx:2.5.3"
     implementation "androidx.navigation:navigation-ui-ktx:2.5.3"
 
-
-    // Glide
-    implementation 'com.github.bumptech.glide:glide:4.13.2'
-    kapt 'com.github.bumptech.glide:compiler:4.13.2'
+    // Picasso
+    implementation 'com.squareup.picasso:picasso:2.71828'
 
 }

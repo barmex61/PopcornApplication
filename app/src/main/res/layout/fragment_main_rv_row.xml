@@ -6,8 +6,11 @@
     <data>
 
         <variable
-            name="result"
-            type="com.fatih.popcornapplication.model.ResultMovies" />
+            name="movieResult"
+            type="com.fatih.popcorn.entities.remote.movie.MovieResult" />
+        <variable
+            name="tvShowResult"
+            type="com.fatih.popcorn.entities.remote.tvshow.TvShowResult" />
         <variable
             name="releaseDate"
             type="String" />
@@ -26,7 +29,8 @@
             app:layout_constraintBottom_toBottomOf="parent"
             android:id="@+id/movieImage"
             android:scaleType="centerCrop"
-            android:imageUrl="@{result.posterPath}"
+            app:movieUrl="@{movieResult.poster_path}"
+            app:tvShowUrl="@{tvShowResult.poster_path}"
             android:contentDescription="@string/app_name" />
 
         <ImageView
@@ -46,7 +50,8 @@
             app:layout_constraintStart_toEndOf="@id/heartImage"
             app:layout_constraintTop_toTopOf="@id/heartImage"
             app:layout_constraintBottom_toBottomOf="@id/heartImage"
-            android:text="@{String.valueOf(result.voteAverage)}"
+            app:movieVoteAverage="@{movieResult.vote_average}"
+            app:tvShowVoteAverage="@{tvShowResult.vote_average}"
             android:textSize="10sp"
             android:textAlignment="center"
             android:includeFontPadding="false"
@@ -54,7 +59,7 @@
             android:ellipsize="none"
             android:paddingStart="2dp"
             android:textColor="@color/white"
-            tools:ignore="SmallSp" />
+            tools:ignore="RtlSymmetry,SmallSp" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -62,14 +67,16 @@
             app:layout_constraintTop_toTopOf="@id/heartImage"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintBottom_toBottomOf="@id/heartImage"
-            android:text="@{releaseDate}"
+            app:releaseDate="@{movieResult.release_date}"
+            app:firstAirDate="@{tvShowResult.first_air_date}"
             android:textSize="10sp"
             android:textColor="@color/white"
             android:includeFontPadding="false"
             android:maxLines="1"
             android:ellipsize="none"
             android:layout_marginEnd="13dp"
-            android:textAlignment="center" />
+            android:textAlignment="center"
+            tools:ignore="SmallSp" />
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>
