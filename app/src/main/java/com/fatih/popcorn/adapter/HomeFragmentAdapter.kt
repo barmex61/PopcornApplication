@@ -48,22 +48,18 @@ class HomeFragmentAdapter @Inject constructor():RecyclerView.Adapter<HomeFragmen
     inner class HomeFragmentViewHolder(val binding:FragmentMainRvRowBinding):RecyclerView.ViewHolder(binding.root)
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): HomeFragmentViewHolder {
-        println("yessir")
         return HomeFragmentViewHolder(DataBindingUtil.inflate(LayoutInflater.from(parent.context),
         R.layout.fragment_main_rv_row,parent,false))
     }
 
     override fun getItemCount(): Int {
-        println("cagrıldı")
         return if(tvShowList.size>=movieList.size) tvShowList.size else movieList.size
     }
 
     override fun onBindViewHolder(holder: HomeFragmentViewHolder, position: Int) {
         if(movieList.isEmpty()){
-            println("empty")
             holder.binding.tvShowResult=tvShowList[position]
         }else{
-            println("not empty")
             holder.binding.movieResult=movieList[position]
         }
     }

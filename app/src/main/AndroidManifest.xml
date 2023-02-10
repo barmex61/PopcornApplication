@@ -12,11 +12,13 @@
         android:label="@string/app_name"
         android:name=".ui.PopcornApplication"
         android:supportsRtl="true"
-        android:theme="@style/Theme.Popcorn"
+        android:theme="@style/Theme.App.Starting"
         tools:targetApi="31">
         <activity
             android:name=".ui.MainActivity"
-            android:exported="true">
+            android:exported="true"
+            android:theme="@style/Theme.App.Starting"
+            >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

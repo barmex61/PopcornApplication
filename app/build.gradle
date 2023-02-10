@@ -86,6 +86,8 @@ dependencies {
     // Coroutine Lifecycle Scopes
     implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:2.5.1"
     implementation "androidx.lifecycle:lifecycle-runtime-ktx:2.5.1"
+    implementation "androidx.lifecycle:lifecycle-livedata-ktx:2.5.1"
+    implementation "androidx.lifecycle:lifecycle-viewmodel-savedstate:2.5.1"
 
     // Retrofit
     implementation 'com.squareup.retrofit2:retrofit:2.9.0'
@@ -98,5 +100,9 @@ dependencies {
 
     // Picasso
     implementation 'com.squareup.picasso:picasso:2.71828'
+
+    implementation 'androidx.core:core-splashscreen:1.0.0'
+
+
 
 }
