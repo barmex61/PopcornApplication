@@ -1,6 +1,7 @@
 package com.fatih.popcorn.other
 
 import android.content.res.Resources
+import androidx.lifecycle.MutableLiveData
 
 
 object Constants {
@@ -11,6 +12,7 @@ object Constants {
     const val tvSearch="tv"
     const val movieSearch="movie"
     var stateList= mutableListOf(State.MOVIE)
+    var mutableStateList=MutableLiveData(stateList)
     val sortArray= arrayOf("Popularity","First Air Date","Vote Average")
     val movie_genre_list= arrayOf("Action","Adventure","Animation","Comedy","Crime","Documentary","Drama","Family","Fantasy","History","Horror","Music","Mystery","Romance","Science Fiction","TV Movie","Thriller","War","Western")
     val movie_booleanArray=BooleanArray(movie_genre_list.size)

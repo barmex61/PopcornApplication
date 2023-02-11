@@ -22,6 +22,7 @@ import com.fatih.popcorn.other.Constants.movieGenreMap
 import com.fatih.popcorn.other.Constants.movieSearch
 import com.fatih.popcorn.other.Constants.movie_booleanArray
 import com.fatih.popcorn.other.Constants.movie_genre_list
+import com.fatih.popcorn.other.Constants.mutableStateList
 import com.fatih.popcorn.other.Constants.qualityArray
 import com.fatih.popcorn.other.Constants.qualityBooleanArray
 import com.fatih.popcorn.other.Constants.sortArray
@@ -32,6 +33,7 @@ import com.fatih.popcorn.other.Constants.tvShowGenreMap
 import com.fatih.popcorn.other.Constants.tv_show_booleanArray
 import com.fatih.popcorn.other.Constants.tv_show_genre_list
 import com.fatih.popcorn.other.State
+import com.fatih.popcorn.other.StateListener
 import com.fatih.popcorn.other.Status
 import com.fatih.popcorn.other.addFilter
 import com.fatih.popcorn.viewmodel.HomeFragmentViewModel
@@ -131,6 +133,7 @@ class HomeFragment @Inject constructor( private val adapter:HomeFragmentAdapter)
                         totalAvailablePages=1
                     }
                 }else{
+                    job?.cancel()
                     adapter.discoverList= listOf()
                     when(stateList.last()){
                         State.SEARCH->{
@@ -150,7 +153,7 @@ class HomeFragment @Inject constructor( private val adapter:HomeFragmentAdapter)
         binding.moviesRecyclerView.layoutManager= GridLayoutManager(requireContext(),3)
         binding.moviesRecyclerView.setOnScrollChangeListener { _, _, _, _, _ ->
             if (!binding.moviesRecyclerView.canScrollVertically(1) && currentPage <= totalAvailablePages) {
-                if(currentPage!=totalAvailablePages) currentPage++
+                currentPage++
                 if (searchText.isEmpty()) {
                     if (stateList.last()==State.MOVIE) {
                         viewModel.getMovies(currentPage,sortString, genres)
@@ -173,6 +176,8 @@ class HomeFragment @Inject constructor( private val adapter:HomeFragmentAdapter)
         if(stateList.last()!=State.MOVIE){
             genres=""
             sortString= sortList[0]
+            tv_show_booleanArray.fill(false)
+            movie_booleanArray.fill(false)
         }
         stateList.addFilter(State.MOVIE)
         searchCategory= movieSearch
@@ -194,6 +199,8 @@ class HomeFragment @Inject constructor( private val adapter:HomeFragmentAdapter)
         if(stateList.last()!=State.TV_SHOW){
             genres=""
             sortString= sortList[0]
+            tv_show_booleanArray.fill(false)
+            movie_booleanArray.fill(false)
         }
         stateList.addFilter(State.TV_SHOW)
         searchCategory= tvSearch
@@ -367,4 +374,5 @@ class HomeFragment @Inject constructor( private val adapter:HomeFragmentAdapter)
             binding.progressBar.visibility=View.GONE
         }
     }
+
 }
