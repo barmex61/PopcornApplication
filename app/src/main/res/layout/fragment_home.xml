@@ -11,75 +11,91 @@
 
     <androidx.drawerlayout.widget.DrawerLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
         android:id="@+id/drawableLayout"
-        android:background="@color/black2">
+        android:layout_height="match_parent">
         <androidx.coordinatorlayout.widget.CoordinatorLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:id="@+id/coordinatorLayoutMain"
             >
-
             <com.google.android.material.appbar.AppBarLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:id="@+id/appbarLayout"
                 >
-
                 <com.google.android.material.appbar.CollapsingToolbarLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    app:layout_scrollFlags="scroll|enterAlways|snap">
+                    app:layout_scrollFlags="enterAlways|scroll">
+
 
                     <androidx.constraintlayout.widget.ConstraintLayout
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        app:layout_collapseMode="pin"
-                        >
-                        <LinearLayout
+                        app:layout_collapseMode="parallax"
+                        android:layout_height="wrap_content">
+
+                        <androidx.constraintlayout.widget.ConstraintLayout
                             android:layout_width="match_parent"
-                            android:layout_height="84dp"
-                            android:id="@+id/layoutHeader"
-                            android:gravity="start|bottom"
-                            android:paddingBottom="10dp"
+                            android:layout_height="wrap_content"
                             app:layout_constraintTop_toTopOf="parent"
                             app:layout_constraintStart_toStartOf="parent"
                             app:layout_constraintEnd_toEndOf="parent"
-                            android:background="#AA000000"
-                            android:orientation="horizontal"
-                            android:weightSum="10">
+                            android:id="@+id/layoutHeader"
+                            android:paddingStart="8dp"
+                            android:paddingEnd="8dp"
+                            android:paddingBottom="8dp"
+                            android:background="@color/black"
+                            >
+
+                            <androidx.constraintlayout.widget.Guideline
+                                android:id="@+id/guideline2"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                app:layout_constraintGuide_percent="0.04"
+                                android:orientation="vertical" />
+
+                            <androidx.constraintlayout.widget.Guideline
+                                android:id="@+id/guideline1"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                app:layout_constraintGuide_percent="0.96"
+                                android:orientation="vertical" />
 
                             <ImageView
-                                android:layout_width="25dp"
-                                android:layout_height="25dp"
+                                android:layout_width="30dp"
+                                android:layout_height="30dp"
                                 android:src="@drawable/ic_menu"
-                                android:layout_marginStart="15dp"
                                 android:id="@+id/menuImage"
+                                app:layout_constraintStart_toStartOf="@id/guideline2"
+                                app:layout_constraintTop_toTopOf="parent"
+                                app:layout_constraintBottom_toBottomOf="parent"
                                 android:contentDescription="@string/app_name"
                                 app:tint="@color/white" />
-
                             <TextView
-                                android:layout_width="0dp"
+                                android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:layout_marginStart="10dp"
-                                android:layout_weight="9"
+                                app:layout_constraintTop_toTopOf="parent"
+                                app:layout_constraintBottom_toBottomOf="parent"
+                                app:layout_constraintStart_toEndOf="@id/menuImage"
+                                app:layout_constraintEnd_toStartOf="@id/watchImage"
                                 android:fontFamily="@font/arizonia"
                                 android:text="@string/p0pc0rn_time"
-                                android:textSize="25sp"
+                                android:textSize="22sp"
                                 android:textColor="@color/white"
                                 android:textStyle="bold"
                                 android:includeFontPadding="false"
-                                android:ellipsize="none"
+                                android:ellipsize="end"
                                 android:maxLines="1"
                                 android:id="@+id/headerText"/>
-
                             <EditText
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
-                                android:layout_weight="9"
-                                android:layout_marginStart="10dp"
+                                app:layout_constraintTop_toTopOf="parent"
+                                app:layout_constraintBottom_toBottomOf="parent"
+                                app:layout_constraintStart_toEndOf="@id/menuImage"
+                                app:layout_constraintEnd_toStartOf="@id/watchImage"
                                 android:id="@+id/searchText"
-                                android:ellipsize="none"
+                                android:ellipsize="end"
                                 android:fontFamily="@font/adamina"
                                 android:hint="@string/enter_tv_show"
                                 android:imeOptions="actionDone"
@@ -92,49 +108,48 @@
                                 android:textSize="16sp"
                                 android:textStyle="bold"
                                 android:visibility="gone"
-
                                 />
-
-
-
                             <ImageView
                                 android:layout_width="25dp"
                                 android:layout_height="25dp"
-                                android:id="@+id/shareImage"
+                                android:id="@+id/watchImage"
                                 android:contentDescription="@string/app_name"
+                                app:layout_constraintTop_toTopOf="parent"
+                                app:layout_constraintBottom_toBottomOf="parent"
+                                android:layout_marginEnd="15dp"
+                                app:layout_constraintEnd_toStartOf="@id/searchImage"
                                 android:src="@drawable/ic_watch"
                                 app:tint="@color/white"
-                                android:layout_marginStart="50dp" />
-
+                                />
                             <ImageView
                                 android:layout_width="25dp"
                                 android:layout_height="25dp"
                                 android:id="@+id/searchImage"
+                                app:layout_constraintTop_toTopOf="parent"
+                                app:layout_constraintBottom_toBottomOf="parent"
+                                app:layout_constraintEnd_toEndOf="@id/guideline1"
                                 android:contentDescription="@string/app_name"
                                 android:src="@drawable/ic_search"
                                 android:layout_marginStart="20dp"
                                 app:tint="@color/white" />
-                        </LinearLayout>
-                    </androidx.constraintlayout.widget.ConstraintLayout>
-                    <androidx.constraintlayout.widget.ConstraintLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="124dp"
-                        app:layout_collapseMode="parallax"
-                        >
+                        </androidx.constraintlayout.widget.ConstraintLayout>
 
-
-                        <LinearLayout
+                        <androidx.constraintlayout.widget.ConstraintLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_gravity="bottom"
-                            app:layout_collapseMode="pin"
-                            android:layout_marginBottom="2dp"
-                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintTop_toBottomOf="@id/layoutHeader"
                             app:layout_constraintStart_toStartOf="parent"
-                            android:orientation="horizontal"
-                            android:background="#AA000000"
-                            android:id="@+id/layoutButtons"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_collapseMode="parallax"
+                            android:background="@color/black"
                             >
+                            <View
+                                android:layout_width="match_parent"
+                                android:layout_height="3dp"
+                                app:layout_constraintTop_toTopOf="parent"
+                                app:layout_constraintStart_toStartOf="parent"
+                                app:layout_constraintEnd_toEndOf="parent"
+                                android:background="#22000000"/>
 
                             <Button
                                 android:id="@+id/movieButton"
@@ -142,10 +157,9 @@
                                 android:layout_height="40dp"
                                 android:background="@android:color/transparent"
                                 android:contentDescription="@string/app_name"
-                                android:ellipsize="none"
+                                app:layout_constraintStart_toStartOf="parent"
+                                app:layout_constraintTop_toTopOf="parent"
                                 android:fontFamily="@font/berkshire_swash"
-                                android:includeFontPadding="false"
-                                android:maxLines="1"
                                 android:text="@string/movies"
                                 android:textColor="@color/white"
                                 android:textSize="14sp" />
@@ -156,44 +170,39 @@
                                 android:layout_height="40dp"
                                 android:fontFamily="@font/berkshire_swash"
                                 android:text="@string/tv_show"
+                                app:layout_constraintStart_toEndOf="@id/movieButton"
+                                app:layout_constraintTop_toTopOf="parent"
                                 android:background="@android:color/transparent"
                                 android:textSize="14sp"
                                 android:textColor="@color/white"
-                                android:includeFontPadding="false"
-                                android:ellipsize="none"
-                                android:maxLines="1"
                                 android:id="@+id/tvShowButton"
                                 android:contentDescription="@string/app_name" />
 
-                        </LinearLayout>
-                        <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:orientation="horizontal"
-                            android:id="@+id/viewLayout"
-                            android:background="#BB000000"
-                            app:layout_constraintTop_toBottomOf="@id/layoutButtons">
-
                             <View
-                                android:layout_width="110dp"
-                                android:layout_height="2dp"
+                                android:layout_width="0dp"
+                                android:layout_height="3dp"
                                 app:layout_constraintTop_toBottomOf="@id/movieButton"
-                                app:layout_constraintStart_toStartOf="parent"
+                                app:layout_constraintStart_toStartOf="@id/movieButton"
+                                app:layout_constraintEnd_toEndOf="@id/movieButton"
                                 android:id="@+id/movieButtonIndicator"
                                 android:contentDescription="@string/app_name" />
-                            <View android:layout_width="110dp"
+                            <View
+                                android:layout_width="0dp"
                                 android:layout_height="2dp"
                                 app:layout_constraintTop_toBottomOf="@id/tvShowButton"
                                 app:layout_constraintStart_toStartOf="@id/tvShowButton"
+                                app:layout_constraintEnd_toEndOf="@id/tvShowButton"
                                 android:id="@+id/tvShowButtonIndicator"
                                 android:contentDescription="@string/app_name" />
 
-                        </LinearLayout>
+                        </androidx.constraintlayout.widget.ConstraintLayout>
+
                     </androidx.constraintlayout.widget.ConstraintLayout>
 
                 </com.google.android.material.appbar.CollapsingToolbarLayout>
 
             </com.google.android.material.appbar.AppBarLayout>
+
             <androidx.recyclerview.widget.RecyclerView
                 android:layout_width="match_parent"
                 android:id="@+id/moviesRecyclerView"
@@ -258,4 +267,3 @@
         </com.google.android.material.navigation.NavigationView>
     </androidx.drawerlayout.widget.DrawerLayout>
 </layout>
-

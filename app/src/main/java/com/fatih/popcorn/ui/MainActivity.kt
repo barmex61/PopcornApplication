@@ -11,9 +11,11 @@ import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import com.fatih.popcorn.BuildConfig
 import com.fatih.popcorn.R
+import com.fatih.popcorn.other.CustomFragmentFactoryEntryPoint
 import com.fatih.popcorn.other.Status
 import com.fatih.popcorn.viewmodel.HomeFragmentViewModel
 import dagger.hilt.android.AndroidEntryPoint
+import dagger.hilt.android.EntryPointAccessors
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -31,8 +33,12 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        val entryPoint = EntryPointAccessors.fromActivity(
+            this,
+            CustomFragmentFactoryEntryPoint::class.java
+        )
+        supportFragmentManager.fragmentFactory = entryPoint.getFragmentFactory()
         super.onCreate(savedInstanceState)
-        supportFragmentManager.fragmentFactory=fragmentFactory
         WindowCompat.setDecorFitsSystemWindows(window, false)
         viewModel=ViewModelProvider(this)[HomeFragmentViewModel::class.java]
         viewModel.getMovies(1, "popularity.desc","28")

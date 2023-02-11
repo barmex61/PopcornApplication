@@ -15,6 +15,7 @@ import androidx.activity.OnBackPressedDispatcher
 import androidx.activity.addCallback
 import androidx.core.content.ContextCompat
 import androidx.core.view.GravityCompat
+import androidx.core.view.updatePadding
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
@@ -23,6 +24,7 @@ import androidx.recyclerview.widget.GridLayoutManager
 import com.fatih.popcorn.R
 import com.fatih.popcorn.adapter.HomeFragmentAdapter
 import com.fatih.popcorn.databinding.FragmentHomeBinding
+import com.fatih.popcorn.databinding.MainFragmentBinding
 import com.fatih.popcorn.other.Constants.movieGenreMap
 import com.fatih.popcorn.other.Constants.movieSearch
 import com.fatih.popcorn.other.Constants.movie_booleanArray
@@ -47,9 +49,9 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class HomeFragment @Inject constructor( private val adapter:HomeFragmentAdapter): Fragment(R.layout.fragment_home) {
+class HomeFragment @Inject constructor( private val adapter:HomeFragmentAdapter): Fragment(R.layout.main_fragment) {
 
-    private lateinit var binding:FragmentHomeBinding
+    private lateinit var binding:MainFragmentBinding
     private var totalAvailablePages=1
     private var currentPage=1
     private var job: Job?=null
@@ -68,6 +70,10 @@ class HomeFragment @Inject constructor( private val adapter:HomeFragmentAdapter)
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding=DataBindingUtil.bind(view)!!
+        val statusBarHeightId = resources.getIdentifier("status_bar_height", "dimen", "android")
+        val statusBarHeight = resources.getDimensionPixelSize(statusBarHeightId) +10
+        binding.layoutHeader.updatePadding(top = statusBarHeight)
+        println("${statusBarHeight} status")
         doInitialization()
     }
 
