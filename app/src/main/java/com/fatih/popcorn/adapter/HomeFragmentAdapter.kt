@@ -8,43 +8,25 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.fatih.popcorn.R
 import com.fatih.popcorn.databinding.FragmentMainRvRowBinding
-import com.fatih.popcorn.entities.remote.movie.MovieResult
-import com.fatih.popcorn.entities.remote.tvshow.TvShowResult
+import com.fatih.popcorn.entities.remote.DiscoverResult
 import javax.inject.Inject
 
 class HomeFragmentAdapter @Inject constructor():RecyclerView.Adapter<HomeFragmentAdapter.HomeFragmentViewHolder>() {
 
-    private val movieDiffUtil=object:DiffUtil.ItemCallback<MovieResult>(){
-        override fun areContentsTheSame(oldItem: MovieResult, newItem: MovieResult): Boolean {
+    private val discoverDataUtil=object:DiffUtil.ItemCallback<DiscoverResult>(){
+        override fun areContentsTheSame(oldItem: DiscoverResult, newItem: DiscoverResult): Boolean {
             return oldItem==newItem
         }
 
-        override fun areItemsTheSame(oldItem: MovieResult, newItem: MovieResult): Boolean {
+        override fun areItemsTheSame(oldItem: DiscoverResult, newItem: DiscoverResult): Boolean {
             return oldItem.id==newItem.id
         }
     }
-    private val movieAsyncListDiffer=AsyncListDiffer(this,movieDiffUtil)
+    private val searchAsyncListDiffer=AsyncListDiffer(this,discoverDataUtil)
 
-    var movieList:List<MovieResult>
-    get() = movieAsyncListDiffer.currentList
-    set(value) =movieAsyncListDiffer.submitList(value)
-
-    private val tvShowDiffUtil=object :DiffUtil.ItemCallback<TvShowResult>(){
-        override fun areContentsTheSame(oldItem: TvShowResult, newItem: TvShowResult): Boolean {
-            return oldItem==newItem
-        }
-
-        override fun areItemsTheSame(oldItem: TvShowResult, newItem: TvShowResult): Boolean {
-            return oldItem.id==newItem.id
-        }
-    }
-    private val tvShowAsyncListDiffer=AsyncListDiffer(this,tvShowDiffUtil)
-
-    var tvShowList:List<TvShowResult>
-        get() = tvShowAsyncListDiffer.currentList
-        set(value) = tvShowAsyncListDiffer.submitList(value)
-
-
+    var discoverList:List<DiscoverResult>
+        get() = searchAsyncListDiffer.currentList
+        set(value) =searchAsyncListDiffer.submitList(value)
     inner class HomeFragmentViewHolder(val binding:FragmentMainRvRowBinding):RecyclerView.ViewHolder(binding.root)
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): HomeFragmentViewHolder {
@@ -53,14 +35,10 @@ class HomeFragmentAdapter @Inject constructor():RecyclerView.Adapter<HomeFragmen
     }
 
     override fun getItemCount(): Int {
-        return if(tvShowList.size>=movieList.size) tvShowList.size else movieList.size
+        return discoverList.size
     }
 
     override fun onBindViewHolder(holder: HomeFragmentViewHolder, position: Int) {
-        if(movieList.isEmpty()){
-            holder.binding.tvShowResult=tvShowList[position]
-        }else{
-            holder.binding.movieResult=movieList[position]
-        }
+        holder.binding.discoverResult=discoverList[position]
     }
 }

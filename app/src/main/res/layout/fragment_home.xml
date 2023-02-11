@@ -19,6 +19,7 @@
             android:layout_width="match_parent"
             android:animateLayoutChanges="true"
             android:layout_height="match_parent"
+            android:id="@+id/coordinatorLayoutMain"
             >
 
             <com.google.android.material.appbar.AppBarLayout
@@ -30,13 +31,12 @@
                 <com.google.android.material.appbar.CollapsingToolbarLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    app:layout_scrollFlags="scroll|enterAlways">
+                    app:layout_scrollFlags="scroll|enterAlways|snap">
 
                     <androidx.constraintlayout.widget.ConstraintLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         app:layout_collapseMode="pin"
-
                         >
                         <LinearLayout
                             android:layout_width="match_parent"
@@ -75,25 +75,33 @@
                                 android:maxLines="1"
                                 android:id="@+id/headerText"/>
 
-                            <EditText
-                                android:id="@+id/searchText"
-                                android:layout_width="0dp"
-                                android:layout_height="wrap_content"
-                                android:layout_marginStart="10dp"
+                            <com.google.android.material.textfield.TextInputLayout
+                                android:layout_width="wrap_content"
                                 android:layout_weight="9"
-                                android:ellipsize="none"
-                                android:fontFamily="@font/adamina"
-                                android:hint="@string/enter_tv_show"
-                                android:imeOptions="actionDone"
-                                android:importantForAutofill="no"
-                                android:includeFontPadding="false"
-                                android:inputType="text"
-                                android:maxLines="1"
-                                android:textColor="@color/white"
-                                android:textColorHint="#7B81A3"
-                                android:textSize="19sp"
-                                android:textStyle="bold"
-                                android:visibility="gone" />
+                                android:layout_marginStart="10dp"
+                                android:gravity="center_vertical"
+                                android:layout_height="wrap_content">
+
+                                <com.google.android.material.textfield.TextInputEditText
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:id="@+id/searchText"
+                                    android:ellipsize="none"
+                                    android:fontFamily="@font/adamina"
+                                    android:hint="@string/enter_tv_show"
+                                    android:imeOptions="actionDone"
+                                    android:importantForAutofill="no"
+                                    android:includeFontPadding="false"
+                                    android:inputType="text"
+                                    android:maxLines="1"
+                                    android:textColor="@color/white"
+                                    android:textColorHint="#7B81A3"
+                                    android:textSize="19sp"
+                                    android:textStyle="bold"
+                                    android:visibility="gone"
+                                    />
+
+                            </com.google.android.material.textfield.TextInputLayout>
 
                             <ImageView
                                 android:layout_width="25dp"

@@ -6,11 +6,9 @@
     <data>
 
         <variable
-            name="movieResult"
-            type="com.fatih.popcorn.entities.remote.movie.MovieResult" />
-        <variable
-            name="tvShowResult"
-            type="com.fatih.popcorn.entities.remote.tvshow.TvShowResult" />
+            name="discoverResult"
+            type="com.fatih.popcorn.entities.remote.DiscoverResult"
+            />
         <variable
             name="releaseDate"
             type="String" />
@@ -29,8 +27,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             android:id="@+id/movieImage"
             android:scaleType="centerCrop"
-            app:movieUrl="@{movieResult.poster_path}"
-            app:tvShowUrl="@{tvShowResult.poster_path}"
+            android:downloadUrl="@{discoverResult.poster_path}"
             android:contentDescription="@string/app_name" />
 
         <ImageView
@@ -50,8 +47,7 @@
             app:layout_constraintStart_toEndOf="@id/heartImage"
             app:layout_constraintTop_toTopOf="@id/heartImage"
             app:layout_constraintBottom_toBottomOf="@id/heartImage"
-            app:movieVoteAverage="@{movieResult.vote_average}"
-            app:tvShowVoteAverage="@{tvShowResult.vote_average}"
+            android:setVoteAverage="@{discoverResult.vote_average}"
             android:textSize="10sp"
             android:textAlignment="center"
             android:includeFontPadding="false"
@@ -67,8 +63,8 @@
             app:layout_constraintTop_toTopOf="@id/heartImage"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintBottom_toBottomOf="@id/heartImage"
-            app:releaseDate="@{movieResult.release_date}"
-            app:firstAirDate="@{tvShowResult.first_air_date}"
+            app:releaseDate="@{discoverResult.release_date}"
+            app:firstAirDate="@{discoverResult.first_air_date}"
             android:textSize="10sp"
             android:textColor="@color/white"
             android:includeFontPadding="false"

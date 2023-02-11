@@ -7,9 +7,8 @@ import com.fatih.popcorn.R
 import com.squareup.picasso.Callback
 import com.squareup.picasso.Picasso
 
-@BindingAdapter("movieUrl", "tvShowUrl")
-fun ImageView.setImageUrl(movieUrl:String?,tvShowUrl:String?){
-    val url= movieUrl ?: tvShowUrl
+@BindingAdapter("android:downloadUrl")
+fun ImageView.setImageUrl(url:String?){
     this.alpha=0.2f
     try {
         url.let {
@@ -30,9 +29,8 @@ fun ImageView.setImageUrl(movieUrl:String?,tvShowUrl:String?){
     }
 }
 
-@BindingAdapter("movieVoteAverage","tvShowVoteAverage")
-fun TextView.setVoteAverageText(movieVoteAverage:Double?,tvShowVoteAverage:Double?){
-    val voteAverage=movieVoteAverage?:tvShowVoteAverage
+@BindingAdapter("android:setVoteAverage")
+fun TextView.setVoteAverageText(voteAverage:Double?){
     voteAverage?.let {
         this.text = it.toString()
     }

@@ -1,10 +1,11 @@
 package com.fatih.popcorn.movieapi
 
 import com.fatih.popcorn.BuildConfig
-import com.fatih.popcorn.entities.remote.movie.MovieResponse
-import com.fatih.popcorn.entities.remote.tvshow.TvShowResponse
+import com.fatih.popcorn.entities.remote.DiscoverResponse
+
 import retrofit2.Response
 import retrofit2.http.GET
+import retrofit2.http.Path
 import retrofit2.http.Query
 
 interface PopcornApi {
@@ -19,7 +20,7 @@ interface PopcornApi {
         @Query("sort_by") sort_by:String,
         @Query("page") page:Int,
         @Query("with_genres") genres:String
-    ):Response<MovieResponse>
+    ):Response<DiscoverResponse>
 
     @GET("discover/tv")
     suspend fun getTvShows(
@@ -27,5 +28,13 @@ interface PopcornApi {
         @Query("sort_by") sort_by:String,
         @Query("page") page:Int,
         @Query("with_genres") genres:String
-    ):Response<TvShowResponse>
+    ):Response<DiscoverResponse>
+
+    @GET("search/{name}")
+    suspend fun search(
+        @Path("name") name:String,
+        @Query("api_key") api_key: String = BuildConfig.API_KEY,
+        @Query("query") query: String,
+        @Query("page") page:Int):Response<DiscoverResponse>
+
 }
