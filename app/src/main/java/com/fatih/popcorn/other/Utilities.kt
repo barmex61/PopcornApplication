@@ -48,3 +48,12 @@ fun TextView.setReleaseDate(firstAirDate:String?,releaseDate:String?){
     }
 }
 
+fun <State> MutableList<State>.addFilter(data:State){
+
+    if(this.last()==com.fatih.popcorn.other.State.SEARCH){
+        return
+    }
+    this.add(data)
+
+}
+

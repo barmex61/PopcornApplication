@@ -20,3 +20,7 @@ class Resource <T>(val data:T?,val message:String?,val status:Status) {
 enum class Status{
     LOADING,SUCCESS,ERROR
 }
+
+enum class State{
+    TV_SHOW,MOVIE,SEARCH
+}

@@ -303,6 +303,7 @@ class HomeFragment @Inject constructor( private val adapter:HomeFragmentAdapter)
                     alertDialog.setNeutralButton("Reset"
                     ) { _, _ ->
                         tv_show_booleanArray.fill(false)
+                        tvShowButtonClicked()
                     }.show()
                 }
 
