@@ -1,13 +1,18 @@
 package com.fatih.popcorn.ui
 
 import android.app.AlertDialog
-import android.content.DialogInterface
+import android.content.Context
+import android.hardware.input.InputManager
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.MenuItem
 import android.view.View
+import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
+import androidx.activity.OnBackPressedCallback
+import androidx.activity.OnBackPressedDispatcher
+import androidx.activity.addCallback
 import androidx.core.content.ContextCompat
 import androidx.core.view.GravityCompat
 import androidx.databinding.DataBindingUtil
@@ -22,7 +27,6 @@ import com.fatih.popcorn.other.Constants.movieGenreMap
 import com.fatih.popcorn.other.Constants.movieSearch
 import com.fatih.popcorn.other.Constants.movie_booleanArray
 import com.fatih.popcorn.other.Constants.movie_genre_list
-import com.fatih.popcorn.other.Constants.mutableStateList
 import com.fatih.popcorn.other.Constants.qualityArray
 import com.fatih.popcorn.other.Constants.qualityBooleanArray
 import com.fatih.popcorn.other.Constants.sortArray
@@ -33,7 +37,6 @@ import com.fatih.popcorn.other.Constants.tvShowGenreMap
 import com.fatih.popcorn.other.Constants.tv_show_booleanArray
 import com.fatih.popcorn.other.Constants.tv_show_genre_list
 import com.fatih.popcorn.other.State
-import com.fatih.popcorn.other.StateListener
 import com.fatih.popcorn.other.Status
 import com.fatih.popcorn.other.addFilter
 import com.fatih.popcorn.viewmodel.HomeFragmentViewModel
@@ -109,6 +112,7 @@ class HomeFragment @Inject constructor( private val adapter:HomeFragmentAdapter)
         setTextChangeListener()
         observeLiveData()
     }
+
     override fun onPause() {
         super.onPause()
         binding.searchText.text?.clear()
@@ -154,18 +158,10 @@ class HomeFragment @Inject constructor( private val adapter:HomeFragmentAdapter)
         binding.moviesRecyclerView.setOnScrollChangeListener { _, _, _, _, _ ->
             if (!binding.moviesRecyclerView.canScrollVertically(1) && currentPage <= totalAvailablePages) {
                 currentPage++
-                if (searchText.isEmpty()) {
-                    if (stateList.last()==State.MOVIE) {
-                        viewModel.getMovies(currentPage,sortString, genres)
-                    } else {
-                        viewModel.getTvShows(currentPage,sortString, genres)
-                    }
-                } else {
-                    if (stateList.last()==State.MOVIE) {
-                        //TODO SEARCHLIVEDATA observeSearchLiveData(searchName!!, searchText, currentPage)
-                    } else {
-                        //TODO SEARCH observeSearchLiveData(searchName!!, searchText, currentPage)
-                    }
+                when(stateList.last()){
+                    State.SEARCH->{viewModel.search(searchCategory,searchText,currentPage)}
+                    State.MOVIE->{viewModel.getMovies(currentPage,sortString, genres) }
+                    State.TV_SHOW->{viewModel.getTvShows(currentPage,sortString, genres)}
                 }
             }
         }
