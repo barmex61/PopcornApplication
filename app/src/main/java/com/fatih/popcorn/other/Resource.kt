@@ -1,6 +1,6 @@
 package com.fatih.popcorn.other
 
-class Resource <T>(val data:T?,val message:String?,val status:Status) {
+class Resource <T>(var data:T?, val message:String?, val status:Status) {
 
     companion object{
 

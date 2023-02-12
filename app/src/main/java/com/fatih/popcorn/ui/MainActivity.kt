@@ -45,7 +45,6 @@ class MainActivity : AppCompatActivity() {
         viewModel.getMovies(1, "popularity.desc","")
         installSplashScreen().apply {
             setKeepOnScreenCondition{
-                println("yeyeye")
                 viewModel.discoverData.value?.status== Status.LOADING
             }
         }

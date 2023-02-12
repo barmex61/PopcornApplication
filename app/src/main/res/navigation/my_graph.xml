@@ -9,10 +9,10 @@
         android:name="com.fatih.popcorn.ui.HomeFragment"
         android:label="MainFragment" >
         <action
-            android:id="@+id/action_mainFragment_to_detailsFragment"
+            android:id="@+id/action_homeFragment_to_detailsFragment"
             app:destination="@id/detailsFragment" />
         <action
-            android:id="@+id/action_mainFragment_to_watchListFragment"
+            android:id="@+id/action_homeFragment_to_watchListFragment"
             app:destination="@id/watchListFragment" />
     </fragment>
     <fragment
@@ -28,9 +28,6 @@
         <argument
             android:name="vibrantColor"
             app:argType="integer" />
-        <argument
-            android:name="isTvShow"
-            app:argType="boolean" />
         <action
             android:id="@+id/action_detailsFragment_to_watchListFragment"
             app:destination="@id/watchListFragment" />

@@ -6,6 +6,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.databinding.BindingAdapter
 import com.fatih.popcorn.R
+import com.fatih.popcorn.entities.remote.DiscoverResponse
 import com.squareup.picasso.Callback
 import com.squareup.picasso.Picasso
 import kotlinx.coroutines.CoroutineScope
@@ -70,3 +71,12 @@ fun <State> MutableList<State>.addFilter(data:State){
 
 }
 
+fun DiscoverResponse.add(data:DiscoverResponse):DiscoverResponse{
+    if(this.page!=data.page){
+        this.results+=data.results
+        this.total_pages=data.total_pages
+        this.total_results=data.total_results
+        this.page=data.page
+    }
+    return this
+}

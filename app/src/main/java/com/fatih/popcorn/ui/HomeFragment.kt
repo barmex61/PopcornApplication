@@ -5,8 +5,10 @@ import android.content.res.Resources
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
+import android.view.ViewGroup
 import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.core.view.GravityCompat
@@ -14,6 +16,7 @@ import androidx.core.view.updatePadding
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import com.fatih.popcorn.R
 import com.fatih.popcorn.adapter.HomeFragmentAdapter
@@ -56,6 +59,7 @@ class HomeFragment @Inject constructor( private val adapter:HomeFragmentAdapter)
     private var searchCategory= movieSearch
     private var tvShowSortPosition=0
     private var movieSortPosition=0
+    private var isFirstOpen=true
     private val viewModel:HomeFragmentViewModel by lazy{
         MainActivity.viewModel
     }
@@ -71,6 +75,7 @@ class HomeFragment @Inject constructor( private val adapter:HomeFragmentAdapter)
 
     private fun doInitialization(){
         setupRecyclerView()
+        binding.watchImage.setOnClickListener { findNavController().navigate(HomeFragmentDirections.actionHomeFragmentToWatchListFragment()) }
         binding.navigationView.setNavigationItemSelectedListener {
             setNavigation(it)
             return@setNavigationItemSelectedListener false
@@ -88,7 +93,6 @@ class HomeFragment @Inject constructor( private val adapter:HomeFragmentAdapter)
             binding.searchText.isFocusableInTouchMode=true
             binding.searchText.requestFocus()
             binding.menuImage.setImageResource(R.drawable.ic_back)
-            stateList.addFilter(State.SEARCH)
             isSearching=true
         }
         binding.menuImage.setOnClickListener {
@@ -103,8 +107,11 @@ class HomeFragment @Inject constructor( private val adapter:HomeFragmentAdapter)
                 binding.drawableLayout.openDrawer(GravityCompat.START)
             }
         }
+        if(isFirstOpen){
+            observeLiveData()
+            isFirstOpen=false
+        }
         setTextChangeListener()
-        observeLiveData()
     }
 
     override fun onPause() {
@@ -112,14 +119,14 @@ class HomeFragment @Inject constructor( private val adapter:HomeFragmentAdapter)
         binding.searchText.text?.clear()
         binding.searchText.clearFocus()
     }
+
     private fun setTextChangeListener(){
         binding.searchText.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int)=Unit
-
             override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) =Unit
-
             override fun afterTextChanged(p0: Editable?) {
                 searchText=p0.toString().trim().lowercase()
+                println("not empty")
                 stateList.addFilter(State.SEARCH)
                 job?.cancel()
                 if(searchText.isNotEmpty()){
@@ -153,9 +160,14 @@ class HomeFragment @Inject constructor( private val adapter:HomeFragmentAdapter)
         binding.moviesRecyclerView.setOnScrollChangeListener { _, _, _, _, _ ->
             if (!binding.moviesRecyclerView.canScrollVertically(1) && currentPage <= totalAvailablePages) {
                 currentPage++
+                println("recycler")
                 when(stateList.last()){
-                    State.SEARCH->{viewModel.search(searchCategory,searchText,currentPage)}
-                    State.MOVIE->{viewModel.getMovies(currentPage,sortString, genres) }
+                    State.SEARCH->{
+                        println("searchde")
+                        viewModel.search(searchCategory,searchText,currentPage)}
+                    State.MOVIE->{
+                        println("${currentPage} ${sortString} ${genres}")
+                        viewModel.getMovies(currentPage,sortString, genres) }
                     State.TV_SHOW->{viewModel.getTvShows(currentPage,sortString, genres)}
                 }
             }
@@ -174,8 +186,10 @@ class HomeFragment @Inject constructor( private val adapter:HomeFragmentAdapter)
         searchCategory= movieSearch
         adapter.discoverList= listOf()
         currentPage=1
+        println("${currentPage} ${totalAvailablePages}")
 
         if(searchText.isEmpty()){
+            println("empty")
             viewModel.getMovies(currentPage,sortString,genres)
         }else{
             viewModel.search(searchCategory,searchText,currentPage)
@@ -220,7 +234,7 @@ class HomeFragment @Inject constructor( private val adapter:HomeFragmentAdapter)
                     setProgressBarVisibility(false)
                     adapter.discoverList += it.data?.results?: listOf()
                     totalAvailablePages=it.data?.total_pages?:1
-
+                    println(it.data?.total_pages)
                 }
                 Status.ERROR->{
                     setProgressBarVisibility(false)
