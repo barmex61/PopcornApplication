@@ -71,12 +71,15 @@ fun <State> MutableList<State>.addFilter(data:State){
 
 }
 
-fun DiscoverResponse.add(data:DiscoverResponse):DiscoverResponse{
-    if(this.page!=data.page){
-        this.results+=data.results
-        this.total_pages=data.total_pages
-        this.total_results=data.total_results
-        this.page=data.page
-    }
-    return this
+fun DiscoverResponse?.add(data:DiscoverResponse):DiscoverResponse {
+    return this?.let {
+        if (this.page != data.page) {
+            this.results += data.results
+            this.total_pages = data.total_pages
+            this.total_results = data.total_results
+            this.page = data.page
+            println("inside ${this.results.size}")
+        }
+        this
+    }?: data
 }

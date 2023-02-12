@@ -49,7 +49,6 @@ class HomeFragment @Inject constructor( private val adapter:HomeFragmentAdapter)
 
     private lateinit var binding:FragmentHomeBinding
     private var totalAvailablePages=1
-    private var currentPage=1
     private var job: Job?=null
     private var isSearching=false
     private var sortString= sortList[0]
@@ -74,6 +73,7 @@ class HomeFragment @Inject constructor( private val adapter:HomeFragmentAdapter)
     }
 
     private fun doInitialization(){
+
         setupRecyclerView()
         binding.watchImage.setOnClickListener { findNavController().navigate(HomeFragmentDirections.actionHomeFragmentToWatchListFragment()) }
         binding.navigationView.setNavigationItemSelectedListener {
@@ -90,15 +90,12 @@ class HomeFragment @Inject constructor( private val adapter:HomeFragmentAdapter)
         binding.searchImage.setOnClickListener {
             binding.searchText.visibility=View.VISIBLE
             binding.headerText.visibility=View.GONE
-            binding.searchText.isFocusableInTouchMode=true
-            binding.searchText.requestFocus()
             binding.menuImage.setImageResource(R.drawable.ic_back)
             isSearching=true
         }
         binding.menuImage.setOnClickListener {
             if(isSearching){
                 binding.searchText.text?.clear()
-                binding.searchText.clearFocus()
                 binding.searchText.visibility=View.GONE
                 binding.headerText.visibility=View.VISIBLE
                 binding.menuImage.setImageResource(R.drawable.ic_menu)
@@ -107,10 +104,7 @@ class HomeFragment @Inject constructor( private val adapter:HomeFragmentAdapter)
                 binding.drawableLayout.openDrawer(GravityCompat.START)
             }
         }
-        if(isFirstOpen){
-            observeLiveData()
-            isFirstOpen=false
-        }
+        observeLiveData()
         setTextChangeListener()
     }
 
@@ -126,20 +120,16 @@ class HomeFragment @Inject constructor( private val adapter:HomeFragmentAdapter)
             override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) =Unit
             override fun afterTextChanged(p0: Editable?) {
                 searchText=p0.toString().trim().lowercase()
-                println("not empty")
-                stateList.addFilter(State.SEARCH)
                 job?.cancel()
                 if(searchText.isNotEmpty()){
                     job=lifecycleScope.launch{
                         delay(200L)
-                        adapter.discoverList= listOf()
-                        viewModel.search(searchCategory,searchText,currentPage)
-                        currentPage=1
+                        viewModel.search(searchCategory,searchText)
+                        viewModel.currentPage.value=1
                         totalAvailablePages=1
                     }
                 }else{
                     job?.cancel()
-                    adapter.discoverList= listOf()
                     when(stateList.last()){
                         State.SEARCH->{
                             stateList.removeLast()
@@ -158,17 +148,16 @@ class HomeFragment @Inject constructor( private val adapter:HomeFragmentAdapter)
         binding.moviesRecyclerView.layoutManager= GridLayoutManager(requireContext(),
             Resources.getSystem().displayMetrics.widthPixels/200)
         binding.moviesRecyclerView.setOnScrollChangeListener { _, _, _, _, _ ->
-            if (!binding.moviesRecyclerView.canScrollVertically(1) && currentPage <= totalAvailablePages) {
-                currentPage++
-                println("recycler")
+            if (!binding.moviesRecyclerView.canScrollVertically(1) && viewModel.currentPage.value!! <= totalAvailablePages) {
+                viewModel.currentPage.value= viewModel.currentPage.value!! +1
                 when(stateList.last()){
                     State.SEARCH->{
-                        println("searchde")
-                        viewModel.search(searchCategory,searchText,currentPage)}
-                    State.MOVIE->{
-                        println("${currentPage} ${sortString} ${genres}")
-                        viewModel.getMovies(currentPage,sortString, genres) }
-                    State.TV_SHOW->{viewModel.getTvShows(currentPage,sortString, genres)}
+                        if(searchText.isNotEmpty()){
+                            viewModel.search(searchCategory,searchText)
+                        }
+                    }
+                    State.MOVIE->{ viewModel.getMovies(sortString, genres) }
+                    State.TV_SHOW->{viewModel.getTvShows(sortString, genres)}
                 }
             }
         }
@@ -181,24 +170,38 @@ class HomeFragment @Inject constructor( private val adapter:HomeFragmentAdapter)
             sortString= sortList[0]
             tv_show_booleanArray.fill(false)
             movie_booleanArray.fill(false)
+            viewModel.currentPage.value=1
         }
-        stateList.addFilter(State.MOVIE)
         searchCategory= movieSearch
-        adapter.discoverList= listOf()
-        currentPage=1
-        println("${currentPage} ${totalAvailablePages}")
 
         if(searchText.isEmpty()){
-            println("empty")
-            viewModel.getMovies(currentPage,sortString,genres)
+            viewModel.getMovies(sortString,genres)
         }else{
-            viewModel.search(searchCategory,searchText,currentPage)
+            viewModel.search(searchCategory,searchText)
         }
+        setIndicatorColor(checkIsItInMovieListOrNot())
 
-        binding.movieButtonIndicator.setBackgroundColor(ContextCompat.getColor(requireContext(),R.color.teal_700))
-        binding.tvShowButtonIndicator.setBackgroundColor(
-            ContextCompat.getColor(requireContext(),
-                android.R.color.transparent))
+    }
+
+    private fun checkIsItInMovieListOrNot():Boolean{
+        if(stateList.last()==State.MOVIE || ( stateList.last()==State.SEARCH && stateList[stateList.size-2]==State.MOVIE)){
+            return true
+        }
+        return false
+    }
+
+    private fun setIndicatorColor(isItInMovie:Boolean){
+        if(isItInMovie){
+            binding.movieButtonIndicator.setBackgroundColor(ContextCompat.getColor(requireContext(),R.color.teal_700))
+            binding.tvShowButtonIndicator.setBackgroundColor(
+                ContextCompat.getColor(requireContext(),
+                    android.R.color.transparent))
+        }else{
+            binding.tvShowButtonIndicator.setBackgroundColor(ContextCompat.getColor(requireContext(),R.color.teal_700))
+            binding.movieButtonIndicator.setBackgroundColor(
+                ContextCompat.getColor(requireContext(),
+                    android.R.color.transparent))
+        }
     }
     private fun tvShowButtonClicked(){
         if(stateList.last()!=State.TV_SHOW){
@@ -206,21 +209,15 @@ class HomeFragment @Inject constructor( private val adapter:HomeFragmentAdapter)
             sortString= sortList[0]
             tv_show_booleanArray.fill(false)
             movie_booleanArray.fill(false)
+            viewModel.currentPage.value=1
         }
-        stateList.addFilter(State.TV_SHOW)
         searchCategory= tvSearch
-        adapter.discoverList= listOf()
-        currentPage=1
         if(searchText.isEmpty()){
-            viewModel.getTvShows(currentPage,sortString,genres)
+            viewModel.getTvShows(sortString,genres)
         }else{
-            viewModel.search(searchCategory,searchText,currentPage)
+            viewModel.search(searchCategory,searchText)
         }
-
-        binding.tvShowButtonIndicator.setBackgroundColor(ContextCompat.getColor(requireContext(),R.color.teal_700))
-        binding.movieButtonIndicator.setBackgroundColor(
-            ContextCompat.getColor(requireContext(),
-                android.R.color.transparent))
+        setIndicatorColor(checkIsItInMovieListOrNot())
     }
 
     private fun observeLiveData(){
@@ -232,9 +229,8 @@ class HomeFragment @Inject constructor( private val adapter:HomeFragmentAdapter)
                 }
                 Status.SUCCESS->{
                     setProgressBarVisibility(false)
-                    adapter.discoverList += it.data?.results?: listOf()
+                    adapter.discoverList=it.data?.results?: listOf()
                     totalAvailablePages=it.data?.total_pages?:1
-                    println(it.data?.total_pages)
                 }
                 Status.ERROR->{
                     setProgressBarVisibility(false)
@@ -265,7 +261,7 @@ class HomeFragment @Inject constructor( private val adapter:HomeFragmentAdapter)
             R.id.movie_filter->{
 
                 val alertDialog=AlertDialog.Builder(requireContext())
-                if(stateList.last()==State.MOVIE || ( stateList.last()==State.SEARCH && stateList[stateList.size-2]==State.MOVIE)){
+                if(checkIsItInMovieListOrNot()){
                     alertDialog.setMultiChoiceItems(
                         movie_genre_list, movie_booleanArray
                     ) { _, p1, p2 -> movie_booleanArray[p1] = p2 }
@@ -323,7 +319,7 @@ class HomeFragment @Inject constructor( private val adapter:HomeFragmentAdapter)
             }
             R.id.sort->{
                 val alertDialog=AlertDialog.Builder(requireContext())
-                if( stateList.last()==State.MOVIE || ( stateList.last()==State.SEARCH && stateList[stateList.size-2]==State.MOVIE)){
+                if(checkIsItInMovieListOrNot()){
                     alertDialog.setTitle("Sort By").setSingleChoiceItems(
                         sortArray,movieSortPosition
                     ) { _, p1 -> movieSortPosition = p1 }.setNegativeButton("CANCEL"

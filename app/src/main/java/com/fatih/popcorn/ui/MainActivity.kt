@@ -13,6 +13,7 @@ import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import com.fatih.popcorn.BuildConfig
 import com.fatih.popcorn.R
+import com.fatih.popcorn.other.Constants.isFirstRun
 import com.fatih.popcorn.other.CustomFragmentFactoryEntryPoint
 import com.fatih.popcorn.other.Status
 import com.fatih.popcorn.viewmodel.HomeFragmentViewModel
@@ -42,7 +43,10 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         WindowCompat.setDecorFitsSystemWindows(window, false)
         viewModel=ViewModelProvider(this)[HomeFragmentViewModel::class.java]
-        viewModel.getMovies(1, "popularity.desc","")
+        if(isFirstRun){
+            viewModel.getMovies( "popularity.desc","")
+            isFirstRun=false
+        }
         installSplashScreen().apply {
             setKeepOnScreenCondition{
                 viewModel.discoverData.value?.status== Status.LOADING

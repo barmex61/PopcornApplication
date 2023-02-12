@@ -27,4 +27,5 @@ object Constants {
     val colorMatrixColorFilter= ColorMatrixColorFilter(ColorMatrix().apply {
         setSaturation(0f)
     })
+    var isFirstRun=true
 }
