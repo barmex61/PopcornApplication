@@ -41,9 +41,10 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         WindowCompat.setDecorFitsSystemWindows(window, false)
         viewModel=ViewModelProvider(this)[HomeFragmentViewModel::class.java]
-        viewModel.getMovies(1, "popularity.desc","28")
+        viewModel.getMovies(1, "popularity.desc","")
         installSplashScreen().apply {
             setKeepOnScreenCondition{
+                println("yeyeye")
                 viewModel.discoverData.value?.status== Status.LOADING
             }
         }

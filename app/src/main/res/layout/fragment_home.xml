@@ -207,6 +207,7 @@
                 android:layout_width="match_parent"
                 android:id="@+id/moviesRecyclerView"
                 android:layout_height="match_parent"
+                android:background="@color/black2"
                 app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior"/>
             <ProgressBar
                 android:layout_width="wrap_content"

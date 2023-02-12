@@ -2,6 +2,7 @@ package com.fatih.popcorn.adapter
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import android.view.animation.AnimationUtils
 import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.AsyncListDiffer
 import androidx.recyclerview.widget.DiffUtil
@@ -40,5 +41,6 @@ class HomeFragmentAdapter @Inject constructor():RecyclerView.Adapter<HomeFragmen
 
     override fun onBindViewHolder(holder: HomeFragmentViewHolder, position: Int) {
         holder.binding.discoverResult=discoverList[position]
+        holder.binding.animatedLayout.startAnimation(AnimationUtils.loadAnimation(holder.itemView.context,R.anim.from_down))
     }
 }
