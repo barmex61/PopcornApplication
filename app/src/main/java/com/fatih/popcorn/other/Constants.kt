@@ -22,5 +22,4 @@ object Constants {
     val tvShowGenreMap:HashMap<String,Int> = hashMapOf("Action" to 10759,"Animation" to 16,"Comedy" to 35,"Crime" to 80,"Documentary" to 99,"Drame" to 18,"Family" to 10751,"Kids" to 10762,"Mystery" to 9648,"News" to 10763,"Reality" to 10764,"Science Fiction" to 10765,"Soap" to 10766,"Talk" to 10767,"War" to 10768,"Western" to 37)
     val qualityArray= arrayOf("360p","480p","720p","1080p")
     val qualityBooleanArray=BooleanArray(qualityArray.size)
-
 }

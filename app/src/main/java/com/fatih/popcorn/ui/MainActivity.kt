@@ -2,6 +2,8 @@ package com.fatih.popcorn.ui
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.animation.Animation
+import android.view.animation.AnimationUtils
 import androidx.activity.viewModels
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.core.view.WindowCompat
@@ -26,7 +28,6 @@ class MainActivity : AppCompatActivity() {
 
     @Inject
     lateinit var fragmentFactory: CustomFragmentFactory
-
 
     companion object {
         lateinit var viewModel: HomeFragmentViewModel

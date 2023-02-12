@@ -1,5 +1,8 @@
 package com.fatih.popcorn.module
 
+import android.content.Context
+import android.view.animation.AnimationUtils
+import com.fatih.popcorn.R
 import com.fatih.popcorn.movieapi.PopcornApi
 import com.fatih.popcorn.other.Constants.BASE_URL
 import com.fatih.popcorn.repository.PopcornRepository
@@ -7,6 +10,7 @@ import com.fatih.popcorn.repository.PopcornRepositoryInterface
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
@@ -24,5 +28,10 @@ object AppModule {
     @Provides
     @Singleton
     fun providePopcornRepo(popcornApi: PopcornApi)=PopcornRepository(popcornApi) as PopcornRepositoryInterface
+
+    @Provides
+    @Singleton
+    fun provideAnimation(@ApplicationContext context:Context)=AnimationUtils.loadAnimation(context,
+        R.anim.fade_scale_animation)
 
 }

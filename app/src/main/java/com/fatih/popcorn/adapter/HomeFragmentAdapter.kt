@@ -41,6 +41,5 @@ class HomeFragmentAdapter @Inject constructor():RecyclerView.Adapter<HomeFragmen
 
     override fun onBindViewHolder(holder: HomeFragmentViewHolder, position: Int) {
         holder.binding.discoverResult=discoverList[position]
-        holder.binding.animatedLayout.startAnimation(AnimationUtils.loadAnimation(holder.itemView.context,R.anim.from_down))
     }
 }

@@ -1,6 +1,7 @@
 package com.fatih.popcorn.ui
 
 import android.app.AlertDialog
+import android.content.res.Resources
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -74,6 +75,7 @@ class HomeFragment @Inject constructor( private val adapter:HomeFragmentAdapter)
             setNavigation(it)
             return@setNavigationItemSelectedListener false
         }
+
         binding.movieButton.setOnClickListener {
             movieButtonClicked()
         }
@@ -146,7 +148,8 @@ class HomeFragment @Inject constructor( private val adapter:HomeFragmentAdapter)
     }
     private fun setupRecyclerView(){
         binding.moviesRecyclerView.adapter=adapter
-        binding.moviesRecyclerView.layoutManager= GridLayoutManager(requireContext(),3)
+        binding.moviesRecyclerView.layoutManager= GridLayoutManager(requireContext(),
+            Resources.getSystem().displayMetrics.widthPixels/200)
         binding.moviesRecyclerView.setOnScrollChangeListener { _, _, _, _, _ ->
             if (!binding.moviesRecyclerView.canScrollVertically(1) && currentPage <= totalAvailablePages) {
                 currentPage++
