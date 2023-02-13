@@ -55,7 +55,7 @@ class HomeFragmentViewModel @Inject constructor(private val popcornRepo:PopcornR
         val response=popcornRepo.getTvShows(sort_by, currentPage.value!!, genres)
         when(response.status){
             Status.SUCCESS->{
-                _discoverData.value= Resource.success(_discoverData.value!!.data.add(response.data!!))
+                _discoverData.value= Resource.success(_discoverData.value!!.data.add(response.data!!).apply{this.genres=genres})
             }
             Status.ERROR->{
                 _discoverData.value= Resource.error("Error occurred")
@@ -69,7 +69,6 @@ class HomeFragmentViewModel @Inject constructor(private val popcornRepo:PopcornR
             if(name == movieSearch) stateList.addFilter(State.MOVIE) else stateList.addFilter(State.TV_SHOW)
             _discoverData.value=Resource.loading(null)
         }
-        println("${searchQuery.value} ${query}")
         stateList.addFilter(State.SEARCH)
         val response=popcornRepo.search(name, query, currentPage.value!!)
         _discoverData.value=Resource.loading(_discoverData.value?.data)
@@ -77,7 +76,6 @@ class HomeFragmentViewModel @Inject constructor(private val popcornRepo:PopcornR
             Status.SUCCESS->{
                 if(searchQuery.value!=query || buttonClicked){
                     _discoverData.value= Resource.success(response.data)
-                    println("yeyeye")
                 }else{
                     _discoverData.value= Resource.success(_discoverData.value!!.data.add(response.data!!))
                 }
