@@ -64,7 +64,7 @@ fun TextView.setReleaseDate(firstAirDate:String?,releaseDate:String?){
 
 fun <State> MutableList<State>.addFilter(data:State){
 
-    if(this.last()==com.fatih.popcorn.other.State.SEARCH){
+    if(data==com.fatih.popcorn.other.State.SEARCH && this.last()==com.fatih.popcorn.other.State.SEARCH){
         return
     }
     this.add(data)
@@ -73,13 +73,20 @@ fun <State> MutableList<State>.addFilter(data:State){
 
 fun DiscoverResponse?.add(data:DiscoverResponse):DiscoverResponse {
     return this?.let {
-        if (this.page != data.page) {
+        if (this.page != data.page ) {
             this.results += data.results
             this.total_pages = data.total_pages
             this.total_results = data.total_results
             this.page = data.page
-            println("inside ${this.results.size}")
+            println("not equal")
+        }else if(this.page ==data.page && this.genres != data.genres){
+            this.results = data.results
+            this.total_pages = data.total_pages
+            this.total_results = data.total_results
+            this.page = data.page
+            this.genres=data.genres
         }
         this
+
     }?: data
 }

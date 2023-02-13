@@ -3,13 +3,17 @@ package com.fatih.popcorn.ui
 import android.app.AlertDialog
 import android.content.res.Resources
 import android.os.Bundle
+import android.os.Handler
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
+import android.view.animation.AnimationUtils
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.Toolbar
 import androidx.core.content.ContextCompat
 import androidx.core.view.GravityCompat
 import androidx.core.view.updatePadding
@@ -58,7 +62,7 @@ class HomeFragment @Inject constructor( private val adapter:HomeFragmentAdapter)
     private var searchCategory= movieSearch
     private var tvShowSortPosition=0
     private var movieSortPosition=0
-    private var isFirstOpen=true
+    private lateinit var handler:Handler
     private val viewModel:HomeFragmentViewModel by lazy{
         MainActivity.viewModel
     }
@@ -73,9 +77,16 @@ class HomeFragment @Inject constructor( private val adapter:HomeFragmentAdapter)
     }
 
     private fun doInitialization(){
-
+        if(viewModel.searchQuery.value!!.isNotEmpty()){
+            searchText= viewModel.searchQuery.value!!
+            binding.searchText.setText(searchText)
+            searchImageClicked()
+            val name=if(checkIsItInMovieListOrNot()) movieSearch else tvSearch
+            viewModel.search(name,searchText,false)
+        }
         setupRecyclerView()
-        binding.watchImage.setOnClickListener { findNavController().navigate(HomeFragmentDirections.actionHomeFragmentToWatchListFragment()) }
+        setIndicatorColor(checkIsItInMovieListOrNot())
+        binding.watchImage.setOnClickListener { findNavController().navigate(HomeFragmentDirections.actionHomeFragmentToDetailsFragment(1,1)) }
         binding.navigationView.setNavigationItemSelectedListener {
             setNavigation(it)
             return@setNavigationItemSelectedListener false
@@ -88,17 +99,26 @@ class HomeFragment @Inject constructor( private val adapter:HomeFragmentAdapter)
             tvShowButtonClicked()
         }
         binding.searchImage.setOnClickListener {
-            binding.searchText.visibility=View.VISIBLE
-            binding.headerText.visibility=View.GONE
-            binding.menuImage.setImageResource(R.drawable.ic_back)
-            isSearching=true
+           searchImageClicked()
         }
         binding.menuImage.setOnClickListener {
             if(isSearching){
-                binding.searchText.text?.clear()
-                binding.searchText.visibility=View.GONE
-                binding.headerText.visibility=View.VISIBLE
-                binding.menuImage.setImageResource(R.drawable.ic_menu)
+                binding.searchText.apply {
+                    text.clear()
+                    clearFocus()
+                    visibility=View.GONE
+                    binding.headerText.visibility=View.VISIBLE
+                    if(checkIsItInMovieListOrNot()) {
+                        viewModel.getMovies(sortString,genres)
+                    }else{
+                        viewModel.getTvShows(sortString,genres)
+                    }
+
+                }
+                binding.menuImage.apply {
+                    startAnimation(AnimationUtils.loadAnimation(requireContext(),R.anim.fade_scale_animation))
+                    setImageResource(R.drawable.ic_menu)
+                }
                 isSearching=false
             }else{
                 binding.drawableLayout.openDrawer(GravityCompat.START)
@@ -106,6 +126,21 @@ class HomeFragment @Inject constructor( private val adapter:HomeFragmentAdapter)
         }
         observeLiveData()
         setTextChangeListener()
+    }
+
+    private fun searchImageClicked(){
+        binding.headerText.visibility=View.GONE
+        binding.searchText.apply {
+            visibility=View.VISIBLE
+            requestFocus()
+            isFocusableInTouchMode=true
+            startAnimation(AnimationUtils.loadAnimation(requireContext(),R.anim.fade_scale_animation))
+        }
+        binding.menuImage.apply {
+            startAnimation(AnimationUtils.loadAnimation(requireContext(),R.anim.fade_scale_animation))
+            setImageResource(R.drawable.ic_back)
+        }
+        isSearching=true
     }
 
     override fun onPause() {
@@ -124,7 +159,8 @@ class HomeFragment @Inject constructor( private val adapter:HomeFragmentAdapter)
                 if(searchText.isNotEmpty()){
                     job=lifecycleScope.launch{
                         delay(200L)
-                        viewModel.search(searchCategory,searchText)
+                        println("called")
+                        viewModel.search(searchCategory,searchText,false)
                         viewModel.currentPage.value=1
                         totalAvailablePages=1
                     }
@@ -153,7 +189,7 @@ class HomeFragment @Inject constructor( private val adapter:HomeFragmentAdapter)
                 when(stateList.last()){
                     State.SEARCH->{
                         if(searchText.isNotEmpty()){
-                            viewModel.search(searchCategory,searchText)
+                            viewModel.search(searchCategory,searchText,false)
                         }
                     }
                     State.MOVIE->{ viewModel.getMovies(sortString, genres) }
@@ -177,11 +213,28 @@ class HomeFragment @Inject constructor( private val adapter:HomeFragmentAdapter)
         if(searchText.isEmpty()){
             viewModel.getMovies(sortString,genres)
         }else{
-            viewModel.search(searchCategory,searchText)
+            viewModel.search(searchCategory,searchText,true)
         }
         setIndicatorColor(checkIsItInMovieListOrNot())
-
     }
+
+    private fun tvShowButtonClicked(){
+        if(stateList.last()!=State.TV_SHOW){
+            genres=""
+            sortString= sortList[0]
+            tv_show_booleanArray.fill(false)
+            movie_booleanArray.fill(false)
+            viewModel.currentPage.value=1
+        }
+        searchCategory= tvSearch
+        if(searchText.isEmpty()){
+            viewModel.getTvShows(sortString,genres)
+        }else{
+            viewModel.search(searchCategory,searchText,true)
+        }
+        setIndicatorColor(checkIsItInMovieListOrNot())
+    }
+
 
     private fun checkIsItInMovieListOrNot():Boolean{
         if(stateList.last()==State.MOVIE || ( stateList.last()==State.SEARCH && stateList[stateList.size-2]==State.MOVIE)){
@@ -203,22 +256,6 @@ class HomeFragment @Inject constructor( private val adapter:HomeFragmentAdapter)
                     android.R.color.transparent))
         }
     }
-    private fun tvShowButtonClicked(){
-        if(stateList.last()!=State.TV_SHOW){
-            genres=""
-            sortString= sortList[0]
-            tv_show_booleanArray.fill(false)
-            movie_booleanArray.fill(false)
-            viewModel.currentPage.value=1
-        }
-        searchCategory= tvSearch
-        if(searchText.isEmpty()){
-            viewModel.getTvShows(sortString,genres)
-        }else{
-            viewModel.search(searchCategory,searchText)
-        }
-        setIndicatorColor(checkIsItInMovieListOrNot())
-    }
 
     private fun observeLiveData(){
 
@@ -237,13 +274,15 @@ class HomeFragment @Inject constructor( private val adapter:HomeFragmentAdapter)
                 }
             }
         }
+
     }
 
     private fun setNavigation(it: MenuItem){
         when(it.itemId){
             R.id.movies->{
+
                 val list= arrayOf("Movie","Tv Show")
-                val alertDialog= AlertDialog.Builder(requireContext())
+                val alertDialog=AlertDialog.Builder(requireContext())
                 alertDialog.setTitle("Index")
                 alertDialog.setSingleChoiceItems(list,indexPosition
                 ) { _, p1 -> indexPosition = p1 }
@@ -285,6 +324,7 @@ class HomeFragment @Inject constructor( private val adapter:HomeFragmentAdapter)
                         alertDialog.setNeutralButton("Reset"
                         ) { _, _ ->
                             movie_booleanArray.fill(false)
+                            genres=""
                             movieButtonClicked()
                         }.show()
                 }else{

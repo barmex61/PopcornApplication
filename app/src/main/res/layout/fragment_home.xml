@@ -26,6 +26,8 @@
                 <com.google.android.material.appbar.CollapsingToolbarLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:id="@+id/collapsingToolbar"
+                    android:background="@drawable/toolbar_bg"
                     app:layout_scrollFlags="enterAlways|scroll">
 
 
@@ -62,6 +64,9 @@
                                 android:orientation="vertical" />
 
                             <ImageView
+                                android:clickable="true"
+                                android:focusable="true"
+                                android:background="?selectableItemBackground"
                                 android:layout_width="30dp"
                                 android:layout_height="30dp"
                                 android:src="@drawable/ic_menu"
@@ -99,14 +104,17 @@
                                 android:ellipsize="end"
                                 android:fontFamily="@font/adamina"
                                 android:hint="@string/enter_tv_show"
-                                android:imeOptions="actionDone"
                                 android:importantForAutofill="no"
                                 android:includeFontPadding="false"
+                                android:cursorVisible="true"
                                 android:inputType="text"
                                 android:maxLines="1"
                                 android:textColor="@color/white"
                                 android:textColorHint="#7B81A3"
                                 android:textSize="16sp"
+                                android:focusable="true"
+                                android:imeOptions="flagNoFullscreen"
+                                android:focusableInTouchMode="true"
                                 android:textStyle="bold"
                                 android:visibility="gone"
                                 />
@@ -118,6 +126,9 @@
                                 app:layout_constraintTop_toTopOf="parent"
                                 app:layout_constraintBottom_toBottomOf="parent"
                                 android:layout_marginEnd="15dp"
+                                android:clickable="true"
+                                android:focusable="true"
+                                android:background="?selectableItemBackground"
                                 app:layout_constraintEnd_toStartOf="@id/searchImage"
                                 android:src="@drawable/ic_watch"
                                 app:tint="@color/white"
@@ -150,13 +161,15 @@
                                 app:layout_constraintTop_toTopOf="parent"
                                 app:layout_constraintStart_toStartOf="parent"
                                 app:layout_constraintEnd_toEndOf="parent"
-                                android:background="#22000000"/>
+                                android:background="@drawable/view_divider_bg"/>
 
                             <Button
                                 android:id="@+id/movieButton"
                                 android:layout_width="110dp"
                                 android:layout_height="40dp"
-                                android:background="@android:color/transparent"
+                                android:focusable="true"
+                                android:clickable="true"
+                                android:background="?selectableItemBackground"
                                 android:contentDescription="@string/app_name"
                                 app:layout_constraintStart_toStartOf="parent"
                                 app:layout_constraintTop_toTopOf="parent"
@@ -169,11 +182,13 @@
                             <Button
                                 android:layout_width="110dp"
                                 android:layout_height="40dp"
+                                android:focusable="true"
+                                android:clickable="true"
+                                android:background="?selectableItemBackground"
                                 android:fontFamily="@font/berkshire_swash"
                                 android:text="@string/tv_show"
                                 app:layout_constraintStart_toEndOf="@id/movieButton"
                                 app:layout_constraintTop_toTopOf="parent"
-                                android:background="@android:color/transparent"
                                 android:textSize="14sp"
                                 android:textColor="@color/white"
                                 android:id="@+id/tvShowButton"
@@ -207,8 +222,8 @@
             <androidx.recyclerview.widget.RecyclerView
                 android:layout_width="match_parent"
                 android:id="@+id/moviesRecyclerView"
+                android:background="@drawable/recycler_bg"
                 android:layout_height="match_parent"
-                android:background="@color/black2"
                 app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior"/>
             <ProgressBar
                 android:layout_width="wrap_content"
