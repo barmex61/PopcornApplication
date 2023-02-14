@@ -1,9 +1,17 @@
 package com.fatih.popcorn.other
 
+import android.annotation.SuppressLint
 import android.content.res.Resources
+import android.graphics.Bitmap
 import android.graphics.ColorMatrix
 import android.graphics.ColorMatrixColorFilter
+import android.graphics.drawable.BitmapDrawable
+import android.widget.ImageView
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.MutableLiveData
+import androidx.palette.graphics.Palette
+import com.fatih.popcorn.R
+import com.google.android.material.color.utilities.CorePalette
 
 
 object Constants {
@@ -14,7 +22,6 @@ object Constants {
     const val tvSearch="tv"
     const val movieSearch="movie"
     var stateList= mutableListOf(State.MOVIE)
-    var mutableStateList=MutableLiveData(stateList)
     val sortArray= arrayOf("Popularity","First Air Date","Vote Average")
     val movie_genre_list= arrayOf("Action","Adventure","Animation","Comedy","Crime","Documentary","Drama","Family","Fantasy","History","Horror","Music","Mystery","Romance","Science Fiction","TV Movie","Thriller","War","Western")
     val movie_booleanArray=BooleanArray(movie_genre_list.size)
@@ -28,4 +35,28 @@ object Constants {
         setSaturation(0f)
     })
     var isFirstRun=true
+    fun checkIsItInMovieListOrNot():Boolean{
+        if(stateList.last()==State.MOVIE || ( stateList.last()==State.SEARCH && stateList[stateList.size-2]==State.MOVIE)){
+            return true
+        }
+        return false
+    }
+
+    fun getVibrantColor(imageView:ImageView?):Pair<Int,Int>?{
+        var pair:Pair<Int,Int>?=null
+        imageView?.let {
+            if(imageView.drawable!=null){
+                val drawable = imageView.drawable as BitmapDrawable
+                val bitmap = drawable.bitmap
+                Palette.Builder(bitmap).generate { palette->
+                    val vibrantColor=palette!!.getVibrantColor(ContextCompat.getColor(imageView.context,R.color.white))
+                    val darkMutedColor=palette.getDarkMutedColor(ContextCompat.getColor(imageView.context,R.color.white))
+                    pair= Pair(vibrantColor,darkMutedColor)
+                }
+            }
+        }
+        return pair
+    }
+
+
 }

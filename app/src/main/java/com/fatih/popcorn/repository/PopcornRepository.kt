@@ -1,8 +1,11 @@
 package com.fatih.popcorn.repository
 
+import com.fatih.popcorn.entities.remote.DetailResponse
 import com.fatih.popcorn.entities.remote.DiscoverResponse
 import com.fatih.popcorn.movieapi.PopcornApi
 import com.fatih.popcorn.other.Resource
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
 
 class PopcornRepository (private val popcornApi: PopcornApi):PopcornRepositoryInterface {
 
@@ -48,6 +51,21 @@ class PopcornRepository (private val popcornApi: PopcornApi):PopcornRepositoryIn
             }
         }catch (e:Exception){
             Resource.error(e.message)
+        }
+    }
+
+    override fun getDetails(name: String, id: Int, language: String): Flow<Resource<DetailResponse>> = flow{
+       try {
+            val result=popcornApi.getDetails(searchName = name,id = id,language = language)
+            if(result.isSuccessful){
+                result.body()?.let {
+                    emit(Resource.success(it))
+                }?: emit(Resource.error("Response body empty"))
+            }else{
+               emit( Resource.error("Response failed"))
+            }
+        }catch (e:Exception){
+           emit(Resource.error(e.message))
         }
     }
 }

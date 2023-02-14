@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.os.Handler
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
@@ -25,6 +26,7 @@ import androidx.recyclerview.widget.GridLayoutManager
 import com.fatih.popcorn.R
 import com.fatih.popcorn.adapter.HomeFragmentAdapter
 import com.fatih.popcorn.databinding.FragmentHomeBinding
+import com.fatih.popcorn.other.Constants.checkIsItInMovieListOrNot
 import com.fatih.popcorn.other.Constants.movieGenreMap
 import com.fatih.popcorn.other.Constants.movieSearch
 import com.fatih.popcorn.other.Constants.movie_booleanArray
@@ -62,17 +64,16 @@ class HomeFragment @Inject constructor( private val adapter:HomeFragmentAdapter)
     private var searchCategory= movieSearch
     private var tvShowSortPosition=0
     private var movieSortPosition=0
-    private lateinit var handler:Handler
     private val viewModel:HomeFragmentViewModel by lazy{
         MainActivity.viewModel
     }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding=DataBindingUtil.bind(view)!!
         val statusBarHeightId = resources.getIdentifier("status_bar_height", "dimen", "android")
         val statusBarHeight = resources.getDimensionPixelSize(statusBarHeightId) +10
         binding.layoutHeader.updatePadding(top = statusBarHeight)
+        Log.d("MyTag","mycreateass")
         doInitialization()
     }
 
@@ -84,9 +85,14 @@ class HomeFragment @Inject constructor( private val adapter:HomeFragmentAdapter)
             val name=if(checkIsItInMovieListOrNot()) movieSearch else tvSearch
             viewModel.search(name,searchText,false)
         }
+
         setupRecyclerView()
         setIndicatorColor(checkIsItInMovieListOrNot())
-        binding.watchImage.setOnClickListener { findNavController().navigate(HomeFragmentDirections.actionHomeFragmentToDetailsFragment(1,1)) }
+        binding.watchImage.setOnClickListener { findNavController().navigate(HomeFragmentDirections.actionHomeFragmentToWatchListFragment()) }
+        adapter.setMyOnClickLambda { id, pair ->
+            Toast.makeText(requireContext(),"${id} id ${pair?.first} pair ${pair?.second}",Toast.LENGTH_LONG).show()
+            println("${id} ${pair?.first} ${pair?.second}")
+        }
         binding.navigationView.setNavigationItemSelectedListener {
             setNavigation(it)
             return@setNavigationItemSelectedListener false
@@ -159,7 +165,6 @@ class HomeFragment @Inject constructor( private val adapter:HomeFragmentAdapter)
                 if(searchText.isNotEmpty()){
                     job=lifecycleScope.launch{
                         delay(200L)
-                        println("called")
                         viewModel.search(searchCategory,searchText,false)
                         viewModel.currentPage.value=1
                         totalAvailablePages=1
@@ -233,14 +238,6 @@ class HomeFragment @Inject constructor( private val adapter:HomeFragmentAdapter)
             viewModel.search(searchCategory,searchText,true)
         }
         setIndicatorColor(checkIsItInMovieListOrNot())
-    }
-
-
-    private fun checkIsItInMovieListOrNot():Boolean{
-        if(stateList.last()==State.MOVIE || ( stateList.last()==State.SEARCH && stateList[stateList.size-2]==State.MOVIE)){
-            return true
-        }
-        return false
     }
 
     private fun setIndicatorColor(isItInMovie:Boolean){
