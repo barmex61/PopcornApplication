@@ -232,6 +232,7 @@
                 app:layout_anchorGravity="center"
                 android:visibility="@{isLoading?View.VISIBLE:View.INVISIBLE,default=invisible}"
                 android:id="@+id/progressBar"/>
+
         </androidx.coordinatorlayout.widget.CoordinatorLayout>
 
         <com.google.android.material.navigation.NavigationView

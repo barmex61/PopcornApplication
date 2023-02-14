@@ -1,10 +1,14 @@
 package com.fatih.popcorn.adapter
 
+import android.graphics.drawable.BitmapDrawable
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.view.animation.AnimationUtils
+import android.widget.Toast
+import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.navigation.Navigation
+import androidx.palette.graphics.Palette
 import androidx.recyclerview.widget.AsyncListDiffer
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
@@ -13,6 +17,10 @@ import com.fatih.popcorn.databinding.FragmentMainRvRowBinding
 import com.fatih.popcorn.entities.remote.DiscoverResult
 import com.fatih.popcorn.other.Constants.getVibrantColor
 import com.fatih.popcorn.ui.HomeFragmentDirections
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 class HomeFragmentAdapter @Inject constructor():RecyclerView.Adapter<HomeFragmentAdapter.HomeFragmentViewHolder>() {
@@ -46,20 +54,16 @@ class HomeFragmentAdapter @Inject constructor():RecyclerView.Adapter<HomeFragmen
     }
 
     override fun getItemCount(): Int {
-        println(discoverList.size)
         return discoverList.size
     }
 
     override fun onBindViewHolder(holder: HomeFragmentViewHolder, position: Int) {
         val discoverResult=discoverList[position]
         holder.binding.discoverResult=discoverResult
-        println("hellooo")
         holder.itemView.setOnClickListener {
-            println(discoverResult.id)
-            val colorPair=getVibrantColor(holder.binding.movieImage)
-            discoverResult.id?.let {
-                println(it)
-                myItemClickLambda?.invoke(it,colorPair)
+            val pair= getVibrantColor(holder.binding.movieImage)
+            discoverResult.id?.let { id->
+                myItemClickLambda?.invoke(id,pair)
             }
         }
     }

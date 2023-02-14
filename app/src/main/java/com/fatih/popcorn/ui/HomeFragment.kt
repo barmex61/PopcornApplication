@@ -76,7 +76,6 @@ class HomeFragment @Inject constructor( private val adapter:HomeFragmentAdapter)
         Log.d("MyTag","mycreateass")
         doInitialization()
     }
-
     private fun doInitialization(){
         if(viewModel.searchQuery.value!!.isNotEmpty()){
             searchText= viewModel.searchQuery.value!!

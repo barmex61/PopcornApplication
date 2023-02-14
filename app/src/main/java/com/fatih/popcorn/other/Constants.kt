@@ -7,11 +7,15 @@ import android.graphics.ColorMatrix
 import android.graphics.ColorMatrixColorFilter
 import android.graphics.drawable.BitmapDrawable
 import android.widget.ImageView
+import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.MutableLiveData
 import androidx.palette.graphics.Palette
 import com.fatih.popcorn.R
 import com.google.android.material.color.utilities.CorePalette
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
 
 
 object Constants {
@@ -43,14 +47,15 @@ object Constants {
     }
 
     fun getVibrantColor(imageView:ImageView?):Pair<Int,Int>?{
+
         var pair:Pair<Int,Int>?=null
         imageView?.let {
             if(imageView.drawable!=null){
                 val drawable = imageView.drawable as BitmapDrawable
                 val bitmap = drawable.bitmap
-                Palette.Builder(bitmap).generate { palette->
-                    val vibrantColor=palette!!.getVibrantColor(ContextCompat.getColor(imageView.context,R.color.white))
-                    val darkMutedColor=palette.getDarkMutedColor(ContextCompat.getColor(imageView.context,R.color.white))
+                Palette.Builder(bitmap).generate().apply {
+                    val vibrantColor=this.getVibrantColor(ContextCompat.getColor(imageView.context,R.color.white))
+                    val darkMutedColor=this.getDarkMutedColor(ContextCompat.getColor(imageView.context,R.color.white))
                     pair= Pair(vibrantColor,darkMutedColor)
                 }
             }
