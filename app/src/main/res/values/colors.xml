@@ -9,5 +9,6 @@
     <color name="blueEnd">#2BD5C1</color>
     <color name="white">#FFFFFFFF</color>
     <color name="opakwhite">#FFAA00</color>
+    <color name="indicatorColor">#45CCCC</color>
 
 </resources>

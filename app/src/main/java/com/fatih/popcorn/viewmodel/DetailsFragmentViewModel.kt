@@ -15,13 +15,11 @@ class DetailsFragmentViewModel @Inject constructor(private val popcornRepo:Popco
     val detailResponse:LiveData<Resource<DetailResponse>>
     get() = _detailResponse
 
-    fun getDetails(searchName:String,id:Int,language:String): LiveData<Resource<DetailResponse>> {
+    fun getDetails(searchName:String,id:Int,language:String) {
 
        _detailResponse= popcornRepo.getDetails(searchName,id, language).onStart {
            emit(Resource.loading(null))
        }.asLiveData(viewModelScope.coroutineContext) as MutableLiveData<Resource<DetailResponse>>
-
-        return detailResponse
     }
 
 }

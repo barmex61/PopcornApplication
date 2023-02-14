@@ -9,6 +9,6 @@
     <color name="black2">#000000</color>
     <color name="white">#FFFFFFFF</color>
     <color name="opakwhite">#FFAA00</color>
-
+    <color name="indicatorColor">#573535</color>
 
 </resources>

@@ -11,6 +11,7 @@ import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
+import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -64,19 +65,20 @@ class HomeFragment @Inject constructor( private val adapter:HomeFragmentAdapter)
     private var searchCategory= movieSearch
     private var tvShowSortPosition=0
     private var movieSortPosition=0
+    @Inject
+    lateinit var animation:Animation
     private val viewModel:HomeFragmentViewModel by lazy{
         MainActivity.viewModel
     }
+
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding=DataBindingUtil.bind(view)!!
-        val statusBarHeightId = resources.getIdentifier("status_bar_height", "dimen", "android")
-        val statusBarHeight = resources.getDimensionPixelSize(statusBarHeightId) +10
-        binding.layoutHeader.updatePadding(top = statusBarHeight)
-        Log.d("MyTag","mycreateass")
         doInitialization()
     }
     private fun doInitialization(){
+        setStatusBarPadding()
         if(viewModel.searchQuery.value!!.isNotEmpty()){
             searchText= viewModel.searchQuery.value!!
             binding.searchText.setText(searchText)
@@ -89,8 +91,10 @@ class HomeFragment @Inject constructor( private val adapter:HomeFragmentAdapter)
         setIndicatorColor(checkIsItInMovieListOrNot())
         binding.watchImage.setOnClickListener { findNavController().navigate(HomeFragmentDirections.actionHomeFragmentToWatchListFragment()) }
         adapter.setMyOnClickLambda { id, pair ->
-            Toast.makeText(requireContext(),"${id} id ${pair?.first} pair ${pair?.second}",Toast.LENGTH_LONG).show()
-            println("${id} ${pair?.first} ${pair?.second}")
+            println(id)
+            pair?.let {
+                findNavController().navigate(HomeFragmentDirections.actionHomeFragmentToDetailsFragment(id,pair.first,pair.second))
+            }?: findNavController().navigate(HomeFragmentDirections.actionHomeFragmentToDetailsFragment(id,R.color.black2,R.color.white))
         }
         binding.navigationView.setNavigationItemSelectedListener {
             setNavigation(it)
@@ -121,7 +125,7 @@ class HomeFragment @Inject constructor( private val adapter:HomeFragmentAdapter)
 
                 }
                 binding.menuImage.apply {
-                    startAnimation(AnimationUtils.loadAnimation(requireContext(),R.anim.fade_scale_animation))
+                    startAnimation(animation)
                     setImageResource(R.drawable.ic_menu)
                 }
                 isSearching=false
@@ -133,16 +137,22 @@ class HomeFragment @Inject constructor( private val adapter:HomeFragmentAdapter)
         setTextChangeListener()
     }
 
+    private fun setStatusBarPadding(){
+        val statusBarHeightId = resources.getIdentifier("status_bar_height", "dimen", "android")
+        val statusBarHeight = resources.getDimensionPixelSize(statusBarHeightId) +10
+        binding.layoutHeader.updatePadding(top = statusBarHeight)
+    }
+
     private fun searchImageClicked(){
         binding.headerText.visibility=View.GONE
         binding.searchText.apply {
             visibility=View.VISIBLE
             requestFocus()
             isFocusableInTouchMode=true
-            startAnimation(AnimationUtils.loadAnimation(requireContext(),R.anim.fade_scale_animation))
+            startAnimation(animation)
         }
         binding.menuImage.apply {
-            startAnimation(AnimationUtils.loadAnimation(requireContext(),R.anim.fade_scale_animation))
+            startAnimation(animation)
             setImageResource(R.drawable.ic_back)
         }
         isSearching=true
@@ -241,12 +251,12 @@ class HomeFragment @Inject constructor( private val adapter:HomeFragmentAdapter)
 
     private fun setIndicatorColor(isItInMovie:Boolean){
         if(isItInMovie){
-            binding.movieButtonIndicator.setBackgroundColor(ContextCompat.getColor(requireContext(),R.color.teal_700))
+            binding.movieButtonIndicator.setBackgroundColor(ContextCompat.getColor(requireContext(),R.color.indicatorColor))
             binding.tvShowButtonIndicator.setBackgroundColor(
                 ContextCompat.getColor(requireContext(),
                     android.R.color.transparent))
         }else{
-            binding.tvShowButtonIndicator.setBackgroundColor(ContextCompat.getColor(requireContext(),R.color.teal_700))
+            binding.tvShowButtonIndicator.setBackgroundColor(ContextCompat.getColor(requireContext(),R.color.indicatorColor))
             binding.movieButtonIndicator.setBackgroundColor(
                 ContextCompat.getColor(requireContext(),
                     android.R.color.transparent))

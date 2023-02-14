@@ -59,12 +59,14 @@ class PopcornRepository (private val popcornApi: PopcornApi):PopcornRepositoryIn
             val result=popcornApi.getDetails(searchName = name,id = id,language = language)
             if(result.isSuccessful){
                 result.body()?.let {
+                    println("success")
                     emit(Resource.success(it))
                 }?: emit(Resource.error("Response body empty"))
             }else{
                emit( Resource.error("Response failed"))
             }
         }catch (e:Exception){
+            println(e.message)
            emit(Resource.error(e.message))
         }
     }

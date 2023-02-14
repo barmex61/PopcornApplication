@@ -2,7 +2,9 @@ package com.fatih.popcorn.module
 
 import android.content.Context
 import android.view.animation.AnimationUtils
+import androidx.room.Room
 import com.fatih.popcorn.R
+import com.fatih.popcorn.database.RoomDb
 import com.fatih.popcorn.movieapi.PopcornApi
 import com.fatih.popcorn.other.Constants.BASE_URL
 import com.fatih.popcorn.repository.PopcornRepository
@@ -33,5 +35,10 @@ object AppModule {
     @Singleton
     fun provideAnimation(@ApplicationContext context:Context)=AnimationUtils.loadAnimation(context,
         R.anim.fade_scale_animation)
+
+    @Provides
+    @Singleton
+    fun provideRoomDao(@ApplicationContext context: Context)= Room.databaseBuilder(context,RoomDb::class.java,"RoomDatabase")
+        .build().roomDao()
 
 }

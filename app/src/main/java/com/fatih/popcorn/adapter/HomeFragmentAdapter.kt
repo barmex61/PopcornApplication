@@ -58,11 +58,10 @@ class HomeFragmentAdapter @Inject constructor():RecyclerView.Adapter<HomeFragmen
     }
 
     override fun onBindViewHolder(holder: HomeFragmentViewHolder, position: Int) {
-        val discoverResult=discoverList[position]
-        holder.binding.discoverResult=discoverResult
+        holder.binding.discoverResult=discoverList[position]
         holder.itemView.setOnClickListener {
             val pair= getVibrantColor(holder.binding.movieImage)
-            discoverResult.id?.let { id->
+            discoverList[position].id?.let { id->
                 myItemClickLambda?.invoke(id,pair)
             }
         }

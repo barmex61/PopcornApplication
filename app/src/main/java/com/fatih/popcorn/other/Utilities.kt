@@ -18,6 +18,7 @@ import javax.inject.Inject
 @BindingAdapter("android:downloadUrl")
 fun ImageView.setImageUrl(url:String?){
     this.alpha=0.1f
+
     val fadeScaleAnimation= AnimationUtils.loadAnimation(context, R.anim.fade_scale_animation)
         try {
             url.let {
