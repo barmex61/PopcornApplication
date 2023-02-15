@@ -1,4 +1,4 @@
-package com.fatih.popcorn.entities.remote
+package com.fatih.popcorn.entities.remote.detailresponse
 
 data class LastEpisodeToAir(
     val air_date: String,

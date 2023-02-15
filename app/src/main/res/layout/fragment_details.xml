@@ -521,7 +521,7 @@
             android:layout_height="24dp"
             android:src="@drawable/ic_watch"
             android:contentDescription="@string/app_name"
-            android:id="@+id/shareButton"
+            android:id="@+id/watchListButton"
             android:layout_marginEnd="15dp"
             app:tint="@color/white"
             />

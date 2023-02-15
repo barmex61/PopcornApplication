@@ -1,8 +1,9 @@
 package com.fatih.popcorn.movieapi
 
 import com.fatih.popcorn.BuildConfig
-import com.fatih.popcorn.entities.remote.DetailResponse
-import com.fatih.popcorn.entities.remote.DiscoverResponse
+import com.fatih.popcorn.entities.remote.detailresponse.DetailResponse
+import com.fatih.popcorn.entities.remote.discoverresponse.DiscoverResponse
+import com.fatih.popcorn.entities.remote.imageresponse.ImageResponse
 
 import retrofit2.Response
 import retrofit2.http.GET
@@ -44,5 +45,11 @@ interface PopcornApi {
                            @Path("id") id:Int,
                            @Query("api_key") api_key:String=BuildConfig.API_KEY,
                            @Query("language") language:String ):Response<DetailResponse>
+
+    @GET("{name}/{id}/images")
+    suspend fun getImages(@Path("name") name:String,
+                          @Path("id") id:Int,
+                          @Query("api_key") api_key: String = BuildConfig.API_KEY):Response<ImageResponse>
+
 
 }

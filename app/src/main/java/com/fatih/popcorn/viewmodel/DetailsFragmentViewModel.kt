@@ -1,12 +1,11 @@
 package com.fatih.popcorn.viewmodel
 
 import androidx.lifecycle.*
-import com.fatih.popcorn.entities.remote.DetailResponse
+import com.fatih.popcorn.entities.remote.detailresponse.DetailResponse
 import com.fatih.popcorn.other.Resource
 import com.fatih.popcorn.repository.PopcornRepositoryInterface
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.onStart
 import javax.inject.Inject
 
 @HiltViewModel

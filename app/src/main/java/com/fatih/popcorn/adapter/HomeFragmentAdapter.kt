@@ -1,26 +1,15 @@
 package com.fatih.popcorn.adapter
 
-import android.graphics.drawable.BitmapDrawable
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import android.view.animation.AnimationUtils
-import android.widget.Toast
-import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
-import androidx.navigation.Navigation
-import androidx.palette.graphics.Palette
 import androidx.recyclerview.widget.AsyncListDiffer
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.fatih.popcorn.R
 import com.fatih.popcorn.databinding.FragmentMainRvRowBinding
-import com.fatih.popcorn.entities.remote.DiscoverResult
+import com.fatih.popcorn.entities.remote.discoverresponse.DiscoverResult
 import com.fatih.popcorn.other.Constants.getVibrantColor
-import com.fatih.popcorn.ui.HomeFragmentDirections
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.async
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 class HomeFragmentAdapter @Inject constructor():RecyclerView.Adapter<HomeFragmentAdapter.HomeFragmentViewHolder>() {

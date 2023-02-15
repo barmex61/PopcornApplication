@@ -1,7 +1,7 @@
 package com.fatih.popcorn.repository
 
-import com.fatih.popcorn.entities.remote.DetailResponse
-import com.fatih.popcorn.entities.remote.DiscoverResponse
+import com.fatih.popcorn.entities.remote.detailresponse.DetailResponse
+import com.fatih.popcorn.entities.remote.discoverresponse.DiscoverResponse
 import com.fatih.popcorn.movieapi.PopcornApi
 import com.fatih.popcorn.other.Resource
 import kotlinx.coroutines.InternalCoroutinesApi

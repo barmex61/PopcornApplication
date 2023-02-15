@@ -7,7 +7,7 @@
 
         <variable
             name="discoverResult"
-            type="com.fatih.popcorn.entities.remote.DiscoverResult"
+            type="com.fatih.popcorn.entities.remote.discoverresponse.DiscoverResult"
             />
         <variable
             name="releaseDate"

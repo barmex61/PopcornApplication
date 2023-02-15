@@ -1,4 +1,4 @@
-package com.fatih.popcorn.entities.remote
+package com.fatih.popcorn.entities.remote.detailresponse
 
 data class  ProductionCountry(
     val iso_3166_1: String,

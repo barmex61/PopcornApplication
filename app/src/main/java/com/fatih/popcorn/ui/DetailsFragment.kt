@@ -2,20 +2,20 @@ package com.fatih.popcorn.ui
 
 import android.annotation.SuppressLint
 import android.content.res.ColorStateList
-import android.graphics.ColorFilter
 import android.graphics.PorterDuff
 import android.os.Bundle
 import android.view.*
 import android.view.animation.AnimationUtils
 import android.widget.Toast
-import androidx.core.content.ContextCompat
 import androidx.core.view.updatePadding
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.fragment.findNavController
 import com.fatih.popcorn.R
 import com.fatih.popcorn.databinding.FragmentDetailsBinding
-import com.fatih.popcorn.entities.remote.DetailResponse
+import com.fatih.popcorn.entities.remote.detailresponse.DetailResponse
 import com.fatih.popcorn.other.Constants.checkIsItInMovieListOrNot
+import com.fatih.popcorn.other.Constants.colorMatrixColorFilter
 import com.fatih.popcorn.other.Constants.movieSearch
 import com.fatih.popcorn.other.Constants.tvSearch
 import com.fatih.popcorn.other.Status
@@ -50,11 +50,11 @@ class DetailsFragment : Fragment(R.layout.fragment_details) {
         viewModel = ViewModelProvider(this)[DetailsFragmentViewModel::class.java]
         //binding.trailerImage.setOnClickListener { youtube() }
         //binding.watchList.setOnClickListener { watchList() }
-        //binding.shareButton.setOnClickListener { findNavController().navigate(DetailsFragmentDirections.actionDetailsFragmentToWatchListFragment()) }
+        binding.watchListButton.setOnClickListener { findNavController().navigate(DetailsFragmentDirections.actionDetailsFragmentToWatchListFragment()) }
         //binding.reviewImage.setOnClickListener { goWeb() }
-        // binding.backButton.setOnClickListener { findNavController().popBackStack() }
+        binding.backButton.setOnClickListener { findNavController().navigateUp() }
         //binding.episodesImage.setOnClickListener {view-> goEpisodes(view) }
-        //binding.backgroundImage.colorFilter = colorMatrixColorFilter
+        binding.backgroundImage.colorFilter = colorMatrixColorFilter
         arguments?.let {
             selectedId = DetailsFragmentArgs.fromBundle(it).id
             // isItInDatabase(selectedTvShowId!!)

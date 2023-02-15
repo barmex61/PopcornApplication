@@ -1,4 +1,4 @@
-package com.fatih.popcorn.entities.remote
+package com.fatih.popcorn.entities.remote.discoverresponse
 
 data class DiscoverResult(
     val adult: Boolean?,

@@ -1,18 +1,13 @@
 package com.fatih.popcorn.other
 
-import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.databinding.BindingAdapter
 import com.fatih.popcorn.R
-import com.fatih.popcorn.entities.remote.DiscoverResponse
+import com.fatih.popcorn.entities.remote.discoverresponse.DiscoverResponse
 import com.squareup.picasso.Callback
 import com.squareup.picasso.Picasso
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import javax.inject.Inject
 
 
 @BindingAdapter("android:downloadUrl")
@@ -81,15 +76,17 @@ fun DiscoverResponse?.add(data: DiscoverResponse): DiscoverResponse {
             this.total_results = data.total_results
             this.page = data.page
             println("if")
-        } else if (this.page == data.page && this.genres != data.genres) {
+        } else if (this.genres != data.genres || this.sortBy != data.sortBy) {
             println("else if")
             this.results = data.results
             this.total_pages = data.total_pages
             this.total_results = data.total_results
             this.page = data.page
             this.genres = data.genres
+            this.sortBy=data.sortBy
         }
         this
 
     } ?: data
 }
+

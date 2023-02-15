@@ -72,11 +72,13 @@ class HomeFragment @Inject constructor( private val adapter:HomeFragmentAdapter)
         if(viewModel.searchQuery.value!!.isNotEmpty()){
             searchText= viewModel.searchQuery.value!!
             binding.searchText.setText(searchText)
-            searchImageClicked()
+            searchImageClicked(binding.searchImage)
             val name=if(checkIsItInMovieListOrNot()) movieSearch else tvSearch
             viewModel.search(name,searchText,false)
         }
-
+        binding.searchText.setOnClickListener {
+            it.startAnimation(AnimationUtils.loadAnimation(it.context,R.anim.fade_scale_animation))
+        }
         setupRecyclerView()
         setIndicatorColor(checkIsItInMovieListOrNot())
         binding.watchImage.setOnClickListener { findNavController().navigate(HomeFragmentDirections.actionHomeFragmentToWatchListFragment()) }
@@ -97,7 +99,7 @@ class HomeFragment @Inject constructor( private val adapter:HomeFragmentAdapter)
             tvShowButtonClicked()
         }
         binding.searchImage.setOnClickListener {
-           searchImageClicked()
+           searchImageClicked(it)
         }
         binding.menuImage.setOnClickListener {
             if(isSearching){
@@ -114,7 +116,7 @@ class HomeFragment @Inject constructor( private val adapter:HomeFragmentAdapter)
                     }
                 }
                 binding.menuImage.apply {
-                    startAnimation(AnimationUtils.loadAnimation(requireContext(),R.anim.fade_scale_animation))
+                    startAnimation(AnimationUtils.loadAnimation(requireContext(),R.anim.button_animation))
                     setImageResource(R.drawable.ic_menu)
                 }
                 isSearching=false
@@ -133,16 +135,17 @@ class HomeFragment @Inject constructor( private val adapter:HomeFragmentAdapter)
         binding.layoutHeader.updatePadding(top = statusBarHeight)
     }
 
-    private fun searchImageClicked(){
+    private fun searchImageClicked(view:View){
         binding.headerText.visibility=View.GONE
         binding.searchText.apply {
             visibility=View.VISIBLE
             requestFocus()
             isFocusableInTouchMode=true
+            view.startAnimation(AnimationUtils.loadAnimation(requireContext(),R.anim.fade_scale_animation))
             startAnimation(AnimationUtils.loadAnimation(requireContext(),R.anim.fade_scale_animation))
         }
         binding.menuImage.apply {
-            startAnimation(AnimationUtils.loadAnimation(requireContext(),R.anim.fade_scale_animation))
+            startAnimation(AnimationUtils.loadAnimation(requireContext(),R.anim.button_animation))
             setImageResource(R.drawable.ic_back)
         }
         isSearching=true
