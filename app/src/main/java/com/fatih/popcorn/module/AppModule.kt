@@ -4,6 +4,7 @@ import android.content.Context
 import android.view.animation.AnimationUtils
 import androidx.room.Room
 import com.fatih.popcorn.R
+import com.fatih.popcorn.database.RoomDao
 import com.fatih.popcorn.database.RoomDb
 import com.fatih.popcorn.movieapi.PopcornApi
 import com.fatih.popcorn.other.Constants.BASE_URL
@@ -29,7 +30,7 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun providePopcornRepo(popcornApi: PopcornApi)=PopcornRepository(popcornApi) as PopcornRepositoryInterface
+    fun providePopcornRepo(popcornApi: PopcornApi, roomDao: RoomDao)=PopcornRepository(popcornApi,roomDao) as PopcornRepositoryInterface
 
     @Provides
     @Singleton

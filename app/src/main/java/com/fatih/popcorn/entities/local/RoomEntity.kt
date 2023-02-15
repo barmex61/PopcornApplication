@@ -11,5 +11,5 @@ data class RoomEntity(
     val voteAverage: Double,
     val isTvShow:Boolean,
     @PrimaryKey (autoGenerate = false)
-    var field_id: Int
+    var field_id: Long
 )

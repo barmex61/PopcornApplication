@@ -2,18 +2,21 @@ package com.fatih.popcorn.ui
 
 import android.annotation.SuppressLint
 import android.content.res.ColorStateList
-import android.graphics.PorterDuff
 import android.os.Bundle
 import android.view.*
 import android.view.animation.AnimationUtils
 import android.widget.Toast
+import androidx.core.content.ContextCompat
 import androidx.core.view.updatePadding
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.fatih.popcorn.R
 import com.fatih.popcorn.databinding.FragmentDetailsBinding
+import com.fatih.popcorn.entities.local.RoomEntity
 import com.fatih.popcorn.entities.remote.detailresponse.DetailResponse
+import com.fatih.popcorn.entities.remote.imageresponse.ImageResponse
 import com.fatih.popcorn.other.Constants.checkIsItInMovieListOrNot
 import com.fatih.popcorn.other.Constants.colorMatrixColorFilter
 import com.fatih.popcorn.other.Constants.movieSearch
@@ -21,8 +24,11 @@ import com.fatih.popcorn.other.Constants.tvSearch
 import com.fatih.popcorn.other.Status
 import com.fatih.popcorn.other.setImageUrl
 import com.fatih.popcorn.viewmodel.DetailsFragmentViewModel
+import com.squareup.picasso.Picasso
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.*
 import java.math.RoundingMode
+import kotlin.Exception
 
 @AndroidEntryPoint
 class DetailsFragment : Fragment(R.layout.fragment_details) {
@@ -31,33 +37,31 @@ class DetailsFragment : Fragment(R.layout.fragment_details) {
     private lateinit var binding: FragmentDetailsBinding
     private var selectedId: Int? = null
     private var selectedResponse: DetailResponse? = null
+    private var selectedImageResponse:ImageResponse?=null
     private var vibrantColor: Int? = null
     private var darkMutedColor: Int? = null
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
+    private var isItInDatabase = false
+    private val handler = CoroutineExceptionHandler{ _,throwable->
+        println("Caught exception $throwable")
+    }
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         binding = FragmentDetailsBinding.inflate(inflater, container, false)
         doInitialization()
-        //binding.nestedScrollView.setOnScrollChangeListener(NestedScrollView.OnScrollChangeListener { _, _, _, _, _ ->
-        //binding.layoutHeader.y= binding.nestedScrollView.scrollY.toFloat()-binding.nestedScrollView.scrollY.toFloat()/2.6f })
         return binding.root
     }
 
     private fun doInitialization() {
         setStatusBarPadding()
+        binding.backgroundImage.colorFilter = colorMatrixColorFilter
         viewModel = ViewModelProvider(this)[DetailsFragmentViewModel::class.java]
         //binding.trailerImage.setOnClickListener { youtube() }
-        //binding.watchList.setOnClickListener { watchList() }
+        binding.watchList.setOnClickListener { watchList() }
         binding.watchListButton.setOnClickListener { findNavController().navigate(DetailsFragmentDirections.actionDetailsFragmentToWatchListFragment()) }
         //binding.reviewImage.setOnClickListener { goWeb() }
         binding.backButton.setOnClickListener { findNavController().navigateUp() }
         //binding.episodesImage.setOnClickListener {view-> goEpisodes(view) }
-        binding.backgroundImage.colorFilter = colorMatrixColorFilter
         arguments?.let {
             selectedId = DetailsFragmentArgs.fromBundle(it).id
-            // isItInDatabase(selectedTvShowId!!)
             darkMutedColor = DetailsFragmentArgs.fromBundle(it).darkMutedColor
             vibrantColor = DetailsFragmentArgs.fromBundle(it).vibrantColor
         }
@@ -97,8 +101,64 @@ class DetailsFragment : Fragment(R.layout.fragment_details) {
             }
         }
 
+        viewModel.isItInDatabase.observe(viewLifecycleOwner){
+            if(it){
+                isItInDatabase=it
+                binding.watchList.imageTintList= ColorStateList.valueOf(ContextCompat.getColor(requireContext(),R.color.white))
+            }else{
+                isItInDatabase=it
+                binding.watchList.imageTintList=ColorStateList.valueOf(ContextCompat.getColor(requireContext(),R.color.gray))
+            }
+        }
+
+        viewModel.imageResponse.observe(viewLifecycleOwner){ resource->
+            if (resource != null) {
+                when (resource.status) {
+                  Status.SUCCESS -> {
+                        resource.data?.let {
+                            selectedImageResponse=it
+                            viewModel.isItIntDatabase(it.id)
+                            val imageUrls=selectedImageResponse!!.backdrops.map {backdrop->
+                                backdrop.file_path
+                            }
+                            setImageAnimations(imageUrls)
+                        }
+                    }
+                    else->Unit
+                }
+            }
+        }
     }
 
+    private fun setImageAnimations(imageUrls:List<String>){
+        val imageView=binding.backgroundImage
+        lifecycleScope.launch(Dispatchers.Default + handler) {
+            try {
+                while (true){
+                     for(url in imageUrls){
+                        imageView.alpha=0f
+                        val job= async(Dispatchers.IO) {
+                            Picasso.get().load("https://www.themoviedb.org/t/p/w600_and_h900_bestv2$url").get()
+                        }
+                        val bitmap=job.await()
+                        withContext(Dispatchers.Main){
+                            imageView.apply {
+                                setImageBitmap(bitmap)
+                                animate().alpha(1f).setDuration(2000L).withEndAction {
+                                    this.animate().alpha(0f).setDuration(2000L).start()
+                                }.start()
+                            }
+                        }
+                        delay(4000L)
+                    }
+                }
+
+            }
+            catch (e:Exception){
+                println(e.message)
+            }
+        }
+    }
     private fun setLayoutVisibility(show: Boolean, showToast: Boolean, message: String?) {
         binding.mainLayout.visibility = View.INVISIBLE
         if (showToast) {
@@ -133,7 +193,7 @@ class DetailsFragment : Fragment(R.layout.fragment_details) {
         binding.reviewImage.imageTintList = darkMutedColor
         binding.reviewText.setTextColor(vibrantColor)
         binding.ratingBar.rating = selectedResponse?.vote_average?.toFloat()?:0f
-        binding.ratingBar.progressDrawable.setColorFilter(this.vibrantColor!!,PorterDuff.Mode.SRC_ATOP)
+        binding.ratingBar.progressTintList = vibrantColor
 
         selectedResponse?.let { it ->
             binding.posterImage.setImageUrl(it.poster_path)
@@ -162,6 +222,38 @@ class DetailsFragment : Fragment(R.layout.fragment_details) {
         binding.mainLayout.apply {
             visibility=View.VISIBLE
             startAnimation(AnimationUtils.loadAnimation(requireContext(),R.anim.fall_down))
+        }
+    }
+
+    private fun watchList(){
+        val isTvShow=!checkIsItInMovieListOrNot()
+        if(!isItInDatabase){
+            selectedResponse?.let {detailResponse->
+                val roomEntity= RoomEntity(
+                    detailResponse.last_air_date?:detailResponse.release_date!!,
+                    detailResponse.poster_path!!,
+                    detailResponse.vote_average!!,isTvShow,
+                    detailResponse.id!!.toLong())
+                viewModel.insertRoomEntity(roomEntity)
+                viewModel.isItIntDatabase(detailResponse.id)
+            }
+            if(isTvShow){
+                Toast.makeText(requireContext(),"Tv show added into Watchlist",Toast.LENGTH_SHORT).show()
+            }else{
+                Toast.makeText(requireContext(),"Movie added into Watchlist",Toast.LENGTH_SHORT).show()
+            }
+
+        }else{
+            selectedResponse?.let {
+                val roomEntity= RoomEntity(it.last_air_date?:it.release_date!!, it.poster_path!!, it.vote_average!!,isTvShow, it.id!!.toLong())
+                viewModel.deleteRoomEntity(roomEntity)
+                viewModel.isItIntDatabase(it.id)
+            }
+            if(isTvShow){
+                Toast.makeText(requireContext(),"Tv show deleted from Watchlist",Toast.LENGTH_SHORT).show()
+            }else{
+                Toast.makeText(requireContext(),"Movie deleted from Watchlist",Toast.LENGTH_SHORT).show()
+            }
         }
     }
 
