@@ -1,5 +1,6 @@
 package com.fatih.popcorn.ui
 
+import android.content.res.Configuration
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.animation.Animation
@@ -14,6 +15,7 @@ import androidx.navigation.fragment.NavHostFragment
 import com.fatih.popcorn.BuildConfig
 import com.fatih.popcorn.R
 import com.fatih.popcorn.other.Constants.isFirstRun
+import com.fatih.popcorn.other.Constants.orientation
 import com.fatih.popcorn.other.CustomFragmentFactoryEntryPoint
 import com.fatih.popcorn.other.Status
 import com.fatih.popcorn.viewmodel.HomeFragmentViewModel
@@ -43,10 +45,12 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         WindowCompat.setDecorFitsSystemWindows(window, false)
         viewModel=ViewModelProvider(this)[HomeFragmentViewModel::class.java]
-        if(isFirstRun){
+        val currentOrientation= resources.configuration.orientation
+        if(isFirstRun && currentOrientation == orientation){
             viewModel.getMovies( "popularity.desc","")
             isFirstRun=false
         }
+        orientation=currentOrientation
         installSplashScreen().apply {
             setKeepOnScreenCondition{
                 viewModel.discoverData.value?.status== Status.LOADING
@@ -55,7 +59,10 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
         setupNavController()
     }
-
+    override fun onDestroy() {
+        isFirstRun=true
+        super.onDestroy()
+    }
     private fun setupNavController(){
         navHostFragment=supportFragmentManager.findFragmentById(R.id.fragmentContainerView) as NavHostFragment
         navController=navHostFragment.navController

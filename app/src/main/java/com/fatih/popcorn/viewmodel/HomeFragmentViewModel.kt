@@ -7,6 +7,7 @@ import androidx.lifecycle.viewModelScope
 import com.fatih.popcorn.entities.remote.DiscoverResponse
 import com.fatih.popcorn.other.*
 import com.fatih.popcorn.other.Constants.movieSearch
+import com.fatih.popcorn.other.Constants.sortList
 import com.fatih.popcorn.other.Constants.stateList
 import com.fatih.popcorn.repository.PopcornRepositoryInterface
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -22,6 +23,7 @@ class HomeFragmentViewModel @Inject constructor(private val popcornRepo:PopcornR
 
     var currentPage=MutableLiveData(1)
     var searchQuery=MutableLiveData("")
+    var currentSort=MutableLiveData(sortList[0])
 
 
     fun getMovies(sort_by:String,genres:String)=viewModelScope.launch{
@@ -35,6 +37,9 @@ class HomeFragmentViewModel @Inject constructor(private val popcornRepo:PopcornR
         val response=popcornRepo.getMovies(sort_by, currentPage.value!!, genres)
         when(response.status){
             Status.SUCCESS->{
+                 if(currentSort.value != sort_by){
+
+                 }
                 _discoverData.value= Resource.success(_discoverData.value!!.data.add(response.data!!.apply { this.genres=genres }))
             }
             Status.ERROR->{
@@ -42,6 +47,7 @@ class HomeFragmentViewModel @Inject constructor(private val popcornRepo:PopcornR
             }
             else->Unit
         }
+        currentSort.value=sort_by
     }
 
     fun getTvShows(sort_by:String,genres:String)=viewModelScope.launch{
@@ -55,7 +61,8 @@ class HomeFragmentViewModel @Inject constructor(private val popcornRepo:PopcornR
         val response=popcornRepo.getTvShows(sort_by, currentPage.value!!, genres)
         when(response.status){
             Status.SUCCESS->{
-                _discoverData.value= Resource.success(_discoverData.value!!.data.add(response.data!!).apply{this.genres=genres})
+
+                _discoverData.value= Resource.success(_discoverData.value!!.data.add(response.data!!.apply{this.genres=genres}))
             }
             Status.ERROR->{
                 _discoverData.value= Resource.error("Error occurred")
@@ -87,5 +94,4 @@ class HomeFragmentViewModel @Inject constructor(private val popcornRepo:PopcornR
         }
         searchQuery.value=query
     }
-
 }

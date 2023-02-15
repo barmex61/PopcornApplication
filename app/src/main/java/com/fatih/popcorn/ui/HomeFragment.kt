@@ -1,21 +1,15 @@
 package com.fatih.popcorn.ui
 
+import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.content.res.Resources
 import android.os.Bundle
-import android.os.Handler
 import android.text.Editable
 import android.text.TextWatcher
-import android.util.Log
-import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
-import android.view.ViewGroup
-import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import android.widget.Toast
-import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.widget.Toolbar
 import androidx.core.content.ContextCompat
 import androidx.core.view.GravityCompat
 import androidx.core.view.updatePadding
@@ -43,7 +37,6 @@ import com.fatih.popcorn.other.Constants.tv_show_booleanArray
 import com.fatih.popcorn.other.Constants.tv_show_genre_list
 import com.fatih.popcorn.other.State
 import com.fatih.popcorn.other.Status
-import com.fatih.popcorn.other.addFilter
 import com.fatih.popcorn.viewmodel.HomeFragmentViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Job
@@ -65,12 +58,9 @@ class HomeFragment @Inject constructor( private val adapter:HomeFragmentAdapter)
     private var searchCategory= movieSearch
     private var tvShowSortPosition=0
     private var movieSortPosition=0
-    @Inject
-    lateinit var animation:Animation
     private val viewModel:HomeFragmentViewModel by lazy{
         MainActivity.viewModel
     }
-
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -91,7 +81,6 @@ class HomeFragment @Inject constructor( private val adapter:HomeFragmentAdapter)
         setIndicatorColor(checkIsItInMovieListOrNot())
         binding.watchImage.setOnClickListener { findNavController().navigate(HomeFragmentDirections.actionHomeFragmentToWatchListFragment()) }
         adapter.setMyOnClickLambda { id, pair ->
-            println(id)
             pair?.let {
                 findNavController().navigate(HomeFragmentDirections.actionHomeFragmentToDetailsFragment(id,pair.first,pair.second))
             }?: findNavController().navigate(HomeFragmentDirections.actionHomeFragmentToDetailsFragment(id,R.color.black2,R.color.white))
@@ -115,6 +104,7 @@ class HomeFragment @Inject constructor( private val adapter:HomeFragmentAdapter)
                 binding.searchText.apply {
                     text.clear()
                     clearFocus()
+                    viewModel.searchQuery.value=""
                     visibility=View.GONE
                     binding.headerText.visibility=View.VISIBLE
                     if(checkIsItInMovieListOrNot()) {
@@ -122,10 +112,9 @@ class HomeFragment @Inject constructor( private val adapter:HomeFragmentAdapter)
                     }else{
                         viewModel.getTvShows(sortString,genres)
                     }
-
                 }
                 binding.menuImage.apply {
-                    startAnimation(animation)
+                    startAnimation(AnimationUtils.loadAnimation(requireContext(),R.anim.fade_scale_animation))
                     setImageResource(R.drawable.ic_menu)
                 }
                 isSearching=false
@@ -137,6 +126,7 @@ class HomeFragment @Inject constructor( private val adapter:HomeFragmentAdapter)
         setTextChangeListener()
     }
 
+    @SuppressLint("InternalInsetResource", "DiscouragedApi")
     private fun setStatusBarPadding(){
         val statusBarHeightId = resources.getIdentifier("status_bar_height", "dimen", "android")
         val statusBarHeight = resources.getDimensionPixelSize(statusBarHeightId) +10
@@ -149,10 +139,10 @@ class HomeFragment @Inject constructor( private val adapter:HomeFragmentAdapter)
             visibility=View.VISIBLE
             requestFocus()
             isFocusableInTouchMode=true
-            startAnimation(animation)
+            startAnimation(AnimationUtils.loadAnimation(requireContext(),R.anim.fade_scale_animation))
         }
         binding.menuImage.apply {
-            startAnimation(animation)
+            startAnimation(AnimationUtils.loadAnimation(requireContext(),R.anim.fade_scale_animation))
             setImageResource(R.drawable.ic_back)
         }
         isSearching=true

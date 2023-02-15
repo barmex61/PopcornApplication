@@ -5,6 +5,7 @@ import com.fatih.popcorn.entities.remote.DetailResponse
 import com.fatih.popcorn.other.Resource
 import com.fatih.popcorn.repository.PopcornRepositoryInterface
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.onStart
 import javax.inject.Inject
 
@@ -17,8 +18,8 @@ class DetailsFragmentViewModel @Inject constructor(private val popcornRepo:Popco
 
     fun getDetails(searchName:String,id:Int,language:String) {
 
-       _detailResponse= popcornRepo.getDetails(searchName,id, language).onStart {
-           emit(Resource.loading(null))
+       _detailResponse= popcornRepo.getDetails(searchName,id, language).catch {
+           println(it.message)
        }.asLiveData(viewModelScope.coroutineContext) as MutableLiveData<Resource<DetailResponse>>
     }
 

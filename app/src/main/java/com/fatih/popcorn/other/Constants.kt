@@ -1,6 +1,7 @@
 package com.fatih.popcorn.other
 
 import android.annotation.SuppressLint
+import android.content.res.Configuration
 import android.content.res.Resources
 import android.graphics.Bitmap
 import android.graphics.ColorMatrix
@@ -38,6 +39,7 @@ object Constants {
     val colorMatrixColorFilter= ColorMatrixColorFilter(ColorMatrix().apply {
         setSaturation(0f)
     })
+    var orientation=Configuration.ORIENTATION_PORTRAIT
     var isFirstRun=true
     fun checkIsItInMovieListOrNot():Boolean{
         if(stateList.last()==State.MOVIE || ( stateList.last()==State.SEARCH && stateList[stateList.size-2]==State.MOVIE)){
