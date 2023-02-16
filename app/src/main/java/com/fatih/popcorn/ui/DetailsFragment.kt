@@ -3,10 +3,12 @@ package com.fatih.popcorn.ui
 import android.annotation.SuppressLint
 import android.content.res.ColorStateList
 import android.os.Bundle
+import android.util.Log
 import android.view.*
 import android.view.animation.AnimationUtils
 import android.widget.Toast
 import androidx.core.content.ContextCompat
+import androidx.core.graphics.drawable.DrawableCompat
 import androidx.core.view.updatePadding
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
@@ -94,6 +96,7 @@ class DetailsFragment : Fragment(R.layout.fragment_details) {
                     Status.SUCCESS -> {
                         resource.data?.let {
                             selectedResponse = it
+                            Log.d("collection",it.belongs_to_collection?.id?.toString()?:"null")
                             setLayoutVisibility(show = true, showToast = false, null)
                         }
                     }
@@ -193,7 +196,7 @@ class DetailsFragment : Fragment(R.layout.fragment_details) {
         binding.reviewImage.imageTintList = darkMutedColor
         binding.reviewText.setTextColor(vibrantColor)
         binding.ratingBar.rating = selectedResponse?.vote_average?.toFloat()?:0f
-        binding.ratingBar.progressTintList = vibrantColor
+        DrawableCompat.setTint(binding.ratingBar.progressDrawable,this.vibrantColor!!);
 
         selectedResponse?.let { it ->
             binding.posterImage.setImageUrl(it.poster_path)

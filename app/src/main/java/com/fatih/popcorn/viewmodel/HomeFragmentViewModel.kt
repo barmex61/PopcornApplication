@@ -24,12 +24,15 @@ class HomeFragmentViewModel @Inject constructor(private val popcornRepo:PopcornR
     var searchQuery=MutableLiveData("")
 
 
-    fun getMovies(sort_by:String,genres:String)=viewModelScope.launch{
-        if(stateList.last()!=State.MOVIE){
+    fun getMovies(sort_by:String,genres:String,clear: Boolean)=viewModelScope.launch{
+        if(stateList.last()!=State.MOVIE ){
+            currentPage.value=1
             _discoverData.value?.let {
                 it.data=null
             }
+            println("ss")
         }
+        println("called")
         stateList.addFilter(State.MOVIE)
         _discoverData.value=Resource.loading(_discoverData.value?.data)
         val response=popcornRepo.getMovies(sort_by, currentPage.value!!, genres)
@@ -47,12 +50,15 @@ class HomeFragmentViewModel @Inject constructor(private val popcornRepo:PopcornR
         }
     }
 
-    fun getTvShows(sort_by:String,genres:String)=viewModelScope.launch{
+    fun getTvShows(sort_by:String,genres:String,clear:Boolean)=viewModelScope.launch{
         if(stateList.last()!=State.TV_SHOW){
+            currentPage.value=1
             _discoverData.value?.let {
                 it.data=null
             }
+            println("ss")
         }
+        println("called")
         stateList.addFilter(State.TV_SHOW)
         _discoverData.value=Resource.loading(_discoverData.value?.data)
         val response=popcornRepo.getTvShows(sort_by, currentPage.value!!, genres)

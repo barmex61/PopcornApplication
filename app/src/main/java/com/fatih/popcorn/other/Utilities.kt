@@ -75,7 +75,9 @@ fun DiscoverResponse?.add(data: DiscoverResponse): DiscoverResponse {
             this.total_pages = data.total_pages
             this.total_results = data.total_results
             this.page = data.page
+            println("if")
         } else if (this.genres != data.genres || this.sortBy != data.sortBy) {
+            println("else if")
             this.results = data.results
             this.total_pages = data.total_pages
             this.total_results = data.total_results

@@ -109,11 +109,6 @@ class HomeFragment @Inject constructor( private val adapter:HomeFragmentAdapter)
                     viewModel.searchQuery.value=""
                     visibility=View.GONE
                     binding.headerText.visibility=View.VISIBLE
-                    if(checkIsItInMovieListOrNot()) {
-                        viewModel.getMovies(sortString,genres)
-                    }else{
-                        viewModel.getTvShows(sortString,genres)
-                    }
                 }
                 binding.menuImage.apply {
                     startAnimation(AnimationUtils.loadAnimation(requireContext(),R.anim.button_animation))
@@ -173,13 +168,13 @@ class HomeFragment @Inject constructor( private val adapter:HomeFragmentAdapter)
                     }
                 }else{
                     job?.cancel()
+                    if (stateList.last()==State.SEARCH){
+                        stateList.removeLast()
+                    }
                     when(stateList.last()){
-                        State.SEARCH->{
-                            stateList.removeLast()
-                        }
                         State.TV_SHOW->{tvShowButtonClicked()}
                         State.MOVIE->{movieButtonClicked()}
-
+                        else -> Unit
                     }
                 }
             }
@@ -199,8 +194,8 @@ class HomeFragment @Inject constructor( private val adapter:HomeFragmentAdapter)
                             viewModel.search(searchCategory,searchText,false)
                         }
                     }
-                    State.MOVIE->{ viewModel.getMovies(sortString, genres) }
-                    State.TV_SHOW->{viewModel.getTvShows(sortString, genres)}
+                    State.MOVIE->{ viewModel.getMovies(sortString, genres,false) }
+                    State.TV_SHOW->{viewModel.getTvShows(sortString, genres,false)}
                 }
             }
         }
@@ -218,7 +213,8 @@ class HomeFragment @Inject constructor( private val adapter:HomeFragmentAdapter)
         searchCategory= movieSearch
 
         if(searchText.isEmpty()){
-            viewModel.getMovies(sortString,genres)
+            println("isempty")
+            viewModel.getMovies(sortString,genres,true)
         }else{
             viewModel.search(searchCategory,searchText,true)
         }
@@ -226,6 +222,7 @@ class HomeFragment @Inject constructor( private val adapter:HomeFragmentAdapter)
     }
 
     private fun tvShowButtonClicked(){
+
         if(stateList.last()!=State.TV_SHOW){
             genres=""
             sortString= sortList[0]
@@ -235,7 +232,7 @@ class HomeFragment @Inject constructor( private val adapter:HomeFragmentAdapter)
         }
         searchCategory= tvSearch
         if(searchText.isEmpty()){
-            viewModel.getTvShows(sortString,genres)
+            viewModel.getTvShows(sortString,genres,true)
         }else{
             viewModel.search(searchCategory,searchText,true)
         }
