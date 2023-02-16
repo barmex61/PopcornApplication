@@ -69,10 +69,11 @@ class HomeFragment @Inject constructor( private val adapter:HomeFragmentAdapter)
     }
     private fun doInitialization(){
         setStatusBarPadding()
+        searchCategory=if(checkIsItInMovieListOrNot()) movieSearch else tvSearch
         if(viewModel.searchQuery.value!!.isNotEmpty()){
             searchText= viewModel.searchQuery.value!!
-            binding.searchText.setText(searchText)
             searchImageClicked(binding.searchImage)
+            binding.searchText.setText(searchText)
             val name=if(checkIsItInMovieListOrNot()) movieSearch else tvSearch
             viewModel.search(name,searchText,false)
         }
@@ -99,7 +100,7 @@ class HomeFragment @Inject constructor( private val adapter:HomeFragmentAdapter)
             tvShowButtonClicked()
         }
         binding.searchImage.setOnClickListener {
-           searchImageClicked(it)
+            searchImageClicked(it)
         }
         binding.menuImage.setOnClickListener {
             if(isSearching){
@@ -109,6 +110,11 @@ class HomeFragment @Inject constructor( private val adapter:HomeFragmentAdapter)
                     viewModel.searchQuery.value=""
                     visibility=View.GONE
                     binding.headerText.visibility=View.VISIBLE
+                    if(checkIsItInMovieListOrNot()) {
+                        viewModel.getMovies(sortString,genres)
+                    }else{
+                        viewModel.getTvShows(sortString,genres)
+                    }
                 }
                 binding.menuImage.apply {
                     startAnimation(AnimationUtils.loadAnimation(requireContext(),R.anim.button_animation))
@@ -160,21 +166,23 @@ class HomeFragment @Inject constructor( private val adapter:HomeFragmentAdapter)
                 searchText=p0.toString().trim().lowercase()
                 job?.cancel()
                 if(searchText.isNotEmpty()){
+                    viewModel.currentPage.value=1
                     job=lifecycleScope.launch{
                         delay(200L)
                         viewModel.search(searchCategory,searchText,false)
-                        viewModel.currentPage.value=1
                         totalAvailablePages=1
                     }
                 }else{
+
                     job?.cancel()
-                    if (stateList.last()==State.SEARCH){
-                        stateList.removeLast()
-                    }
+
                     when(stateList.last()){
+                        State.SEARCH->{
+                            stateList.removeLast()
+                        }
                         State.TV_SHOW->{tvShowButtonClicked()}
                         State.MOVIE->{movieButtonClicked()}
-                        else -> Unit
+
                     }
                 }
             }
@@ -186,7 +194,7 @@ class HomeFragment @Inject constructor( private val adapter:HomeFragmentAdapter)
         binding.moviesRecyclerView.layoutManager= GridLayoutManager(requireContext(),
             Resources.getSystem().displayMetrics.widthPixels/200)
         binding.moviesRecyclerView.setOnScrollChangeListener { _, _, _, _, _ ->
-            if (!binding.moviesRecyclerView.canScrollVertically(1) && viewModel.currentPage.value!! <= totalAvailablePages) {
+            if (!binding.moviesRecyclerView.canScrollVertically(1) && viewModel.currentPage.value!! < totalAvailablePages) {
                 viewModel.currentPage.value= viewModel.currentPage.value!! +1
                 when(stateList.last()){
                     State.SEARCH->{
@@ -194,8 +202,8 @@ class HomeFragment @Inject constructor( private val adapter:HomeFragmentAdapter)
                             viewModel.search(searchCategory,searchText,false)
                         }
                     }
-                    State.MOVIE->{ viewModel.getMovies(sortString, genres,false) }
-                    State.TV_SHOW->{viewModel.getTvShows(sortString, genres,false)}
+                    State.MOVIE->{ viewModel.getMovies(sortString, genres) }
+                    State.TV_SHOW->{ viewModel.getTvShows(sortString, genres)}
                 }
             }
         }
@@ -213,8 +221,7 @@ class HomeFragment @Inject constructor( private val adapter:HomeFragmentAdapter)
         searchCategory= movieSearch
 
         if(searchText.isEmpty()){
-            println("isempty")
-            viewModel.getMovies(sortString,genres,true)
+            viewModel.getMovies(sortString,genres)
         }else{
             viewModel.search(searchCategory,searchText,true)
         }
@@ -222,7 +229,6 @@ class HomeFragment @Inject constructor( private val adapter:HomeFragmentAdapter)
     }
 
     private fun tvShowButtonClicked(){
-
         if(stateList.last()!=State.TV_SHOW){
             genres=""
             sortString= sortList[0]
@@ -232,7 +238,7 @@ class HomeFragment @Inject constructor( private val adapter:HomeFragmentAdapter)
         }
         searchCategory= tvSearch
         if(searchText.isEmpty()){
-            viewModel.getTvShows(sortString,genres,true)
+            viewModel.getTvShows(sortString,genres)
         }else{
             viewModel.search(searchCategory,searchText,true)
         }
@@ -317,12 +323,12 @@ class HomeFragment @Inject constructor( private val adapter:HomeFragmentAdapter)
                         movieButtonClicked()
                         binding.drawableLayout.closeDrawer(GravityCompat.START)
                     }
-                        alertDialog.setNeutralButton("Reset"
-                        ) { _, _ ->
-                            movie_booleanArray.fill(false)
-                            genres=""
-                            movieButtonClicked()
-                        }.show()
+                    alertDialog.setNeutralButton("Reset"
+                    ) { _, _ ->
+                        movie_booleanArray.fill(false)
+                        genres=""
+                        movieButtonClicked()
+                    }.show()
                 }else{
                     alertDialog.setMultiChoiceItems(
                         tv_show_genre_list, tv_show_booleanArray
@@ -396,7 +402,7 @@ class HomeFragment @Inject constructor( private val adapter:HomeFragmentAdapter)
             }
             R.id.like->{
                 binding.drawableLayout.closeDrawer(GravityCompat.START)
-               // findNavController().navigate(MainFragmentDirections.actionMainFragmentToWatchListFragment())
+                // findNavController().navigate(MainFragmentDirections.actionMainFragmentToWatchListFragment())
             }
             else ->{
                 Toast.makeText(requireContext(),"Coming Soon Ins",Toast.LENGTH_SHORT).show()

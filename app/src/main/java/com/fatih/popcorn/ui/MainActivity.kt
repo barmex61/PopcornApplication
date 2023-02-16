@@ -47,7 +47,7 @@ class MainActivity : AppCompatActivity() {
         viewModel=ViewModelProvider(this)[HomeFragmentViewModel::class.java]
         val currentOrientation= resources.configuration.orientation
         if(isFirstRun && currentOrientation == orientation){
-            viewModel.getMovies( "popularity.desc","",false)
+            viewModel.getMovies( "popularity.desc","",true)
             isFirstRun=false
         }
         orientation=currentOrientation

@@ -24,15 +24,13 @@ class HomeFragmentViewModel @Inject constructor(private val popcornRepo:PopcornR
     var searchQuery=MutableLiveData("")
 
 
-    fun getMovies(sort_by:String,genres:String,clear: Boolean)=viewModelScope.launch{
+    fun getMovies(sort_by:String,genres:String)=viewModelScope.launch{
         if(stateList.last()!=State.MOVIE ){
             currentPage.value=1
             _discoverData.value?.let {
                 it.data=null
             }
-            println("ss")
         }
-        println("called")
         stateList.addFilter(State.MOVIE)
         _discoverData.value=Resource.loading(_discoverData.value?.data)
         val response=popcornRepo.getMovies(sort_by, currentPage.value!!, genres)
@@ -48,33 +46,32 @@ class HomeFragmentViewModel @Inject constructor(private val popcornRepo:PopcornR
             }
             else->Unit
         }
+
     }
 
-    fun getTvShows(sort_by:String,genres:String,clear:Boolean)=viewModelScope.launch{
-        if(stateList.last()!=State.TV_SHOW){
+    fun getTvShows(sort_by:String,genres:String )=viewModelScope.launch{
+        if(stateList.last()!=State.TV_SHOW ){
             currentPage.value=1
             _discoverData.value?.let {
                 it.data=null
             }
-            println("ss")
         }
-        println("called")
         stateList.addFilter(State.TV_SHOW)
         _discoverData.value=Resource.loading(_discoverData.value?.data)
         val response=popcornRepo.getTvShows(sort_by, currentPage.value!!, genres)
         when(response.status){
             Status.SUCCESS->{
-
-                _discoverData.value= Resource.success(_discoverData.value!!.data.add(response.data!!.apply{
+                _discoverData.value= Resource.success(_discoverData.value!!.data.add(response.data!!.apply {
                     this.genres=genres
                     this.sortBy=sort_by
-                }))
+                } ))
             }
             Status.ERROR->{
                 _discoverData.value= Resource.error("Error occurred")
             }
             else->Unit
         }
+
     }
 
     fun search(name:String,query:String,buttonClicked:Boolean)=viewModelScope.launch{
@@ -99,5 +96,6 @@ class HomeFragmentViewModel @Inject constructor(private val popcornRepo:PopcornR
             else->Unit
         }
         searchQuery.value=query
+
     }
 }
