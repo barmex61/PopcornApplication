@@ -1,11 +1,15 @@
 package com.fatih.popcorn.ui
 
 import android.annotation.SuppressLint
+import android.content.pm.ActivityInfo
 import android.content.res.ColorStateList
+import android.content.res.Configuration
+import android.content.res.Resources
 import android.os.Bundle
 import android.util.Log
 import android.view.*
 import android.view.animation.AnimationUtils
+import android.widget.ImageView
 import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.DrawableCompat
@@ -15,12 +19,14 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.fatih.popcorn.R
+import com.fatih.popcorn.adapter.ViewPagerAdapter
 import com.fatih.popcorn.databinding.FragmentDetailsBinding
 import com.fatih.popcorn.entities.local.RoomEntity
 import com.fatih.popcorn.entities.remote.detailresponse.DetailResponse
 import com.fatih.popcorn.entities.remote.imageresponse.ImageResponse
 import com.fatih.popcorn.other.Constants.checkIsItInMovieListOrNot
 import com.fatih.popcorn.other.Constants.colorMatrixColorFilter
+import com.fatih.popcorn.other.Constants.language
 import com.fatih.popcorn.other.Constants.movieSearch
 import com.fatih.popcorn.other.Constants.tvSearch
 import com.fatih.popcorn.other.Status
@@ -30,6 +36,7 @@ import com.squareup.picasso.Picasso
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.*
 import java.math.RoundingMode
+import java.util.*
 import kotlin.Exception
 
 @AndroidEntryPoint
@@ -46,6 +53,7 @@ class DetailsFragment : Fragment(R.layout.fragment_details) {
     private val handler = CoroutineExceptionHandler{ _,throwable->
         println("Caught exception $throwable")
     }
+    @SuppressLint("SourceLockedOrientationActivity")
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         binding = FragmentDetailsBinding.inflate(inflater, container, false)
         doInitialization()
@@ -68,9 +76,9 @@ class DetailsFragment : Fragment(R.layout.fragment_details) {
             vibrantColor = DetailsFragmentArgs.fromBundle(it).vibrantColor
         }
         if (checkIsItInMovieListOrNot()) {
-            viewModel.getDetails(movieSearch, selectedId!!, "")
+            viewModel.getDetails(movieSearch, selectedId!!, language)
         } else {
-            viewModel.getDetails(tvSearch, selectedId!!, "")
+            viewModel.getDetails(tvSearch, selectedId!!, language)
         }
         observeLiveData()
     }
@@ -96,7 +104,7 @@ class DetailsFragment : Fragment(R.layout.fragment_details) {
                     Status.SUCCESS -> {
                         resource.data?.let {
                             selectedResponse = it
-                            Log.d("collection",it.belongs_to_collection?.id?.toString()?:"null")
+                            viewModel.isItIntDatabase(it.id!!)
                             setLayoutVisibility(show = true, showToast = false, null)
                         }
                     }
@@ -118,13 +126,20 @@ class DetailsFragment : Fragment(R.layout.fragment_details) {
             if (resource != null) {
                 when (resource.status) {
                   Status.SUCCESS -> {
-                        resource.data?.let {
+                        resource.data?.let { it ->
                             selectedImageResponse=it
-                            viewModel.isItIntDatabase(it.id)
-                            val imageUrls=selectedImageResponse!!.backdrops.map {backdrop->
-                                backdrop.file_path
+                            lifecycleScope.launch {
+                                val imageUrls=selectedImageResponse!!.backdrops.map {backdrop->
+                                    backdrop.file_path
+                                }
+                                val portraitList=selectedImageResponse!!.posters.filter {
+                                    it.iso_639_1=="en"
+                                }.map {
+                                    it.file_path
+                                }
+                                setImageAnimations(imageUrls)
+                                setupViewPager(portraitList,imageUrls)
                             }
-                            setImageAnimations(imageUrls)
                         }
                     }
                     else->Unit
@@ -133,15 +148,26 @@ class DetailsFragment : Fragment(R.layout.fragment_details) {
         }
     }
 
+    private fun setupViewPager(portraitList: List<String>,landscapeList:List<String>){
+        println(portraitList.size)
+        println(landscapeList.size)
+        val viewPagerAdapter=ViewPagerAdapter(requireContext(),portraitList,landscapeList)
+        binding.posterImageViewPager.adapter=viewPagerAdapter
+        binding.circleIndicator.setViewPager(binding.posterImageViewPager)
+
+    }
+
     private fun setImageAnimations(imageUrls:List<String>){
         val imageView=binding.backgroundImage
+        imageView.scaleType=ImageView.ScaleType.FIT_XY
         lifecycleScope.launch(Dispatchers.Default + handler) {
             try {
                 while (true){
                      for(url in imageUrls){
                         imageView.alpha=0f
+
                         val job= async(Dispatchers.IO) {
-                            Picasso.get().load("https://www.themoviedb.org/t/p/w600_and_h900_bestv2$url").get()
+                            Picasso.get().load("https://image.tmdb.org/t/p/original$url").get()
                         }
                         val bitmap=job.await()
                         withContext(Dispatchers.Main){
@@ -185,7 +211,6 @@ class DetailsFragment : Fragment(R.layout.fragment_details) {
     private fun setTints() {
         val vibrantColor=ColorStateList.valueOf(vibrantColor!!)
         val darkMutedColor=ColorStateList.valueOf(darkMutedColor!!)
-        binding.ratingText.setTextColor(vibrantColor)
         binding.imgPlay.backgroundTintList = vibrantColor
         binding.imgPlay.imageTintList= darkMutedColor
         binding.saveImage.backgroundTintList = vibrantColor
@@ -196,17 +221,9 @@ class DetailsFragment : Fragment(R.layout.fragment_details) {
         binding.reviewImage.imageTintList = darkMutedColor
         binding.reviewText.setTextColor(vibrantColor)
         binding.ratingBar.rating = selectedResponse?.vote_average?.toFloat()?:0f
-        DrawableCompat.setTint(binding.ratingBar.progressDrawable,this.vibrantColor!!);
-
         selectedResponse?.let { it ->
-            binding.posterImage.setImageUrl(it.poster_path)
-            binding.genreText.text = it.genres?.let {
-                if(it.isNotEmpty()){
-                    it[0].name
-                }else{
-                    ""
-                }
-            }
+
+
             binding.textDescription.text = it.overview
             binding.runtimeText.text = "${it.runtime} min"
             binding.ratingText.text = it.vote_average?.toBigDecimal()?.setScale(1, RoundingMode.UP)?.toString() + "/10"

@@ -98,4 +98,8 @@ class HomeFragmentViewModel @Inject constructor(private val popcornRepo:PopcornR
         searchQuery.value=query
 
     }
+    fun resetData(){
+        _discoverData.value=Resource.loading(null)
+        currentPage.value=1
+    }
 }

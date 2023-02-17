@@ -10,10 +10,18 @@
         android:label="MainFragment" >
         <action
             android:id="@+id/action_homeFragment_to_detailsFragment"
-            app:destination="@id/detailsFragment" />
+            app:destination="@id/detailsFragment"
+            app:enterAnim="@anim/layout_enter_anim"
+            app:exitAnim="@anim/layout_exit_anim"
+            app:popEnterAnim="@anim/layout_enter_anim"
+            app:popExitAnim="@anim/layout_exit_anim" />
         <action
             android:id="@+id/action_homeFragment_to_watchListFragment"
-            app:destination="@id/watchListFragment" />
+            app:destination="@id/watchListFragment"
+            app:enterAnim="@anim/layout_enter_anim"
+            app:exitAnim="@anim/layout_exit_anim"
+            app:popEnterAnim="@anim/layout_enter_anim"
+            app:popExitAnim="@anim/layout_exit_anim"/>
     </fragment>
     <fragment
         android:id="@+id/detailsFragment"
@@ -21,7 +29,11 @@
         android:label="DetailsFragment" >
         <action
             android:id="@+id/action_detailsFragment_to_mainFragment"
-            app:destination="@id/mainFragment" />
+            app:destination="@id/mainFragment"
+            app:enterAnim="@anim/layout_enter_anim"
+            app:exitAnim="@anim/layout_exit_anim"
+            app:popEnterAnim="@anim/layout_enter_anim"
+            app:popExitAnim="@anim/layout_exit_anim"/>
         <argument
             android:name="id"
             app:argType="integer" />
@@ -30,10 +42,18 @@
             app:argType="integer" />
         <action
             android:id="@+id/action_detailsFragment_to_watchListFragment"
-            app:destination="@id/watchListFragment" />
+            app:destination="@id/watchListFragment"
+            app:enterAnim="@anim/layout_enter_anim"
+            app:exitAnim="@anim/layout_exit_anim"
+            app:popEnterAnim="@anim/layout_enter_anim"
+            app:popExitAnim="@anim/layout_exit_anim"/>
         <action
             android:id="@+id/action_detailsFragment_to_moviePlayFragment"
-            app:destination="@id/moviePlayFragment" />
+            app:destination="@id/moviePlayFragment"
+            app:enterAnim="@anim/layout_enter_anim"
+            app:exitAnim="@anim/layout_exit_anim"
+            app:popEnterAnim="@anim/layout_enter_anim"
+            app:popExitAnim="@anim/layout_exit_anim"/>
         <argument
             android:name="darkMutedColor"
             app:argType="integer" />
@@ -45,7 +65,11 @@
         tools:layout="@layout/fragment_watch_list" >
         <action
             android:id="@+id/action_watchListFragment_to_detailsFragment"
-            app:destination="@id/detailsFragment" />
+            app:destination="@id/detailsFragment"
+            app:enterAnim="@anim/layout_enter_anim"
+            app:exitAnim="@anim/layout_exit_anim"
+            app:popEnterAnim="@anim/layout_enter_anim"
+            app:popExitAnim="@anim/layout_exit_anim"/>
     </fragment>
     <fragment
         android:id="@+id/moviePlayFragment"

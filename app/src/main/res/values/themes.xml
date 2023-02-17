@@ -24,4 +24,9 @@
     <style name="MyDialogTheme" parent="Theme.AppCompat.Light.Dialog.Alert">
         <item name="android:background">#393636</item>
     </style>
+    
+    <style name="ratingBarStyle" parent="Widget.AppCompat.RatingBar.Small">
+        <item name="android:progressTint">@color/white</item>
+        <item name="android:progressBackgroundTint">@color/white</item>
+    </style>
 </resources>

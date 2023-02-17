@@ -16,6 +16,7 @@ interface PopcornApi {
     //https://api.themoviedb.org/3/discover/tv?api_key=ae624ef782f69d5092464dffa234178b&sort_by=popularity.desc&page=1
     //https://api.themoviedb.org/3/search/movie?api_key=ae624ef782f69d5092464dffa234178b&query=Spi&page=1
     //https://api.themoviedb.org/3/tv/85552/videos?api_key=ae624ef782f69d5092464dffa234178b
+    //https://api.themoviedb.org/3/movie/1037353/credits?api_key=ae624ef782f69d5092464dffa234178b&language=en-US
     //https://api.themoviedb.org/3/discover/movie?api_key=ae624ef782f69d5092464dffa234178b&sort_by=popularity.desc&page=1&with_genres=80
     @GET("discover/movie")
     suspend fun getMovies(

@@ -1,7 +1,10 @@
 package com.fatih.popcorn.other
 
+import android.content.res.Resources
+import android.view.Gravity
 import android.view.animation.AnimationUtils
 import android.widget.ImageView
+import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.databinding.BindingAdapter
 import com.fatih.popcorn.R
@@ -34,6 +37,19 @@ fun ImageView.setImageUrl(url: String?) {
                 })
 
         }
+    } catch (e: Exception) {
+        e.printStackTrace()
+    }
+
+}
+
+fun ImageView.setViewPagerImage(url: String?) {
+
+    try {
+        url.let {
+            Picasso.get().load("https://image.tmdb.org/t/p/original$url").into(this)
+        }
+
     } catch (e: Exception) {
         e.printStackTrace()
     }

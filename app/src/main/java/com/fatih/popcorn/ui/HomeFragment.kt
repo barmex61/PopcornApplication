@@ -108,6 +108,7 @@ class HomeFragment @Inject constructor( private val adapter:HomeFragmentAdapter)
                     text.clear()
                     clearFocus()
                     viewModel.searchQuery.value=""
+                    viewModel.resetData()
                     visibility=View.GONE
                     binding.headerText.visibility=View.VISIBLE
                     if(checkIsItInMovieListOrNot()) {
@@ -199,6 +200,7 @@ class HomeFragment @Inject constructor( private val adapter:HomeFragmentAdapter)
                 when(stateList.last()){
                     State.SEARCH->{
                         if(searchText.isNotEmpty()){
+                            println("recycler")
                             viewModel.search(searchCategory,searchText,false)
                         }
                     }

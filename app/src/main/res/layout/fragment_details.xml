@@ -71,13 +71,11 @@
             app:layout_constraintGuide_percent="0.95" />
 
 
-        <ImageView
-            android:id="@+id/posterImage"
+        <androidx.viewpager.widget.ViewPager
+            android:id="@+id/posterImageViewPager"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:adjustViewBounds="true"
             android:contentDescription="@string/app_name"
-            android:scaleType="centerCrop"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -85,15 +83,17 @@
 
         <RatingBar
             android:id="@+id/ratingBar"
-            style="?android:ratingBarStyleSmall"
+            style="@style/ratingBarStyle"
             android:layout_width="80dp"
             android:layout_height="17dp"
             android:isIndicator="true"
             android:max="10"
             android:numStars="5"
             android:stepSize="1"
+            android:progressTint="@color/white"
+            android:backgroundTint="@color/white"
             app:layout_constraintStart_toEndOf="@id/guideLineVertical1"
-            app:layout_constraintTop_toBottomOf="@id/guideLineHorizontal2"
+            app:layout_constraintBottom_toTopOf="@id/nameText"
 
             />
 
@@ -104,6 +104,7 @@
             android:layout_marginStart="5dp"
             android:contentDescription="@string/app_name"
             android:textSize="12sp"
+            android:textColor="@color/white"
             android:textStyle="bold"
             app:layout_constraintStart_toEndOf="@id/ratingBar"
             app:layout_constraintTop_toTopOf="@id/ratingBar" />
@@ -131,7 +132,7 @@
             android:textSize="32sp"
             android:textStyle="bold"
             app:layout_constraintStart_toStartOf="@id/ratingBar"
-            app:layout_constraintTop_toBottomOf="@id/ratingText" />
+            app:layout_constraintBottom_toTopOf="@id/genreText" />
 
         <TextView
             android:id="@+id/genreText"
@@ -145,7 +146,9 @@
             android:textColor="@color/white"
             android:textSize="13sp"
             app:layout_constraintStart_toStartOf="@id/nameText"
-            app:layout_constraintTop_toBottomOf="@id/nameText" />
+            app:layout_constraintBottom_toBottomOf="@id/runtimeText"
+
+            />
 
         <ImageView
             android:id="@+id/calendarImage"
@@ -155,9 +158,8 @@
             android:layout_marginBottom="1sp"
             android:contentDescription="@string/app_name"
             android:src="@drawable/ic_calendar"
-            app:layout_constraintBottom_toBottomOf="@id/genreText"
+            app:layout_constraintBottom_toBottomOf="@id/runtimeText"
             app:layout_constraintStart_toEndOf="@id/genreText"
-            app:layout_constraintTop_toTopOf="@id/genreText"
             app:tint="@color/white" />
 
         <TextView
@@ -172,21 +174,20 @@
             android:text="2022-12-07"
             android:textColor="@color/white"
             android:textSize="13sp"
-            app:layout_constraintBottom_toBottomOf="@id/calendarImage"
+            app:layout_constraintBottom_toBottomOf="@id/runtimeText"
             app:layout_constraintStart_toEndOf="@id/calendarImage"
-            app:layout_constraintTop_toTopOf="@id/calendarImage" />
+            />
 
         <ImageView
             android:id="@+id/timeImage"
             android:layout_width="13dp"
             android:layout_height="13dp"
             android:layout_marginStart="10dp"
-            android:layout_marginBottom="1dp"
             android:contentDescription="@string/app_name"
             android:src="@drawable/ic_time"
-            app:layout_constraintBottom_toBottomOf="@id/calendarImage"
+            android:layout_marginBottom="1dp"
+            app:layout_constraintBottom_toBottomOf="@id/runtimeText"
             app:layout_constraintStart_toEndOf="@id/yearText"
-            app:layout_constraintTop_toTopOf="@id/calendarImage"
             app:tint="@color/white" />
 
         <TextView
@@ -201,9 +202,19 @@
             android:text="2022-12-07"
             android:textColor="@color/white"
             android:textSize="13sp"
-            app:layout_constraintBottom_toBottomOf="@id/timeImage"
+            android:layout_marginBottom="15dp"
+            app:layout_constraintBottom_toBottomOf="@id/circleIndicator"
             app:layout_constraintStart_toEndOf="@id/timeImage"
-            app:layout_constraintTop_toTopOf="@id/timeImage" />
+            />
+
+        <me.relex.circleindicator.CircleIndicator
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginBottom="15dp"
+            android:id="@+id/circleIndicator"/>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
