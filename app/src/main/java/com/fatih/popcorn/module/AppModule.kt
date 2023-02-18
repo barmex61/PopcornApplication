@@ -10,6 +10,7 @@ import com.fatih.popcorn.movieapi.PopcornApi
 import com.fatih.popcorn.other.Constants.BASE_URL
 import com.fatih.popcorn.repository.PopcornRepository
 import com.fatih.popcorn.repository.PopcornRepositoryInterface
+import com.squareup.picasso.Picasso
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -41,5 +42,6 @@ object AppModule {
     @Singleton
     fun provideRoomDao(@ApplicationContext context: Context)= Room.databaseBuilder(context,RoomDb::class.java,"RoomDatabase")
         .build().roomDao()
+
 
 }

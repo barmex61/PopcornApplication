@@ -1,24 +1,25 @@
 package com.fatih.popcorn.ui
 
 import android.annotation.SuppressLint
-import android.content.pm.ActivityInfo
 import android.content.res.ColorStateList
-import android.content.res.Configuration
-import android.content.res.Resources
+import android.graphics.Bitmap
 import android.os.Bundle
-import android.util.Log
 import android.view.*
+import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import android.widget.ImageView
 import android.widget.Toast
 import androidx.core.content.ContextCompat
-import androidx.core.graphics.drawable.DrawableCompat
 import androidx.core.view.updatePadding
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.OrientationHelper
+import androidx.recyclerview.widget.RecyclerView
 import com.fatih.popcorn.R
+import com.fatih.popcorn.adapter.CastRecyclerViewAdapter
 import com.fatih.popcorn.adapter.ViewPagerAdapter
 import com.fatih.popcorn.databinding.FragmentDetailsBinding
 import com.fatih.popcorn.entities.local.RoomEntity
@@ -30,17 +31,17 @@ import com.fatih.popcorn.other.Constants.language
 import com.fatih.popcorn.other.Constants.movieSearch
 import com.fatih.popcorn.other.Constants.tvSearch
 import com.fatih.popcorn.other.Status
-import com.fatih.popcorn.other.setImageUrl
 import com.fatih.popcorn.viewmodel.DetailsFragmentViewModel
 import com.squareup.picasso.Picasso
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.*
 import java.math.RoundingMode
 import java.util.*
+import javax.inject.Inject
 import kotlin.Exception
 
 @AndroidEntryPoint
-class DetailsFragment : Fragment(R.layout.fragment_details) {
+class DetailsFragment @Inject constructor(private val castAdapter:CastRecyclerViewAdapter) : Fragment(R.layout.fragment_details) {
 
     private lateinit var viewModel: DetailsFragmentViewModel
     private lateinit var binding: FragmentDetailsBinding
@@ -50,10 +51,11 @@ class DetailsFragment : Fragment(R.layout.fragment_details) {
     private var vibrantColor: Int? = null
     private var darkMutedColor: Int? = null
     private var isItInDatabase = false
+    private var job:Job?=null
+    private var searchLanguage= language
     private val handler = CoroutineExceptionHandler{ _,throwable->
         println("Caught exception $throwable")
     }
-    @SuppressLint("SourceLockedOrientationActivity")
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         binding = FragmentDetailsBinding.inflate(inflater, container, false)
         doInitialization()
@@ -62,8 +64,32 @@ class DetailsFragment : Fragment(R.layout.fragment_details) {
 
     private fun doInitialization() {
         setStatusBarPadding()
+        binding.castRecyclerView.layoutManager=LinearLayoutManager(requireContext())
+        binding.castRecyclerView.adapter=castAdapter
         binding.backgroundImage.colorFilter = colorMatrixColorFilter
         viewModel = ViewModelProvider(this)[DetailsFragmentViewModel::class.java]
+        binding.imgPlay.setOnClickListener {
+            binding.castRecyclerView.layoutManager=LinearLayoutManager(requireContext(),LinearLayoutManager.HORIZONTAL,false)
+            binding.castRecyclerView.visibility=View.VISIBLE
+            binding.castRecyclerView.adapter=castAdapter
+            /* val animation=AnimationUtils.loadAnimation(requireContext(),R.anim.fall_down)
+            animation.setAnimationListener(
+                object :Animation.AnimationListener{
+                    override fun onAnimationEnd(animation: Animation?) {
+                        binding.castRecyclerView.visibility=View.GONE
+                    }
+                    override fun onAnimationRepeat(animation: Animation?)=Unit
+                    override fun onAnimationStart(animation: Animation?) {
+                        binding.castRecyclerView.visibility=View.VISIBLE
+                    }
+                }
+            )  */
+            /* if (binding.castRecyclerView.visibility==View.GONE){
+                binding.castRecyclerView.startAnimation(animation)
+            }else{
+                binding.castRecyclerView.startAnimation(animation)
+            } */
+        }
         //binding.trailerImage.setOnClickListener { youtube() }
         binding.watchList.setOnClickListener { watchList() }
         binding.watchListButton.setOnClickListener { findNavController().navigate(DetailsFragmentDirections.actionDetailsFragmentToWatchListFragment()) }
@@ -76,9 +102,9 @@ class DetailsFragment : Fragment(R.layout.fragment_details) {
             vibrantColor = DetailsFragmentArgs.fromBundle(it).vibrantColor
         }
         if (checkIsItInMovieListOrNot()) {
-            viewModel.getDetails(movieSearch, selectedId!!, language)
+            viewModel.getDetails(movieSearch, selectedId!!, searchLanguage)
         } else {
-            viewModel.getDetails(tvSearch, selectedId!!, language)
+            viewModel.getDetails(tvSearch, selectedId!!, searchLanguage)
         }
         observeLiveData()
     }
@@ -103,6 +129,7 @@ class DetailsFragment : Fragment(R.layout.fragment_details) {
                     }
                     Status.SUCCESS -> {
                         resource.data?.let {
+                            println(it.id)
                             selectedResponse = it
                             viewModel.isItIntDatabase(it.id!!)
                             setLayoutVisibility(show = true, showToast = false, null)
@@ -115,10 +142,28 @@ class DetailsFragment : Fragment(R.layout.fragment_details) {
         viewModel.isItInDatabase.observe(viewLifecycleOwner){
             if(it){
                 isItInDatabase=it
-                binding.watchList.imageTintList= ColorStateList.valueOf(ContextCompat.getColor(requireContext(),R.color.white))
+                binding.watchList.imageTintList = ColorStateList.valueOf(ContextCompat.getColor(requireContext(),R.color.white))
             }else{
                 isItInDatabase=it
-                binding.watchList.imageTintList=ColorStateList.valueOf(ContextCompat.getColor(requireContext(),R.color.gray))
+                binding.watchList.imageTintList =ColorStateList.valueOf(ContextCompat.getColor(requireContext(),R.color.gray))
+            }
+        }
+
+        viewModel.creditsResponse.observe(viewLifecycleOwner){
+            when(it.status){
+                Status.SUCCESS->{
+                    it.data?.let {
+
+                        val urlList=it.cast.map { cast->
+                            cast.profile_path
+                        }
+                        println("size ${it.cast.size}")
+                        castAdapter.urlList=urlList
+                        println(castAdapter.urlList.size)
+                        castAdapter.notifyDataSetChanged()
+                    }
+                }
+                else->Unit
             }
         }
 
@@ -128,18 +173,17 @@ class DetailsFragment : Fragment(R.layout.fragment_details) {
                   Status.SUCCESS -> {
                         resource.data?.let { it ->
                             selectedImageResponse=it
-                            lifecycleScope.launch {
-                                val imageUrls=selectedImageResponse!!.backdrops.map {backdrop->
-                                    backdrop.file_path
-                                }
-                                val portraitList=selectedImageResponse!!.posters.filter {
-                                    it.iso_639_1=="en"
-                                }.map {
-                                    it.file_path
-                                }
-                                setImageAnimations(imageUrls)
-                                setupViewPager(portraitList,imageUrls)
+
+                            val imageUrls=selectedImageResponse!!.backdrops.map {backdrop->
+                                backdrop.file_path
                             }
+                            val portraitList=selectedImageResponse!!.posters.filter {
+                                it.iso_639_1=="en"
+                            }.map {
+                                it.file_path
+                            }
+                            setImageAnimations(imageUrls)
+                            setupViewPager(portraitList,imageUrls)
                         }
                     }
                     else->Unit
@@ -149,66 +193,135 @@ class DetailsFragment : Fragment(R.layout.fragment_details) {
     }
 
     private fun setupViewPager(portraitList: List<String>,landscapeList:List<String>){
-        println(portraitList.size)
-        println(landscapeList.size)
-        val viewPagerAdapter=ViewPagerAdapter(requireContext(),portraitList,landscapeList)
+        var portraits=portraitList
+        var landscapes=landscapeList
+        var shouldFitXY=false
+        if(portraitList.isEmpty()){
+            portraits=landscapeList
+            shouldFitXY=true
+        }
+        if (landscapeList.isEmpty()){
+            landscapes=portraitList
+        }
+        portraits=if (portraits.size>=9) portraits.subList(0,9) else portraits.subList(0,portraits.size)
+        landscapes=if (landscapes.size>=9) landscapes.subList(0,9) else landscapes.subList(0,landscapes.size)
+        val viewPagerAdapter=ViewPagerAdapter(requireContext(),portraits,landscapes,shouldFitXY)
         binding.posterImageViewPager.adapter=viewPagerAdapter
         binding.circleIndicator.setViewPager(binding.posterImageViewPager)
 
     }
 
-    private fun setImageAnimations(imageUrls:List<String>){
+    private fun startAnimation(bitmapList: List<Bitmap>){
         val imageView=binding.backgroundImage
         imageView.scaleType=ImageView.ScaleType.FIT_XY
-        lifecycleScope.launch(Dispatchers.Default + handler) {
-            try {
-                while (true){
-                     for(url in imageUrls){
-                        imageView.alpha=0f
+        imageView.clearAnimation()
+        val size=bitmapList.size-1
+        var index=0
+        val animation=AnimationUtils.loadAnimation(requireContext(),android.R.anim.fade_in).apply {
+            repeatCount=Animation.INFINITE
+            repeatMode=Animation.REVERSE
+            duration=2000L
+            setAnimationListener( object :Animation.AnimationListener{
+                var repeatCount=0
+                    override fun onAnimationEnd(animation: Animation?) {
+                    }
+                    override fun onAnimationRepeat(animation: Animation?) {
+                        if (index<size && repeatCount%2==0){
+                            index++
+                            imageView.setImageBitmap(bitmapList[index])
+                        }else if (index==size){
+                            repeatCount=0
+                            index=0
+                        }
+                        repeatCount++
+                    }
 
-                        val job= async(Dispatchers.IO) {
+                    override fun onAnimationStart(animation: Animation?) {
+                        repeatCount++
+                        imageView.setImageBitmap(bitmapList[index])
+                    }
+                })
+        }
+        imageView.startAnimation(animation)
+    }
+    private fun setImageAnimations(imageUrls:List<String>){
+        job?.cancel()
+        val bitmapList= mutableListOf<Bitmap>()
+        if (imageUrls.isNotEmpty()){
+            job=lifecycleScope.launch(Dispatchers.IO + handler){
+                val subList=if (imageUrls.size>=9) imageUrls.subList(0,9) else imageUrls.subList(0,imageUrls.size-1)
+                try {
+                    println("called")
+                    for (url in subList){
+                        val job=async(Dispatchers.IO){
                             Picasso.get().load("https://image.tmdb.org/t/p/original$url").get()
                         }
-                        val bitmap=job.await()
-                        withContext(Dispatchers.Main){
-                            imageView.apply {
-                                setImageBitmap(bitmap)
-                                animate().alpha(1f).setDuration(2000L).withEndAction {
-                                    this.animate().alpha(0f).setDuration(2000L).start()
-                                }.start()
-                            }
-                        }
-                        delay(4000L)
+                        bitmapList.add(job.await())
                     }
+                    withContext(Dispatchers.Main){
+                        if (bitmapList.isNotEmpty()){
+                            startAnimation(bitmapList)
+                        }
+                    }
+                }catch (e:Exception){
+                    println(e.message)
                 }
-
-            }
-            catch (e:Exception){
-                println(e.message)
             }
         }
+
+        /*    job=lifecycleScope.launch(Dispatchers.IO + handler) {
+                try {
+                    while (true){
+                        for(url in imageUrls){
+                            imageView.alpha=0f
+                            val job= async(Dispatchers.IO) {
+                                Picasso.get().load("https://image.tmdb.org/t/p/original$url").get()
+                            }
+                            val bitmap=job.await()
+                            val job2=launch(Dispatchers.Main){
+                                imageView.apply {
+                                    setImageBitmap(bitmap)
+                                    animate().alpha(1f).setDuration(2000L).withEndAction {
+                                        this.animate().alpha(0f).setDuration(2000L).start()
+                                    }.start()
+                                }
+                            }
+                            delay(4000L)
+                            job.cancel()
+                            job2.cancel()
+                        }
+                    }
+
+                }
+                catch (e:Exception){
+                    println(e.message)
+                }
+            } */
     }
     private fun setLayoutVisibility(show: Boolean, showToast: Boolean, message: String?) {
-        binding.mainLayout.visibility = View.INVISIBLE
         if (showToast) {
             binding.mainLayout.visibility = View.GONE
             Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
             return
         }
-        val trailerImage = binding.trailerImage
-        val reviewImage = binding.reviewImage
         if (show) {
-            trailerImage.visibility = View.VISIBLE
-            reviewImage.visibility = View.VISIBLE
             setTints()
-        } else {
-            trailerImage.visibility = View.INVISIBLE
-            reviewImage.visibility = View.INVISIBLE
         }
     }
 
     @SuppressLint("SetTextI18n")
     private fun setTints() {
+        if((searchLanguage == "tr") && ((selectedResponse?.overview == null) || (selectedResponse?.overview?.isEmpty() == true))){
+            searchLanguage = "en"
+            if (checkIsItInMovieListOrNot()) {
+                viewModel.resetData()
+                viewModel.getDetails(movieSearch, selectedId!!, searchLanguage)
+            } else {
+                viewModel.resetData()
+                viewModel.getDetails(tvSearch, selectedId!!, searchLanguage)
+            }
+            observeLiveData()
+        }
         val vibrantColor=ColorStateList.valueOf(vibrantColor!!)
         val darkMutedColor=ColorStateList.valueOf(darkMutedColor!!)
         binding.imgPlay.backgroundTintList = vibrantColor
@@ -220,15 +333,28 @@ class DetailsFragment : Fragment(R.layout.fragment_details) {
         binding.videoImage.imageTintList=darkMutedColor
         binding.reviewImage.imageTintList = darkMutedColor
         binding.reviewText.setTextColor(vibrantColor)
-        binding.ratingBar.rating = selectedResponse?.vote_average?.toFloat()?:0f
+        binding.ratingBar.rating = (selectedResponse?.vote_average?.toFloat()?.div(2f))?:0f
         selectedResponse?.let { it ->
 
-
+            it.genres?.let {
+            var name=""
+                for(i in it.indices){
+                    if (i == it.size - 1)
+                    name += it[i]
+                    else
+                    name += "${it[i]} , "
+                    if(i == 5) break
+                }
+            }
+            var text=""
+            if (it.episode_run_time?.isNotEmpty() == true) {
+                text= it.episode_run_time.last().toString()
+            }
             binding.textDescription.text = it.overview
-            binding.runtimeText.text = "${it.runtime} min"
+            binding.runtimeText.text = "${it.runtime?:text} min"
             binding.ratingText.text = it.vote_average?.toBigDecimal()?.setScale(1, RoundingMode.UP)?.toString() + "/10"
-            binding.nameText.text = it.original_title
-            binding.yearText.text = it.release_date
+            binding.nameText.text = it.original_title?:it.original_name
+            binding.yearText.text = it.release_date?:it.last_air_date
 
             if (checkIsItInMovieListOrNot()) {
                 binding.episodesImage.visibility = View.INVISIBLE
@@ -237,13 +363,9 @@ class DetailsFragment : Fragment(R.layout.fragment_details) {
                 binding.episodesImage.visibility = View.VISIBLE
                 binding.episodesText.visibility = View.VISIBLE
             }
-
-        }
-        binding.mainLayout.apply {
-            visibility=View.VISIBLE
-            startAnimation(AnimationUtils.loadAnimation(requireContext(),R.anim.fall_down))
         }
     }
+
 
     private fun watchList(){
         val isTvShow=!checkIsItInMovieListOrNot()
@@ -275,6 +397,16 @@ class DetailsFragment : Fragment(R.layout.fragment_details) {
                 Toast.makeText(requireContext(),"Movie deleted from Watchlist",Toast.LENGTH_SHORT).show()
             }
         }
+    }
+
+    override fun onStop() {
+        super.onStop()
+        job?.cancel()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        job?.cancel()
     }
 
 }

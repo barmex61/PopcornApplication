@@ -329,6 +329,7 @@ class HomeFragment @Inject constructor( private val adapter:HomeFragmentAdapter)
                     ) { _, _ ->
                         movie_booleanArray.fill(false)
                         genres=""
+                        viewModel.resetData()
                         movieButtonClicked()
                     }.show()
                 }else{
@@ -355,6 +356,8 @@ class HomeFragment @Inject constructor( private val adapter:HomeFragmentAdapter)
                     alertDialog.setNeutralButton("Reset"
                     ) { _, _ ->
                         tv_show_booleanArray.fill(false)
+                        genres=""
+                        viewModel.resetData()
                         tvShowButtonClicked()
                     }.show()
                 }

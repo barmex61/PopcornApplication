@@ -14,6 +14,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.palette.graphics.Palette
 import com.fatih.popcorn.R
 import com.google.android.material.color.utilities.CorePalette
+import com.squareup.picasso.Picasso
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
@@ -21,7 +22,6 @@ import java.util.Locale
 
 
 object Constants {
-
     var language=Locale.getDefault().language
     const val BASE_URL="https://api.themoviedb.org/3/"
     val sortList= listOf("popularity.desc","release_date.desc","vote_average.desc","first_air_date.desc")
@@ -41,7 +41,7 @@ object Constants {
     val colorMatrixColorFilter= ColorMatrixColorFilter(ColorMatrix().apply {
         setSaturation(0f)
     })
-    var orientation=Configuration.ORIENTATION_PORTRAIT
+    var orientation=Resources.getSystem().configuration.orientation
     var isFirstRun=true
     fun checkIsItInMovieListOrNot():Boolean{
         if(stateList.last()==State.MOVIE || ( stateList.last()==State.SEARCH && stateList[stateList.size-2]==State.MOVIE)){

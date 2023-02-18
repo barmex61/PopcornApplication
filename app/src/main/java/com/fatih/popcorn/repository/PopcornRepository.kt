@@ -4,6 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.liveData
 import com.fatih.popcorn.database.RoomDao
 import com.fatih.popcorn.entities.local.RoomEntity
+import com.fatih.popcorn.entities.remote.creditsresponse.CreditsResponse
 import com.fatih.popcorn.entities.remote.detailresponse.DetailResponse
 import com.fatih.popcorn.entities.remote.discoverresponse.DiscoverResponse
 import com.fatih.popcorn.entities.remote.imageresponse.ImageResponse
@@ -127,5 +128,20 @@ class PopcornRepository (
            println(e.message)
            null
        }
+    }
+
+    override suspend fun getCredits(name: String, id: Int): Resource<CreditsResponse> {
+        return try {
+            val response=popcornApi.getCredits(name,id)
+            if(response.isSuccessful){
+                response.body()?.let {
+                    Resource.success(it)
+                }?:Resource.error("Response body null")
+            }else{
+                Resource.error("Response failed")
+            }
+        }catch (e:Exception){
+            Resource.error(e.message)
+        }
     }
 }

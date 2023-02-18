@@ -2,6 +2,7 @@ package com.fatih.popcorn.viewmodel
 
 import androidx.lifecycle.*
 import com.fatih.popcorn.entities.local.RoomEntity
+import com.fatih.popcorn.entities.remote.creditsresponse.CreditsResponse
 import com.fatih.popcorn.entities.remote.detailresponse.DetailResponse
 import com.fatih.popcorn.entities.remote.imageresponse.ImageResponse
 import com.fatih.popcorn.other.Resource
@@ -24,17 +25,20 @@ class DetailsFragmentViewModel @Inject constructor(private val popcornRepo:Popco
     val imageResponse:LiveData<Resource<ImageResponse>>
     get() = _imageResponse
 
-    val roomEntityList=popcornRepo.getAllRoomEntity()
-
     private var _isItInDatabase= MutableLiveData<Boolean>()
     val isItInDatabase:LiveData<Boolean>
     get() = _isItInDatabase
+
+    private var _creditsResponse=MutableLiveData<Resource<CreditsResponse>>()
+    val creditsResponse:LiveData<Resource<CreditsResponse>>
+    get() = _creditsResponse
     fun getDetails(searchName:String,id:Int,language:String) {
 
        _detailResponse= popcornRepo.getDetails(searchName,id, language).catch {
            it.printStackTrace()
        }.asLiveData(viewModelScope.coroutineContext) as MutableLiveData<Resource<DetailResponse>>
        getImages(searchName,id)
+       getCredits(searchName,id)
     }
 
     private fun getImages(searchName : String , id : Int)=viewModelScope.launch {
@@ -57,6 +61,18 @@ class DetailsFragmentViewModel @Inject constructor(private val popcornRepo:Popco
             true
         }?:false
         )
+    }
+    fun getCredits(name:String,id:Int)=viewModelScope.launch {
+        _creditsResponse.value= Resource.loading(null)
+        _creditsResponse.value=popcornRepo.getCredits(name,id)
+    }
+
+    fun resetData()=viewModelScope.launch {
+        _detailResponse=MutableLiveData<Resource<DetailResponse>>()
+        _imageResponse=MutableLiveData<Resource<ImageResponse>>()
+        _isItInDatabase= MutableLiveData<Boolean>()
+        _creditsResponse=MutableLiveData<Resource<CreditsResponse>>()
+
     }
 
 }

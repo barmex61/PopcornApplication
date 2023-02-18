@@ -9,6 +9,7 @@
     android:id="@+id/mainLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:layoutAnimation="@anim/layout_animation"
     android:background="#000000"
     app:layoutDescription="@xml/details_scene">
 
@@ -501,6 +502,19 @@
         app:tint="@android:color/white"
         android:src="@drawable/ic_baseline_save_alt_24"
         android:scaleType="fitCenter"/>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:layout_width="match_parent"
+        android:layout_height="80dp"
+        android:orientation="horizontal"
+        android:id="@+id/castRecyclerView"
+        android:layout_marginBottom="10dp"
+        android:background="@android:color/transparent"
+        app:layout_constraintBottom_toTopOf="@id/imgPlay"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+
+        />
 
     <LinearLayout
         android:layout_width="match_parent"

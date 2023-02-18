@@ -21,8 +21,7 @@ fun ImageView.setImageUrl(url: String?) {
 
     try {
         url.let {
-            Picasso.get().load("https://www.themoviedb.org/t/p/w600_and_h900_bestv2$url").noFade()
-                .placeholder(
+            Picasso.get().load("https://www.themoviedb.org/t/p/w600_and_h900_bestv2$url").placeholder(
                     R.drawable.popcorn
                 )
                 .into(this@setImageUrl, object : Callback {
@@ -42,12 +41,14 @@ fun ImageView.setImageUrl(url: String?) {
     }
 
 }
-
+@BindingAdapter("android:imageUrl")
 fun ImageView.setViewPagerImage(url: String?) {
 
     try {
         url.let {
+
             Picasso.get().load("https://image.tmdb.org/t/p/original$url").into(this)
+
         }
 
     } catch (e: Exception) {

@@ -11,7 +11,8 @@ import com.fatih.popcorn.other.setViewPagerImage
 
 class ViewPagerAdapter (private val context: Context,
                         private val portraitList:List<String>,
-                        private val landscapeList:List<String>):PagerAdapter() {
+                        private val landscapeList:List<String>,
+                        private val shouldFitXY:Boolean):PagerAdapter() {
     override fun getCount(): Int {
         return if(isItPortrait()){
             portraitList.size
@@ -24,7 +25,11 @@ class ViewPagerAdapter (private val context: Context,
 
     override fun instantiateItem(container: ViewGroup, position: Int): Any {
         val imageView=ImageView(context).apply {
-            this.scaleType=ImageView.ScaleType.CENTER_CROP
+            if (shouldFitXY){
+                this.scaleType=ImageView.ScaleType.FIT_XY
+            }else{
+                this.scaleType=ImageView.ScaleType.CENTER_CROP
+            }
             if (isItPortrait()){
                 setViewPagerImage(portraitList[position])
             }else{

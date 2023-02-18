@@ -19,6 +19,7 @@ import com.fatih.popcorn.other.Constants.orientation
 import com.fatih.popcorn.other.CustomFragmentFactoryEntryPoint
 import com.fatih.popcorn.other.Status
 import com.fatih.popcorn.viewmodel.HomeFragmentViewModel
+import com.squareup.picasso.Picasso
 import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.EntryPointAccessors
 import javax.inject.Inject
