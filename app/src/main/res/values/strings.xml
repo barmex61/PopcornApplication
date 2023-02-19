@@ -16,4 +16,9 @@
     <string name="version_1_0">Version 1.0</string>
     <string name="popcorn_time">POPCORN Time</string>
     <string name="enter_tv_show">Search…</string>
+    <string name="reviews">REVIEWS</string>
+    <string name="trailer">TRAILER</string>
+    <string name="seasons">SEASONS</string>
+    <string name="film_bilgisi">Film Bilgisi</string>
+    <string name="orjinal_smi">Orjinal İsmi</string>
 </resources>

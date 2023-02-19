@@ -6,8 +6,10 @@ import android.content.res.Resources
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
+import android.view.ViewGroup
 import android.view.animation.AnimationUtils
 import android.widget.Toast
 import androidx.core.content.ContextCompat
@@ -18,6 +20,8 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.RecyclerView.OnScrollListener
 import com.fatih.popcorn.R
 import com.fatih.popcorn.adapter.HomeFragmentAdapter
 import com.fatih.popcorn.databinding.FragmentHomeBinding
@@ -45,9 +49,11 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class HomeFragment @Inject constructor( private val adapter:HomeFragmentAdapter): Fragment(R.layout.fragment_home) {
+class HomeFragment @Inject constructor(): Fragment(R.layout.fragment_home) {
 
-    private lateinit var binding:FragmentHomeBinding
+    private var _binding:FragmentHomeBinding?=null
+    private val binding:FragmentHomeBinding
+    get() = _binding!!
     private var totalAvailablePages=1
     private var job: Job?=null
     private var isSearching=false
@@ -55,20 +61,26 @@ class HomeFragment @Inject constructor( private val adapter:HomeFragmentAdapter)
     private var searchText=""
     private var genres=""
     private var indexPosition=0
+    private var recyclerView:RecyclerView?=null
     private var searchCategory= movieSearch
     private var tvShowSortPosition=0
+    private lateinit var onScrollListener: OnScrollListener
+    private lateinit var adapter: HomeFragmentAdapter
     private var movieSortPosition=0
     private val viewModel:HomeFragmentViewModel by lazy{
         MainActivity.viewModel
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        binding=DataBindingUtil.bind(view)!!
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        _binding=DataBindingUtil.inflate(inflater,R.layout.fragment_home,container,false)
+        val view=_binding!!.root
         doInitialization()
+        return view
     }
+
     private fun doInitialization(){
         setStatusBarPadding()
+        adapter=HomeFragmentAdapter()
         searchCategory=if(checkIsItInMovieListOrNot()) movieSearch else tvSearch
         if(viewModel.searchQuery.value!!.isNotEmpty()){
             searchText= viewModel.searchQuery.value!!
@@ -191,24 +203,29 @@ class HomeFragment @Inject constructor( private val adapter:HomeFragmentAdapter)
         })
     }
     private fun setupRecyclerView(){
-        binding.moviesRecyclerView.adapter=adapter
-        binding.moviesRecyclerView.layoutManager= GridLayoutManager(requireContext(),
+        recyclerView =binding.moviesRecyclerView
+        recyclerView!!.adapter=adapter
+        recyclerView!!.layoutManager= GridLayoutManager(requireContext(),
             Resources.getSystem().displayMetrics.widthPixels/200)
-        binding.moviesRecyclerView.setOnScrollChangeListener { _, _, _, _, _ ->
-            if (!binding.moviesRecyclerView.canScrollVertically(1) && viewModel.currentPage.value!! < totalAvailablePages) {
-                viewModel.currentPage.value= viewModel.currentPage.value!! +1
-                when(stateList.last()){
-                    State.SEARCH->{
-                        if(searchText.isNotEmpty()){
-                            println("recycler")
-                            viewModel.search(searchCategory,searchText,false)
+        onScrollListener=object:OnScrollListener() {
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                if (!recyclerView.canScrollVertically(1) && viewModel.currentPage.value!! < totalAvailablePages) {
+                    viewModel.currentPage.value= viewModel.currentPage.value!! +1
+                    when(stateList.last()){
+                        State.SEARCH->{
+                            if(searchText.isNotEmpty()){
+                                println("recycler")
+                                viewModel.search(searchCategory,searchText,false)
+                            }
                         }
+                        State.MOVIE->{ viewModel.getMovies(sortString, genres) }
+                        State.TV_SHOW->{ viewModel.getTvShows(sortString, genres)}
                     }
-                    State.MOVIE->{ viewModel.getMovies(sortString, genres) }
-                    State.TV_SHOW->{ viewModel.getTvShows(sortString, genres)}
                 }
+                super.onScrolled(recyclerView, dx, dy)
             }
         }
+        recyclerView!!.addOnScrollListener(onScrollListener)
     }
 
 
@@ -269,6 +286,7 @@ class HomeFragment @Inject constructor( private val adapter:HomeFragmentAdapter)
                     setProgressBarVisibility(true)
                 }
                 Status.SUCCESS->{
+                    println("discoverResponse")
                     setProgressBarVisibility(false)
                     adapter.discoverList=it.data?.results?: listOf()
                     totalAvailablePages=it.data?.total_pages?:1
@@ -407,7 +425,7 @@ class HomeFragment @Inject constructor( private val adapter:HomeFragmentAdapter)
             }
             R.id.like->{
                 binding.drawableLayout.closeDrawer(GravityCompat.START)
-                // findNavController().navigate(MainFragmentDirections.actionMainFragmentToWatchListFragment())
+                findNavController().navigate(HomeFragmentDirections.actionHomeFragmentToWatchListFragment())
             }
             else ->{
                 Toast.makeText(requireContext(),"Coming Soon Ins",Toast.LENGTH_SHORT).show()

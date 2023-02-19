@@ -12,19 +12,19 @@ import javax.inject.Inject
 
 class CastRecyclerViewAdapter @Inject constructor():RecyclerView.Adapter<CastRecyclerViewAdapter.CastRecyclerViewHolder>() {
 
-    private val diffUtil=object:DiffUtil.ItemCallback<String>(){
-        override fun areContentsTheSame(oldItem: String, newItem: String): Boolean {
-            return oldItem==newItem
+    private val diffUtil=object :DiffUtil.ItemCallback<Triple<String,String,String>>(){
+        override fun areContentsTheSame(oldItem: Triple<String, String, String>, newItem: Triple<String, String, String>): Boolean {
+            return ((oldItem.first==newItem.first) && (oldItem.second==newItem.second) && (oldItem.third==newItem.third))
         }
 
-        override fun areItemsTheSame(oldItem: String, newItem: String): Boolean {
-            return oldItem==newItem
+        override fun areItemsTheSame(oldItem: Triple<String, String, String>, newItem: Triple<String, String, String>): Boolean {
+            return oldItem.third==newItem.third
         }
     }
 
     private var asyncListDiffer=AsyncListDiffer(this,diffUtil)
 
-    var urlList:List<String>
+    var castList:List<Triple<String,String,String>>
     get() = asyncListDiffer.currentList
     set(value) = asyncListDiffer.submitList(value)
 
@@ -36,11 +36,12 @@ class CastRecyclerViewAdapter @Inject constructor():RecyclerView.Adapter<CastRec
     }
 
     override fun getItemCount(): Int {
-        return urlList.size
+        return castList.size
     }
 
     override fun onBindViewHolder(holder: CastRecyclerViewHolder, position: Int) {
-        holder.castRecyclerRowBinding.imageUrl=urlList[position]
-        println("position ${position}")
+        holder.castRecyclerRowBinding.imageUrl=castList[position].third
+        holder.castRecyclerRowBinding.name=castList[position].first
+        holder.castRecyclerRowBinding.charecter="(${castList[position].second})"
     }
 }

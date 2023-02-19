@@ -7,31 +7,57 @@
         <variable
             name="imageUrl"
             type="String" />
+        <variable
+            name="name"
+            type="String" />
+        <variable
+            name="charecter"
+            type="String" />
     </data>
+
+
+
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:background="@android:color/transparent"
-        >
+        android:orientation="vertical">
 
-
-
-<androidx.cardview.widget.CardView
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    app:cardCornerRadius="150dp"
-    android:background="@android:color/transparent">
-
-    <ImageView
-        android:layout_width="250dp"
-        android:layout_height="250dp"
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:layout_width="70dp"
         android:src="@drawable/popcorn"
         android:scaleType="centerCrop"
         android:imageUrl="@{imageUrl}"
-        android:background="@android:color/transparent"
-        >
-    </ImageView>
-</androidx.cardview.widget.CardView>
+        android:layout_height="60dp"/>
+
+
+    <TextView
+        android:layout_width="70dp"
+        android:layout_height="wrap_content"
+        android:textSize="12sp"
+        android:text="@{name}"
+        android:paddingTop="3dp"
+        android:textColor="@color/white"
+        android:maxLines="2"
+        android:ellipsize="end"
+        android:textStyle="bold"
+        android:textAlignment="center"
+        android:fontFamily="@font/adamina"
+       />
+
+        <TextView
+            android:layout_width="70dp"
+            android:layout_height="wrap_content"
+            android:textSize="12sp"
+            android:text="@{charecter}"
+            android:paddingTop="1dp"
+            android:textColor="@color/white"
+            android:maxLines="2"
+            android:ellipsize="end"
+            android:textStyle="bold"
+            android:textAlignment="center"
+            android:fontFamily="@font/adamina"
+            />
+
     </LinearLayout>
 
 </layout>

@@ -128,7 +128,6 @@
             android:fontFamily="@font/adamina"
             android:includeFontPadding="false"
             android:maxLines="1"
-            android:text="Black Adam"
             android:textColor="@color/white"
             android:textSize="32sp"
             android:textStyle="bold"
@@ -143,7 +142,6 @@
             android:ellipsize="none"
             android:includeFontPadding="false"
             android:maxLines="1"
-            android:text="Drama"
             android:textColor="@color/white"
             android:textSize="13sp"
             app:layout_constraintStart_toStartOf="@id/nameText"
@@ -172,7 +170,6 @@
             android:ellipsize="none"
             android:includeFontPadding="false"
             android:maxLines="1"
-            android:text="2022-12-07"
             android:textColor="@color/white"
             android:textSize="13sp"
             app:layout_constraintBottom_toBottomOf="@id/runtimeText"
@@ -200,7 +197,6 @@
             android:ellipsize="none"
             android:includeFontPadding="false"
             android:maxLines="1"
-            android:text="2022-12-07"
             android:textColor="@color/white"
             android:textSize="13sp"
             android:layout_marginBottom="15dp"
@@ -219,258 +215,15 @@
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <androidx.core.widget.NestedScrollView
-        android:id="@+id/nestedScrollView3"
+    <com.google.android.material.tabs.TabLayout
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:fillViewport="true"
+        android:layout_height="wrap_content"
+        android:id="@+id/tabLayout"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/guideLineHorizontal1">
+        app:layout_constraintTop_toBottomOf="@id/guideLineHorizontal1"/>
 
-
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/detailsLayout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@color/black2"
-            android:orientation="vertical">
-
-            <androidx.constraintlayout.widget.Guideline
-                android:id="@+id/guideLineHorizontal5"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                app:layout_constraintGuide_percent="0.1" />
-
-            <androidx.constraintlayout.widget.Guideline
-                android:id="@+id/guideLineVertical4"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                app:layout_constraintGuide_percent="0.05" />
-
-            <androidx.constraintlayout.widget.Guideline
-                android:id="@+id/guideLineVertical3"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                app:layout_constraintGuide_percent="0.95" />
-
-            <ImageView
-                android:id="@+id/backgroundImage"
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:adjustViewBounds="true"
-                android:contentDescription="@string/app_name"
-                android:scaleType="centerCrop"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-
-            <ImageView
-                android:id="@+id/watchList"
-                android:layout_width="25dp"
-                android:layout_height="25dp"
-                android:contentDescription="@string/app_name"
-                android:src="@drawable/ic_watch"
-                app:layout_constraintStart_toStartOf="@id/guideLineVertical4"
-                app:layout_constraintTop_toTopOf="@id/guideLineHorizontal5"
-                app:tint="#77FFFFFF" />
-
-            <ImageView
-                android:id="@+id/reviewImage"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="10dp"
-                android:src="@drawable/review_background"
-                app:layout_constraintBottom_toBottomOf="@id/watchList"
-                app:layout_constraintStart_toEndOf="@id/watchList"
-                app:layout_constraintTop_toTopOf="@id/watchList" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:ellipsize="none"
-                android:fontFamily="@font/adamina"
-                android:includeFontPadding="false"
-                android:maxLines="1"
-                android:text="REVIEWS"
-                android:textColor="#000000"
-                android:textSize="13sp"
-                android:id="@+id/reviewText"
-                android:textStyle="bold"
-                app:layout_constraintBottom_toBottomOf="@id/reviewImage"
-                app:layout_constraintEnd_toEndOf="@id/reviewImage"
-                app:layout_constraintStart_toStartOf="@id/reviewImage"
-                app:layout_constraintTop_toTopOf="@id/reviewImage" />
-
-            <ImageView
-                android:id="@+id/trailerImage"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="10dp"
-                android:src="@drawable/review_background"
-                app:layout_constraintBottom_toBottomOf="@id/watchList"
-                app:layout_constraintStart_toEndOf="@id/reviewImage"
-                app:layout_constraintTop_toTopOf="@id/watchList" />
-
-            <ImageView
-                android:id="@+id/videoImage"
-                android:layout_width="20dp"
-                android:layout_height="20dp"
-                android:layout_marginStart="4dp"
-                android:src="@drawable/ic_video"
-                app:layout_constraintBottom_toBottomOf="@id/trailerImage"
-                app:layout_constraintStart_toStartOf="@id/trailerImage"
-                app:layout_constraintTop_toTopOf="@id/trailerImage"
-                app:tint="@color/black2" />
-
-            <TextView
-                android:id="@+id/trailerText"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:ellipsize="none"
-                android:fontFamily="@font/adamina"
-                android:includeFontPadding="false"
-                android:maxLines="1"
-                android:text="TRAILER"
-                android:textColor="@color/black2"
-                android:textSize="12sp"
-                android:textStyle="bold"
-                app:layout_constraintBottom_toBottomOf="@id/trailerImage"
-                app:layout_constraintEnd_toEndOf="@id/trailerImage"
-                app:layout_constraintStart_toEndOf="@id/videoImage"
-                app:layout_constraintTop_toTopOf="@id/trailerImage" />
-
-            <ImageView
-                android:id="@+id/episodesImage"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="10dp"
-                android:src="@drawable/review_background"
-                android:visibility="invisible"
-                app:layout_constraintStart_toEndOf="@id/trailerImage"
-                app:layout_constraintTop_toTopOf="@id/trailerImage" />
-
-            <TextView
-                android:id="@+id/episodesText"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="SEASONS"
-                android:textColor="#000000"
-                android:textSize="13sp"
-                android:visibility="invisible"
-                app:layout_constraintBottom_toBottomOf="@id/episodesImage"
-                app:layout_constraintEnd_toEndOf="@id/episodesImage"
-                app:layout_constraintStart_toStartOf="@id/episodesImage"
-                app:layout_constraintTop_toTopOf="@id/episodesImage" />
-
-
-            <TextView
-                android:id="@+id/textDescription"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:contentDescription="@string/app_name"
-                android:fontFamily="@font/adamina"
-                android:includeFontPadding="false"
-                android:lineSpacingExtra="2dp"
-                android:paddingTop="20dp"
-                android:text="Quii tempor ipsum quis maximus egestas. Mauris ut nisl consequat, fringilla arcu non, sollicitudin dolor. Suspendisse ornare tincidunt augue, vel interdum justo egestas at. Proin consequat tellus sapien, eu aliquam quam aliquam quis. Proin et magna id eros tristique vehicula. Nulla facilisi. Curabitur eu erat semper, finibus nisi ut, semper diam. Morbi eu pulvinar nibh. Aliquam erat volutpat. "
-                android:textColor="@color/white"
-                android:textSize="13sp"
-                app:layout_constraintEnd_toEndOf="@id/guideLineVertical3"
-                app:layout_constraintStart_toStartOf="@id/guideLineVertical4"
-                app:layout_constraintTop_toBottomOf="@id/reviewImage" />
-
-            <View
-                android:id="@+id/viewDivider"
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:layout_marginTop="20dp"
-                android:background="#22FFFFFF"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/textDescription" />
-
-            <ImageView
-                android:id="@+id/subtitleImage"
-                android:layout_width="25dp"
-                android:layout_height="25dp"
-                android:layout_marginTop="15dp"
-                android:contentDescription="@string/app_name"
-                android:src="@drawable/ic_subtitles"
-                app:layout_constraintStart_toStartOf="@id/watchList"
-                app:layout_constraintTop_toBottomOf="@id/viewDivider"
-                app:tint="@color/white" />
-
-            <TextView
-                android:id="@+id/subText"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="25dp"
-                android:clickable="true"
-                android:ellipsize="none"
-                android:focusable="true"
-                android:fontFamily="@font/adamina"
-                android:includeFontPadding="false"
-                android:maxLines="1"
-                android:text="TURKCE"
-                android:textColor="@color/white"
-                android:textSize="17sp"
-                app:layout_constraintBottom_toBottomOf="@id/subtitleImage"
-                app:layout_constraintStart_toEndOf="@id/subtitleImage"
-                app:layout_constraintTop_toTopOf="@id/subtitleImage" />
-
-            <View
-                android:id="@+id/viewDivider2"
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:layout_marginTop="15dp"
-                android:background="#22FFFFFF"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/subtitleImage" />
-
-            <ImageView
-                android:id="@+id/dubImage"
-                android:layout_width="25dp"
-                android:layout_height="25dp"
-                android:layout_marginTop="15dp"
-                android:contentDescription="@string/app_name"
-                android:src="@drawable/ic_dub"
-                app:layout_constraintStart_toStartOf="@id/subtitleImage"
-                app:layout_constraintTop_toBottomOf="@id/viewDivider2"
-                app:tint="@color/white" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:ellipsize="none"
-                android:fontFamily="@font/adamina"
-                android:includeFontPadding="false"
-                android:maxLines="1"
-                android:text="SELECT DUBBING"
-                android:textColor="@color/white"
-                android:textSize="17sp"
-                app:layout_constraintStart_toStartOf="@id/subText"
-                app:layout_constraintTop_toTopOf="@id/dubImage" />
-
-            <View
-                android:id="@+id/viewDivider3"
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:layout_marginTop="15dp"
-                android:background="#22FFFFFF"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/dubImage" />
-
-        </androidx.constraintlayout.widget.ConstraintLayout>
-
-    </androidx.core.widget.NestedScrollView>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:layout_width="wrap_content"
@@ -503,18 +256,6 @@
         android:src="@drawable/ic_baseline_save_alt_24"
         android:scaleType="fitCenter"/>
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:layout_width="match_parent"
-        android:layout_height="80dp"
-        android:orientation="horizontal"
-        android:id="@+id/castRecyclerView"
-        android:layout_marginBottom="10dp"
-        android:background="@android:color/transparent"
-        app:layout_constraintBottom_toTopOf="@id/imgPlay"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-
-        />
 
     <LinearLayout
         android:layout_width="match_parent"

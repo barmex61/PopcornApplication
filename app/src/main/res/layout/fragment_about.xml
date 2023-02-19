@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+
+<androidx.core.widget.NestedScrollView
+    android:id="@+id/nestedScrollView3"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fillViewport="true"
+    >
+
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/detailsLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/recycler_bg"
+        >
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guideLineHorizontal5"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintGuide_percent="0.1" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guideLineVertical4"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent="0.05" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guideLineVertical3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent="0.95" />
+
+        <ImageView
+            android:id="@+id/backgroundImage"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:adjustViewBounds="true"
+            android:contentDescription="@string/app_name"
+            android:scaleType="centerCrop"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+
+        <TextView
+            android:id="@+id/textDescription"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:contentDescription="@string/app_name"
+            android:fontFamily="@font/adamina"
+            android:includeFontPadding="false"
+            android:lineSpacingExtra="2dp"
+            android:paddingTop="20dp"
+            android:textColor="@color/white"
+            android:textSize="13sp"
+            android:text="Lorem ımpsum Lorem ımpsum Lorem ımpsum Lorem ımpsumLorem ımpsum Lorem ımpsumLorem ımpsum Lorem ımpsumLorem ımpsum Lorem ımpsumLorem ımpsum Lorem ımpsumLorem ımpsum Lorem ımpsumLorem ımpsum Lorem ımpsumLorem ımpsumLorem ımpsum Lorem ımpsumLorem ımpsum Lorem ımpsumLorem ımpsum Lorem ımpsum Lorem ımpsum"
+            app:layout_constraintEnd_toEndOf="@id/guideLineVertical3"
+            app:layout_constraintStart_toStartOf="@id/guideLineVertical4"
+            android:layout_marginTop="10dp"
+            app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/bilgiText"
+                android:text="@string/film_bilgisi"
+                app:layout_constraintTop_toBottomOf="@id/textDescription"
+                app:layout_constraintStart_toStartOf="@id/textDescription"
+                android:layout_marginTop="20dp"
+                android:textColor="@color/white"
+                android:textStyle="bold"
+                android:textSize="15sp"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/orjinal_smi"
+                android:textColor="#8C8686"
+                android:layout_marginTop="10dp"
+                app:layout_constraintTop_toBottomOf="@id/bilgiText"
+                app:layout_constraintStart_toStartOf="@id/textDescription"
+                android:id="@+id/originalNameText"/>
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</androidx.core.widget.NestedScrollView>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
+

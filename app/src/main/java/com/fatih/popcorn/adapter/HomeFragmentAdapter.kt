@@ -30,7 +30,9 @@ class HomeFragmentAdapter @Inject constructor():RecyclerView.Adapter<HomeFragmen
             return oldItem.id==newItem.id
         }
     }
+
     private val searchAsyncListDiffer=AsyncListDiffer(this,discoverDataUtil)
+
 
     var discoverList:List<DiscoverResult>
         get() = searchAsyncListDiffer.currentList
@@ -38,6 +40,7 @@ class HomeFragmentAdapter @Inject constructor():RecyclerView.Adapter<HomeFragmen
     inner class HomeFragmentViewHolder(val binding:FragmentMainRvRowBinding):RecyclerView.ViewHolder(binding.root)
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): HomeFragmentViewHolder {
+
         return HomeFragmentViewHolder(DataBindingUtil.inflate(LayoutInflater.from(parent.context),
         R.layout.fragment_main_rv_row,parent,false))
     }
@@ -55,4 +58,5 @@ class HomeFragmentAdapter @Inject constructor():RecyclerView.Adapter<HomeFragmen
             }
         }
     }
+
 }

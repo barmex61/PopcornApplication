@@ -16,8 +16,8 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.OrientationHelper
 import androidx.recyclerview.widget.RecyclerView
+
 import com.fatih.popcorn.R
 import com.fatih.popcorn.adapter.CastRecyclerViewAdapter
 import com.fatih.popcorn.adapter.ViewPagerAdapter
@@ -41,10 +41,17 @@ import javax.inject.Inject
 import kotlin.Exception
 
 @AndroidEntryPoint
-class DetailsFragment @Inject constructor(private val castAdapter:CastRecyclerViewAdapter) : Fragment(R.layout.fragment_details) {
+class DetailsFragment @Inject constructor() : Fragment(R.layout.fragment_details) {
+
+    @Inject
+    lateinit var castAdapter:CastRecyclerViewAdapter
+    @Inject
+    lateinit var crewAdapter:CastRecyclerViewAdapter
 
     private lateinit var viewModel: DetailsFragmentViewModel
-    private lateinit var binding: FragmentDetailsBinding
+    private var _binding: FragmentDetailsBinding?=null
+    private val binding:FragmentDetailsBinding
+    get() = _binding!!
     private var selectedId: Int? = null
     private var selectedResponse: DetailResponse? = null
     private var selectedImageResponse:ImageResponse?=null
@@ -52,44 +59,24 @@ class DetailsFragment @Inject constructor(private val castAdapter:CastRecyclerVi
     private var darkMutedColor: Int? = null
     private var isItInDatabase = false
     private var job:Job?=null
+    private var job2:Job?=null
     private var searchLanguage= language
+    private var castRecyclerView:RecyclerView?=null
+    private var crewRecyclerView:RecyclerView?=null
     private val handler = CoroutineExceptionHandler{ _,throwable->
         println("Caught exception $throwable")
     }
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
-        binding = FragmentDetailsBinding.inflate(inflater, container, false)
+        _binding = FragmentDetailsBinding.inflate(inflater, container, false)
         doInitialization()
         return binding.root
     }
 
     private fun doInitialization() {
         setStatusBarPadding()
-        binding.castRecyclerView.layoutManager=LinearLayoutManager(requireContext())
-        binding.castRecyclerView.adapter=castAdapter
+        setupCastRecyclerView()
         binding.backgroundImage.colorFilter = colorMatrixColorFilter
         viewModel = ViewModelProvider(this)[DetailsFragmentViewModel::class.java]
-        binding.imgPlay.setOnClickListener {
-            binding.castRecyclerView.layoutManager=LinearLayoutManager(requireContext(),LinearLayoutManager.HORIZONTAL,false)
-            binding.castRecyclerView.visibility=View.VISIBLE
-            binding.castRecyclerView.adapter=castAdapter
-            /* val animation=AnimationUtils.loadAnimation(requireContext(),R.anim.fall_down)
-            animation.setAnimationListener(
-                object :Animation.AnimationListener{
-                    override fun onAnimationEnd(animation: Animation?) {
-                        binding.castRecyclerView.visibility=View.GONE
-                    }
-                    override fun onAnimationRepeat(animation: Animation?)=Unit
-                    override fun onAnimationStart(animation: Animation?) {
-                        binding.castRecyclerView.visibility=View.VISIBLE
-                    }
-                }
-            )  */
-            /* if (binding.castRecyclerView.visibility==View.GONE){
-                binding.castRecyclerView.startAnimation(animation)
-            }else{
-                binding.castRecyclerView.startAnimation(animation)
-            } */
-        }
         //binding.trailerImage.setOnClickListener { youtube() }
         binding.watchList.setOnClickListener { watchList() }
         binding.watchListButton.setOnClickListener { findNavController().navigate(DetailsFragmentDirections.actionDetailsFragmentToWatchListFragment()) }
@@ -109,6 +96,14 @@ class DetailsFragment @Inject constructor(private val castAdapter:CastRecyclerVi
         observeLiveData()
     }
 
+    private fun setupCastRecyclerView(){
+        crewRecyclerView=binding.crewRecyclerView
+        crewRecyclerView!!.layoutManager=LinearLayoutManager(requireContext(),LinearLayoutManager.HORIZONTAL,false)
+        crewRecyclerView!!.adapter=crewAdapter
+        castRecyclerView=binding.castRecyclerView
+        castRecyclerView!!.layoutManager=LinearLayoutManager(requireContext(),LinearLayoutManager.HORIZONTAL,false)
+        castRecyclerView!!.adapter=castAdapter
+    }
     @SuppressLint("InternalInsetResource", "DiscouragedApi")
     private fun setStatusBarPadding() {
         val statusBarHeightId = resources.getIdentifier("status_bar_height", "dimen", "android")
@@ -128,8 +123,9 @@ class DetailsFragment @Inject constructor(private val castAdapter:CastRecyclerVi
                         setLayoutVisibility(show = false, showToast = true, resource.message)
                     }
                     Status.SUCCESS -> {
+
                         resource.data?.let {
-                            println(it.id)
+                            println("detailresponse")
                             selectedResponse = it
                             viewModel.isItIntDatabase(it.id!!)
                             setLayoutVisibility(show = true, showToast = false, null)
@@ -152,15 +148,32 @@ class DetailsFragment @Inject constructor(private val castAdapter:CastRecyclerVi
         viewModel.creditsResponse.observe(viewLifecycleOwner){
             when(it.status){
                 Status.SUCCESS->{
-                    it.data?.let {
 
-                        val urlList=it.cast.map { cast->
-                            cast.profile_path
+                    it.data?.let {
+                        println("creditsResponse")
+                        job2?.cancel()
+                        job2=lifecycleScope.launch(Dispatchers.Main + handler){
+                            val castList=async(Dispatchers.Default){
+                                it.cast.filter {
+                                    !it.profile_path.isNullOrEmpty() && it.profile_path != "null"
+                                }.distinctBy {
+                                    it.profile_path
+                                }.map { cast->
+                                    Triple(cast.name,cast.character,cast.profile_path!!)
+                                }
+                            }
+                            val crewList=async(Dispatchers.Default){
+                                it.crew.filter {
+                                    !it.profile_path.isNullOrEmpty() && it.profile_path != "null"
+                                }.distinctBy {
+                                    it.profile_path
+                                }.map { crew->
+                                    Triple(crew.name,crew.job,crew.profile_path!!)
+                                }
+                            }
+                            crewAdapter.castList=crewList.await()
+                            castAdapter.castList=castList.await()
                         }
-                        println("size ${it.cast.size}")
-                        castAdapter.urlList=urlList
-                        println(castAdapter.urlList.size)
-                        castAdapter.notifyDataSetChanged()
                     }
                 }
                 else->Unit
@@ -172,6 +185,7 @@ class DetailsFragment @Inject constructor(private val castAdapter:CastRecyclerVi
                 when (resource.status) {
                   Status.SUCCESS -> {
                         resource.data?.let { it ->
+                            println("imageResponse")
                             selectedImageResponse=it
 
                             val imageUrls=selectedImageResponse!!.backdrops.map {backdrop->
@@ -248,7 +262,7 @@ class DetailsFragment @Inject constructor(private val castAdapter:CastRecyclerVi
         job?.cancel()
         val bitmapList= mutableListOf<Bitmap>()
         if (imageUrls.isNotEmpty()){
-            job=lifecycleScope.launch(Dispatchers.IO + handler){
+            job=lifecycleScope.launch (Dispatchers.Main + handler){
                 val subList=if (imageUrls.size>=9) imageUrls.subList(0,9) else imageUrls.subList(0,imageUrls.size-1)
                 try {
                     println("called")
@@ -339,10 +353,12 @@ class DetailsFragment @Inject constructor(private val castAdapter:CastRecyclerVi
             it.genres?.let {
             var name=""
                 for(i in it.indices){
-                    if (i == it.size - 1)
-                    name += it[i]
-                    else
-                    name += "${it[i]} , "
+                    if (i == it.size-1){
+                        name += it[i]
+                    }
+                    else{
+                        name += "${it[i]} , "
+                    }
                     if(i == 5) break
                 }
             }
@@ -399,14 +415,21 @@ class DetailsFragment @Inject constructor(private val castAdapter:CastRecyclerVi
         }
     }
 
-    override fun onStop() {
-        super.onStop()
+    override fun onDestroyView() {
         job?.cancel()
+        job2?.cancel()
+        castRecyclerView?.adapter=null
+        crewRecyclerView?.adapter=null
+        castRecyclerView=null
+        crewRecyclerView=null
+        super.onDestroyView()
     }
 
     override fun onDestroy() {
-        super.onDestroy()
         job?.cancel()
+        job2?.cancel()
+        super.onDestroy()
+
     }
 
 }
