@@ -21,5 +21,17 @@
     <string name="seasons">SEZONLAR</string>
     <string name="film_bilgisi">Film Bilgisi</string>
     <string name="orjinal_smi">Orjinal İsmi</string>
+    <string name="durumu">Durumu</string>
+    <string name="s_resi">Süresi</string>
+    <string name="orjinal_dili">Orjinal Dili</string>
+    <string name="yap_mc_lke">Yapımcı Ülke</string>
+    <string name="irketler">Şirketler</string>
+    <string name="b_t_esi">Bütçesi</string>
+    <string name="has_lat">Hasılatı</string>
+    <string name="tagline">Tagline</string>
+    <string name="puan_ortalamas">Puan Ortalaması</string>
+    <string name="oy_say_s">Oy Sayısı</string>
+    <string name="a_klama">Açıklama</string>
+    <string name="t_r">Tür</string>
 
 </resources>

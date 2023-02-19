@@ -66,6 +66,7 @@ class HomeFragment @Inject constructor(): Fragment(R.layout.fragment_home) {
     private var tvShowSortPosition=0
     private lateinit var onScrollListener: OnScrollListener
     private lateinit var adapter: HomeFragmentAdapter
+    private var view:View?=null
     private var movieSortPosition=0
     private val viewModel:HomeFragmentViewModel by lazy{
         MainActivity.viewModel
@@ -73,7 +74,7 @@ class HomeFragment @Inject constructor(): Fragment(R.layout.fragment_home) {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         _binding=DataBindingUtil.inflate(inflater,R.layout.fragment_home,container,false)
-        val view=_binding!!.root
+        view=binding.root
         doInitialization()
         return view
     }
@@ -204,6 +205,7 @@ class HomeFragment @Inject constructor(): Fragment(R.layout.fragment_home) {
     }
     private fun setupRecyclerView(){
         recyclerView =binding.moviesRecyclerView
+        recyclerView!!.setItemViewCacheSize(100)
         recyclerView!!.adapter=adapter
         recyclerView!!.layoutManager= GridLayoutManager(requireContext(),
             Resources.getSystem().displayMetrics.widthPixels/200)
@@ -439,6 +441,14 @@ class HomeFragment @Inject constructor(): Fragment(R.layout.fragment_home) {
         }else{
             binding.progressBar.visibility=View.GONE
         }
+    }
+
+    override fun onDestroyView() {
+        binding.moviesRecyclerView.removeOnScrollListener(onScrollListener)
+        binding.moviesRecyclerView.adapter=null
+        view=null
+        _binding=null
+        super.onDestroyView()
     }
 
 }

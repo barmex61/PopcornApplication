@@ -73,7 +73,7 @@
     </fragment>
     <fragment
         android:id="@+id/moviePlayFragment"
-        android:name="com.fatih.popcorn.ui.TrailerFragment"
+        android:name="com.fatih.popcorn.ui.tabfragments.TrailerFragment"
         android:label="MoviePlayFragment" >
         <argument
             android:name="id"

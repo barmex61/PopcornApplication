@@ -3,14 +3,30 @@
 <androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
+    android:background="@drawable/recycler_bg"
     android:layout_height="match_parent">
+
+
+    <ImageView
+        android:id="@+id/backgroundImage"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:adjustViewBounds="true"
+        android:contentDescription="@string/app_name"
+        android:scaleType="centerCrop"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
 
 <androidx.core.widget.NestedScrollView
     android:id="@+id/nestedScrollView3"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:paddingTop="30dp"
     android:fillViewport="true"
     >
 
@@ -19,7 +35,6 @@
         android:id="@+id/detailsLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@drawable/recycler_bg"
         >
 
         <androidx.constraintlayout.widget.Guideline
@@ -43,19 +58,18 @@
             android:orientation="vertical"
             app:layout_constraintGuide_percent="0.95" />
 
-        <ImageView
-            android:id="@+id/backgroundImage"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:adjustViewBounds="true"
-            android:contentDescription="@string/app_name"
-            android:scaleType="centerCrop"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/a_klama"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:textColor="@color/white"
+            android:id="@+id/acıklama"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="@id/guideLineVertical4"
 
-
+     />
         <TextView
             android:id="@+id/textDescription"
             android:layout_width="0dp"
@@ -64,41 +78,333 @@
             android:fontFamily="@font/adamina"
             android:includeFontPadding="false"
             android:lineSpacingExtra="2dp"
-            android:paddingTop="20dp"
             android:textColor="@color/white"
             android:textSize="13sp"
             android:text="Lorem ımpsum Lorem ımpsum Lorem ımpsum Lorem ımpsumLorem ımpsum Lorem ımpsumLorem ımpsum Lorem ımpsumLorem ımpsum Lorem ımpsumLorem ımpsum Lorem ımpsumLorem ımpsum Lorem ımpsumLorem ımpsum Lorem ımpsumLorem ımpsumLorem ımpsum Lorem ımpsumLorem ımpsum Lorem ımpsumLorem ımpsum Lorem ımpsum Lorem ımpsum"
             app:layout_constraintEnd_toEndOf="@id/guideLineVertical3"
             app:layout_constraintStart_toStartOf="@id/guideLineVertical4"
             android:layout_marginTop="10dp"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toBottomOf="@+id/acıklama" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:id="@+id/bilgiText"
-                android:text="@string/film_bilgisi"
+                android:textStyle="bold"
+                android:textSize="16sp"
+                android:textColor="@color/white"
+                android:id="@+id/tür"
+                android:text="@string/t_r"
                 app:layout_constraintTop_toBottomOf="@id/textDescription"
                 app:layout_constraintStart_toStartOf="@id/textDescription"
-                android:layout_marginTop="20dp"
-                android:textColor="@color/white"
-                android:textStyle="bold"
-                android:textSize="15sp"/>
+                android:layout_marginTop="10dp"
+                />
+
+
+        <androidx.constraintlayout.helper.widget.Flow
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toTopOf="@id/tür"
+            app:layout_constraintStart_toStartOf="@id/originalNameText"
+            android:id="@+id/flow"
+            app:flow_horizontalBias="0"
+            app:flow_horizontalGap="10dp"
+            app:flow_horizontalStyle="packed"
+            app:flow_verticalBias="0"
+            app:flow_wrapMode="chain" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/bilgiText"
+            android:text="@string/film_bilgisi"
+            app:layout_constraintTop_toBottomOf="@id/flow"
+            app:layout_constraintStart_toStartOf="@id/textDescription"
+            android:layout_marginTop="20dp"
+            android:textColor="@color/white"
+            android:textStyle="bold"
+            android:textSize="16sp"/>
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/orjinal_smi"
-                android:textColor="#8C8686"
+                android:textColor="#B5ABAB"
                 android:layout_marginTop="10dp"
+                android:textSize="13sp"
                 app:layout_constraintTop_toBottomOf="@id/bilgiText"
                 app:layout_constraintStart_toStartOf="@id/textDescription"
-                android:id="@+id/originalNameText"/>
+                android:id="@+id/originalName"/>
 
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="Ant-Man İki Karınca"
+            android:textSize="13sp"
+            android:textColor="@color/white"
+            app:layout_constraintStart_toEndOf="@id/originalName"
+            app:layout_constraintTop_toTopOf="@id/originalName"
+            app:layout_constraintEnd_toStartOf="@id/guideLineVertical3"
+            android:layout_marginStart="50dp"
+            android:ellipsize="end"
+            android:maxLines="2"
+            android:id="@+id/originalNameText"/>
+
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/durumu"
+            android:textColor="#B5ABAB"
+            android:layout_marginTop="10dp"
+            android:textSize="13sp"
+            app:layout_constraintTop_toBottomOf="@id/originalNameText"
+            app:layout_constraintStart_toStartOf="@id/textDescription"
+            android:id="@+id/status"/>
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="Yayınlandı"
+            android:textSize="13sp"
+            android:textColor="@color/white"
+            app:layout_constraintStart_toStartOf="@id/originalNameText"
+            app:layout_constraintTop_toTopOf="@id/status"
+            app:layout_constraintEnd_toStartOf="@id/guideLineVertical3"
+            android:ellipsize="end"
+            android:maxLines="2"
+            android:id="@+id/statusText"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/s_resi"
+            android:textColor="#B5ABAB"
+            android:layout_marginTop="10dp"
+            android:textSize="13sp"
+            app:layout_constraintTop_toBottomOf="@id/statusText"
+            app:layout_constraintStart_toStartOf="@id/textDescription"
+            android:id="@+id/time"/>
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="2 saat 15 dk"
+            android:textSize="13sp"
+            android:textColor="@color/white"
+            app:layout_constraintStart_toStartOf="@id/originalNameText"
+            app:layout_constraintTop_toTopOf="@id/time"
+            app:layout_constraintEnd_toStartOf="@id/guideLineVertical3"
+            android:ellipsize="end"
+            android:maxLines="2"
+            android:id="@+id/timeText"/>
+
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/orjinal_dili"
+            android:textColor="#B5ABAB"
+            android:layout_marginTop="10dp"
+            android:textSize="13sp"
+            app:layout_constraintTop_toBottomOf="@id/timeText"
+            app:layout_constraintStart_toStartOf="@id/textDescription"
+            android:id="@+id/originalLanguage"/>
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="İngilizce"
+            android:textSize="13sp"
+            android:textColor="@color/white"
+            app:layout_constraintStart_toStartOf="@id/originalNameText"
+            app:layout_constraintTop_toTopOf="@id/originalLanguage"
+            app:layout_constraintEnd_toStartOf="@id/guideLineVertical3"
+            android:ellipsize="end"
+            android:maxLines="2"
+            android:id="@+id/originalLanguageText"/>
+
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/yap_mc_lke"
+            android:textColor="#B5ABAB"
+            android:layout_marginTop="10dp"
+            android:textSize="13sp"
+            app:layout_constraintTop_toBottomOf="@id/originalLanguageText"
+            app:layout_constraintStart_toStartOf="@id/textDescription"
+            android:id="@+id/country"/>
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="Türkiye"
+            android:textSize="13sp"
+            android:textColor="@color/white"
+            app:layout_constraintStart_toStartOf="@id/originalNameText"
+            app:layout_constraintTop_toTopOf="@id/country"
+            app:layout_constraintEnd_toStartOf="@id/guideLineVertical3"
+            android:ellipsize="end"
+            android:maxLines="2"
+            android:id="@+id/countryText"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/irketler"
+            android:textColor="#B5ABAB"
+            android:layout_marginTop="10dp"
+            android:textSize="13sp"
+            app:layout_constraintTop_toBottomOf="@id/countryText"
+            app:layout_constraintStart_toStartOf="@id/textDescription"
+            android:id="@+id/companies"/>
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="Marvel Studios"
+            android:textSize="13sp"
+            android:textColor="@color/white"
+            app:layout_constraintStart_toStartOf="@id/originalNameText"
+            app:layout_constraintTop_toTopOf="@id/companies"
+            app:layout_constraintEnd_toStartOf="@id/guideLineVertical3"
+            android:ellipsize="end"
+            android:maxLines="2"
+            android:id="@+id/companyText"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/b_t_esi"
+            android:textColor="#B5ABAB"
+            android:layout_marginTop="10dp"
+            android:textSize="13sp"
+            app:layout_constraintTop_toBottomOf="@id/companyText"
+            app:layout_constraintStart_toStartOf="@id/textDescription"
+            android:id="@+id/fund"/>
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="1.5 m $"
+            android:textSize="13sp"
+            android:textColor="@color/white"
+            app:layout_constraintStart_toStartOf="@id/originalNameText"
+            app:layout_constraintTop_toTopOf="@id/fund"
+            app:layout_constraintEnd_toStartOf="@id/guideLineVertical3"
+            android:ellipsize="end"
+            android:maxLines="2"
+            android:id="@+id/fundText"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/has_lat"
+            android:textColor="#B5ABAB"
+            android:layout_marginTop="10dp"
+            android:textSize="13sp"
+            app:layout_constraintTop_toBottomOf="@id/fundText"
+            app:layout_constraintStart_toStartOf="@id/textDescription"
+            android:id="@+id/income"/>
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="2.5 m $"
+            android:textSize="13sp"
+            android:textColor="@color/white"
+            app:layout_constraintStart_toStartOf="@id/originalNameText"
+            app:layout_constraintTop_toTopOf="@id/income"
+            app:layout_constraintEnd_toStartOf="@id/guideLineVertical3"
+            android:ellipsize="end"
+            android:maxLines="2"
+            android:id="@+id/incomeText"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/tagline"
+            android:textColor="#B5ABAB"
+            android:layout_marginTop="10dp"
+            android:textSize="13sp"
+            app:layout_constraintTop_toBottomOf="@id/incomeText"
+            app:layout_constraintStart_toStartOf="@id/textDescription"
+            android:id="@+id/tagline"/>
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="Wakanda Forever"
+            android:textSize="13sp"
+            android:textColor="@color/white"
+            app:layout_constraintStart_toStartOf="@id/originalNameText"
+            app:layout_constraintTop_toTopOf="@id/tagline"
+            app:layout_constraintEnd_toStartOf="@id/guideLineVertical3"
+            android:ellipsize="end"
+            android:maxLines="2"
+            android:id="@+id/taglineText"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/puan_ortalamas"
+            android:textColor="#B5ABAB"
+            android:layout_marginTop="10dp"
+            android:textSize="13sp"
+            app:layout_constraintTop_toBottomOf="@id/taglineText"
+            app:layout_constraintStart_toStartOf="@id/textDescription"
+            android:id="@+id/voteAverage"/>
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="7.2"
+            android:textSize="13sp"
+            android:textColor="@color/white"
+            app:layout_constraintStart_toStartOf="@id/originalNameText"
+            app:layout_constraintTop_toTopOf="@id/voteAverage"
+            app:layout_constraintEnd_toStartOf="@id/guideLineVertical3"
+            android:ellipsize="end"
+            android:maxLines="2"
+            android:id="@+id/voteAverageText"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/oy_say_s"
+            android:textColor="#B5ABAB"
+            android:layout_marginTop="10dp"
+            android:textSize="13sp"
+            app:layout_constraintTop_toBottomOf="@id/voteAverageText"
+            app:layout_constraintStart_toStartOf="@id/textDescription"
+            android:id="@+id/voteCount"/>
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="550"
+            android:textSize="13sp"
+            android:textColor="@color/white"
+            app:layout_constraintStart_toStartOf="@id/originalNameText"
+            app:layout_constraintTop_toTopOf="@id/voteCount"
+            app:layout_constraintEnd_toStartOf="@id/guideLineVertical3"
+            android:ellipsize="end"
+            android:maxLines="2"
+            android:id="@+id/voteCountText"/>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 </androidx.core.widget.NestedScrollView>
+
+    <ProgressBar
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/aboutProgressBar"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        android:visibility="visible"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
 

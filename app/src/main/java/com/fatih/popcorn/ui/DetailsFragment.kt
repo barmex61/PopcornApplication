@@ -3,38 +3,42 @@ package com.fatih.popcorn.ui
 import android.annotation.SuppressLint
 import android.content.res.ColorStateList
 import android.graphics.Bitmap
+import android.graphics.PorterDuff
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.view.*
-import android.view.animation.Animation
-import android.view.animation.AnimationUtils
-import android.widget.ImageView
 import android.widget.Toast
 import androidx.core.content.ContextCompat
+
 import androidx.core.view.updatePadding
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
-import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 
 import com.fatih.popcorn.R
 import com.fatih.popcorn.adapter.CastRecyclerViewAdapter
+import com.fatih.popcorn.adapter.DetailsFragmentViewPagerAdapter
 import com.fatih.popcorn.adapter.ViewPagerAdapter
 import com.fatih.popcorn.databinding.FragmentDetailsBinding
 import com.fatih.popcorn.entities.local.RoomEntity
 import com.fatih.popcorn.entities.remote.detailresponse.DetailResponse
 import com.fatih.popcorn.entities.remote.imageresponse.ImageResponse
 import com.fatih.popcorn.other.Constants.checkIsItInMovieListOrNot
-import com.fatih.popcorn.other.Constants.colorMatrixColorFilter
 import com.fatih.popcorn.other.Constants.language
 import com.fatih.popcorn.other.Constants.movieSearch
 import com.fatih.popcorn.other.Constants.tvSearch
 import com.fatih.popcorn.other.Status
+import com.fatih.popcorn.ui.tabfragments.*
 import com.fatih.popcorn.viewmodel.DetailsFragmentViewModel
+import com.google.android.material.tabs.TabLayoutMediator
 import com.squareup.picasso.Picasso
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.*
+import kotlinx.coroutines.Runnable
 import java.math.RoundingMode
 import java.util.*
 import javax.inject.Inject
@@ -51,16 +55,23 @@ class DetailsFragment @Inject constructor() : Fragment(R.layout.fragment_details
     private lateinit var viewModel: DetailsFragmentViewModel
     private var _binding: FragmentDetailsBinding?=null
     private val binding:FragmentDetailsBinding
-    get() = _binding!!
+        get() = _binding!!
+    private var viewPagerHandler:Handler?=null
+    private var runnable:Runnable?=null
     private var selectedId: Int? = null
+    private var _myFragmentManager:FragmentManager?=null
+    private val myFragmentManager: FragmentManager
+    get() = _myFragmentManager!!
     private var selectedResponse: DetailResponse? = null
     private var selectedImageResponse:ImageResponse?=null
     private var vibrantColor: Int? = null
     private var darkMutedColor: Int? = null
     private var isItInDatabase = false
     private var job:Job?=null
+    private var fragmentViewPagerAdapter:DetailsFragmentViewPagerAdapter?=null
     private var job2:Job?=null
     private var searchLanguage= language
+    private var fragmentList : List<Fragment>? =null
     private var castRecyclerView:RecyclerView?=null
     private var crewRecyclerView:RecyclerView?=null
     private val handler = CoroutineExceptionHandler{ _,throwable->
@@ -74,13 +85,12 @@ class DetailsFragment @Inject constructor() : Fragment(R.layout.fragment_details
 
     private fun doInitialization() {
         setStatusBarPadding()
-        setupCastRecyclerView()
-        binding.backgroundImage.colorFilter = colorMatrixColorFilter
+        setupFragmentViewPager()
+        //setupCastRecyclerView()
+        //binding.backgroundImage.colorFilter = colorMatrixColorFilter
         viewModel = ViewModelProvider(this)[DetailsFragmentViewModel::class.java]
-        //binding.trailerImage.setOnClickListener { youtube() }
-        binding.watchList.setOnClickListener { watchList() }
+        //binding.watchList.setOnClickListener { watchList() }
         binding.watchListButton.setOnClickListener { findNavController().navigate(DetailsFragmentDirections.actionDetailsFragmentToWatchListFragment()) }
-        //binding.reviewImage.setOnClickListener { goWeb() }
         binding.backButton.setOnClickListener { findNavController().navigateUp() }
         //binding.episodesImage.setOnClickListener {view-> goEpisodes(view) }
         arguments?.let {
@@ -96,18 +106,37 @@ class DetailsFragment @Inject constructor() : Fragment(R.layout.fragment_details
         observeLiveData()
     }
 
-    private fun setupCastRecyclerView(){
+    private fun setupFragmentViewPager(){
+        fragmentList= listOf(AboutFragment(),CastFragment(),ReviewFragment(),RecommendFragment(),FamiliarFragment(),TrailerFragment())
+        _myFragmentManager=childFragmentManager
+        fragmentViewPagerAdapter=DetailsFragmentViewPagerAdapter(fragmentList!!,myFragmentManager,lifecycle)
+        binding.detailsViewPager.adapter=fragmentViewPagerAdapter
+        TabLayoutMediator(binding.tabLayout,binding.detailsViewPager,true,true){tab,position->
+           when(position){
+               0->{ tab.text = "Hakkında" }
+               1->{tab.text="Oyuncular"}
+               2->{tab.text="Yorumlar"}
+               3->{tab.text="Önerilenler"}
+               4->{tab.text="Benzerleri"}
+               5->{tab.text="Fragmanlar"}
+           }
+
+        }.attach()
+
+    }
+
+    /* private fun setupCastRecyclerView(){
         crewRecyclerView=binding.crewRecyclerView
         crewRecyclerView!!.layoutManager=LinearLayoutManager(requireContext(),LinearLayoutManager.HORIZONTAL,false)
         crewRecyclerView!!.adapter=crewAdapter
         castRecyclerView=binding.castRecyclerView
         castRecyclerView!!.layoutManager=LinearLayoutManager(requireContext(),LinearLayoutManager.HORIZONTAL,false)
         castRecyclerView!!.adapter=castAdapter
-    }
+    } */
     @SuppressLint("InternalInsetResource", "DiscouragedApi")
     private fun setStatusBarPadding() {
         val statusBarHeightId = resources.getIdentifier("status_bar_height", "dimen", "android")
-        val statusBarHeight = resources.getDimensionPixelSize(statusBarHeightId) + 10
+        val statusBarHeight = resources.getDimensionPixelSize(statusBarHeightId)
         binding.linearLayout.updatePadding(top = statusBarHeight)
     }
 
@@ -138,10 +167,10 @@ class DetailsFragment @Inject constructor() : Fragment(R.layout.fragment_details
         viewModel.isItInDatabase.observe(viewLifecycleOwner){
             if(it){
                 isItInDatabase=it
-                binding.watchList.imageTintList = ColorStateList.valueOf(ContextCompat.getColor(requireContext(),R.color.white))
+                //binding.watchList.imageTintList = ColorStateList.valueOf(ContextCompat.getColor(requireContext(),R.color.white))
             }else{
                 isItInDatabase=it
-                binding.watchList.imageTintList =ColorStateList.valueOf(ContextCompat.getColor(requireContext(),R.color.gray))
+                //binding.watchList.imageTintList =ColorStateList.valueOf(ContextCompat.getColor(requireContext(),R.color.gray))
             }
         }
 
@@ -220,12 +249,38 @@ class DetailsFragment @Inject constructor() : Fragment(R.layout.fragment_details
         portraits=if (portraits.size>=9) portraits.subList(0,9) else portraits.subList(0,portraits.size)
         landscapes=if (landscapes.size>=9) landscapes.subList(0,9) else landscapes.subList(0,landscapes.size)
         val viewPagerAdapter=ViewPagerAdapter(requireContext(),portraits,landscapes,shouldFitXY)
-        binding.posterImageViewPager.adapter=viewPagerAdapter
+        binding.posterImageViewPager.apply {
+            adapter=viewPagerAdapter
+            offscreenPageLimit=3
+        }
         binding.circleIndicator.setViewPager(binding.posterImageViewPager)
+        binding.posterImageViewPager.setCurrentItem(0,true)
+        viewPagerHandler= Handler(Looper.getMainLooper())
+        var started=false
+        runnable= Runnable {
+            try {
+                binding.posterImageViewPager.apply {
+                    handler.postDelayed(runnable!!,5000)
+                    if (currentItem==this.adapter!!.count-1){
+                        currentItem=0
+                        setCurrentItem(currentItem,true)
+                        return@apply
+                    }
+                    if(started){
+                        setCurrentItem(currentItem+1,true)
+                    }
+                    started=true
 
+                }
+            }catch (e:Exception){
+                e.printStackTrace()
+            }
+        }
+        viewPagerHandler!!.post(runnable!!)
     }
 
-    private fun startAnimation(bitmapList: List<Bitmap>){
+
+    /* private fun startAnimation(bitmapList: List<Bitmap>){
         val imageView=binding.backgroundImage
         imageView.scaleType=ImageView.ScaleType.FIT_XY
         imageView.clearAnimation()
@@ -257,7 +312,8 @@ class DetailsFragment @Inject constructor() : Fragment(R.layout.fragment_details
                 })
         }
         imageView.startAnimation(animation)
-    }
+    }  */
+
     private fun setImageAnimations(imageUrls:List<String>){
         job?.cancel()
         val bitmapList= mutableListOf<Bitmap>()
@@ -274,7 +330,7 @@ class DetailsFragment @Inject constructor() : Fragment(R.layout.fragment_details
                     }
                     withContext(Dispatchers.Main){
                         if (bitmapList.isNotEmpty()){
-                            startAnimation(bitmapList)
+                           // startAnimation(bitmapList)
                         }
                     }
                 }catch (e:Exception){
@@ -340,13 +396,18 @@ class DetailsFragment @Inject constructor() : Fragment(R.layout.fragment_details
         val darkMutedColor=ColorStateList.valueOf(darkMutedColor!!)
         binding.imgPlay.backgroundTintList = vibrantColor
         binding.imgPlay.imageTintList= darkMutedColor
+        //binding.ratingBar.progressTintMode=PorterDuff.Mode.SRC_ATOP
+        binding.ratingBar.progressTintList=vibrantColor
+        binding.linearLayout.backgroundTintList=vibrantColor
+        binding.tabLayout.setTabTextColors(ContextCompat.getColor(requireContext(),R.color.white),this.vibrantColor!!)
+        binding.tabLayout.setSelectedTabIndicatorColor(this.vibrantColor!!)
         binding.saveImage.backgroundTintList = vibrantColor
         binding.saveImage.imageTintList = darkMutedColor
-        binding.trailerImage.imageTintList = vibrantColor
-        binding.trailerText.setTextColor(darkMutedColor)
-        binding.videoImage.imageTintList=darkMutedColor
-        binding.reviewImage.imageTintList = darkMutedColor
-        binding.reviewText.setTextColor(vibrantColor)
+       // binding.trailerImage.imageTintList = vibrantColor
+        //binding.trailerText.setTextColor(darkMutedColor)
+        //binding.videoImage.imageTintList=darkMutedColor
+        //binding.reviewImage.imageTintList = darkMutedColor
+        //binding.reviewText.setTextColor(vibrantColor)
         binding.ratingBar.rating = (selectedResponse?.vote_average?.toFloat()?.div(2f))?:0f
         selectedResponse?.let { it ->
 
@@ -366,18 +427,18 @@ class DetailsFragment @Inject constructor() : Fragment(R.layout.fragment_details
             if (it.episode_run_time?.isNotEmpty() == true) {
                 text= it.episode_run_time.last().toString()
             }
-            binding.textDescription.text = it.overview
+            //binding.textDescription.text = it.overview
             binding.runtimeText.text = "${it.runtime?:text} min"
             binding.ratingText.text = it.vote_average?.toBigDecimal()?.setScale(1, RoundingMode.UP)?.toString() + "/10"
             binding.nameText.text = it.original_title?:it.original_name
             binding.yearText.text = it.release_date?:it.last_air_date
 
             if (checkIsItInMovieListOrNot()) {
-                binding.episodesImage.visibility = View.INVISIBLE
-                binding.episodesText.visibility = View.INVISIBLE
+              //  binding.episodesImage.visibility = View.INVISIBLE
+                //binding.episodesText.visibility = View.INVISIBLE
             } else {
-                binding.episodesImage.visibility = View.VISIBLE
-                binding.episodesText.visibility = View.VISIBLE
+                //binding.episodesImage.visibility = View.VISIBLE
+                //binding.episodesText.visibility = View.VISIBLE
             }
         }
     }
@@ -418,18 +479,20 @@ class DetailsFragment @Inject constructor() : Fragment(R.layout.fragment_details
     override fun onDestroyView() {
         job?.cancel()
         job2?.cancel()
+        binding.detailsViewPager.adapter=null
+        _myFragmentManager=null
         castRecyclerView?.adapter=null
         crewRecyclerView?.adapter=null
         castRecyclerView=null
         crewRecyclerView=null
+        fragmentViewPagerAdapter=null
+        fragmentList=null
+        viewPagerHandler=null
+        runnable=null
+        _binding=null
         super.onDestroyView()
     }
 
-    override fun onDestroy() {
-        job?.cancel()
-        job2?.cancel()
-        super.onDestroy()
 
-    }
 
 }

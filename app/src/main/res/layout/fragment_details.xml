@@ -7,10 +7,10 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/mainLayout"
+    android:layoutAnimation="@anim/layout_animation"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layoutAnimation="@anim/layout_animation"
-    android:background="#000000"
+    android:background="@drawable/recycler_bg"
     app:layoutDescription="@xml/details_scene">
 
     <androidx.constraintlayout.widget.Guideline
@@ -25,7 +25,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        app:layout_constraintGuide_percent="0.65" />
+        app:layout_constraintGuide_percent="0.45" />
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guideLineVertical5"
@@ -87,14 +87,13 @@
             style="@style/ratingBarStyle"
             android:layout_width="80dp"
             android:layout_height="17dp"
+            android:backgroundTint="@color/white"
             android:isIndicator="true"
             android:max="10"
             android:numStars="5"
             android:stepSize="1"
-            android:progressTint="@color/white"
-            android:backgroundTint="@color/white"
-            app:layout_constraintStart_toEndOf="@id/guideLineVertical1"
             app:layout_constraintBottom_toTopOf="@id/nameText"
+            app:layout_constraintStart_toEndOf="@id/guideLineVertical1"
 
             />
 
@@ -104,8 +103,8 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="5dp"
             android:contentDescription="@string/app_name"
-            android:textSize="12sp"
             android:textColor="@color/white"
+            android:textSize="12sp"
             android:textStyle="bold"
             app:layout_constraintStart_toEndOf="@id/ratingBar"
             app:layout_constraintTop_toTopOf="@id/ratingBar" />
@@ -131,8 +130,8 @@
             android:textColor="@color/white"
             android:textSize="32sp"
             android:textStyle="bold"
-            app:layout_constraintStart_toStartOf="@id/ratingBar"
-            app:layout_constraintBottom_toTopOf="@id/genreText" />
+            app:layout_constraintBottom_toTopOf="@id/genreText"
+            app:layout_constraintStart_toStartOf="@id/ratingBar" />
 
         <TextView
             android:id="@+id/genreText"
@@ -144,8 +143,8 @@
             android:maxLines="1"
             android:textColor="@color/white"
             android:textSize="13sp"
-            app:layout_constraintStart_toStartOf="@id/nameText"
             app:layout_constraintBottom_toBottomOf="@id/runtimeText"
+            app:layout_constraintStart_toStartOf="@id/nameText"
 
             />
 
@@ -173,17 +172,16 @@
             android:textColor="@color/white"
             android:textSize="13sp"
             app:layout_constraintBottom_toBottomOf="@id/runtimeText"
-            app:layout_constraintStart_toEndOf="@id/calendarImage"
-            />
+            app:layout_constraintStart_toEndOf="@id/calendarImage" />
 
         <ImageView
             android:id="@+id/timeImage"
             android:layout_width="13dp"
             android:layout_height="13dp"
             android:layout_marginStart="10dp"
+            android:layout_marginBottom="1dp"
             android:contentDescription="@string/app_name"
             android:src="@drawable/ic_time"
-            android:layout_marginBottom="1dp"
             app:layout_constraintBottom_toBottomOf="@id/runtimeText"
             app:layout_constraintStart_toEndOf="@id/yearText"
             app:tint="@color/white" />
@@ -193,113 +191,159 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="2dp"
+            android:layout_marginBottom="15dp"
             android:contentDescription="@string/app_name"
             android:ellipsize="none"
             android:includeFontPadding="false"
             android:maxLines="1"
             android:textColor="@color/white"
             android:textSize="13sp"
-            android:layout_marginBottom="15dp"
-            app:layout_constraintBottom_toBottomOf="@id/circleIndicator"
-            app:layout_constraintStart_toEndOf="@id/timeImage"
-            />
+            app:layout_constraintBottom_toTopOf="@id/circleIndicator"
+            app:layout_constraintStart_toEndOf="@id/timeImage" />
 
         <me.relex.circleindicator.CircleIndicator
+            android:id="@+id/circleIndicator"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginBottom="20dp"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            android:layout_marginBottom="15dp"
-            android:id="@+id/circleIndicator"/>
+            app:layout_constraintStart_toStartOf="parent" />
+
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
+
+    <androidx.viewpager2.widget.ViewPager2
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:orientation="horizontal"
+        android:background="@drawable/recycler_bg"
+        app:layout_constraintTop_toTopOf="@id/tabLayout"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:id="@+id/detailsViewPager"/>
+
     <com.google.android.material.tabs.TabLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="30dp"
         android:id="@+id/tabLayout"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/guideLineHorizontal1"/>
+        app:tabMode="scrollable"
+        app:tabGravity="center"
+        app:tabTextColor="@color/white"
+        app:tabIndicatorColor="@color/scaletRed"
+        app:tabSelectedTextColor="@color/scaletRed"
+        app:tabIndicatorAnimationMode="elastic"
+        app:tabIndicatorFullWidth="false"
+        app:tabIndicatorAnimationDuration="@integer/material_motion_duration_medium_2"
+        app:layout_constraintTop_toBottomOf="@id/guideLineHorizontal1"
+        android:background="@android:color/transparent"
+        />
 
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:contentDescription="@string/app_name"
-        android:layout_marginEnd="15dp"
-        app:layout_constraintTop_toTopOf="@id/guideLineHorizontal1"
-        app:layout_constraintBottom_toTopOf="@id/guideLineHorizontal1"
-        app:layout_constraintEnd_toStartOf="@id/saveImage"
+        app:layout_constraintTop_toBottomOf="@id/saveImage"
+        app:layout_constraintEnd_toEndOf="@id/saveImage"
         android:adjustViewBounds="true"
         android:id="@+id/imgPlay"
+        android:layout_marginTop="15dp"
         app:fabSize="normal"
+        android:alpha="0"
         android:elevation="25dp"
         app:borderWidth="0dp"
         app:tint="@android:color/white"
-        android:src="@drawable/ic_baseline_play_arrow_24"
+        android:src="@drawable/ic_video"
         />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:layout_width="56dp"
-        android:layout_height="56dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:contentDescription="@string/app_name"
-        app:layout_constraintTop_toTopOf="@id/guideLineHorizontal1"
+        android:alpha="0"
+        app:layout_constraintTop_toBottomOf="@id/linearLayout"
+        android:layout_marginTop="20dp"
+        android:layout_marginEnd="10dp"
         app:layout_constraintEnd_toEndOf="@id/guideLineVertical5"
-        app:layout_constraintBottom_toTopOf="@id/guideLineHorizontal1"
         android:id="@+id/saveImage"
         app:borderWidth="0dp"
         android:elevation="25dp"
         app:tint="@android:color/white"
-        android:src="@drawable/ic_baseline_save_alt_24"
+        android:src="@drawable/baseline_add_24"
         android:scaleType="fitCenter"/>
 
+       <androidx.constraintlayout.widget.ConstraintLayout
+           android:layout_width="match_parent"
+           android:layout_height="wrap_content"
+           app:layout_constraintTop_toTopOf="parent"
+           app:layout_constraintStart_toStartOf="parent"
+           app:layout_constraintEnd_toEndOf="parent"
+           android:id="@+id/linearLayout">
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="?actionBarSize"
-        android:gravity="center"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:orientation="horizontal"
-        android:id="@+id/linearLayout"
-        android:background="@drawable/view_background"
-        >
         <ImageView
+            android:id="@+id/back_button"
             android:layout_width="24dp"
             android:layout_height="24dp"
-            android:src="@drawable/ic_back"
             android:layout_marginStart="20dp"
-            app:tint="@color/white"
             android:contentDescription="@string/app_name"
-            android:id="@+id/back_button"/>
-        <ImageView
+            android:src="@drawable/ic_back"
+            android:layout_marginBottom="10dp"
+            android:layout_marginTop="10dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:tint="@color/white" />
+
+        <TextView
+            android:id="@+id/fillImage"
             android:layout_width="0dp"
             android:layout_height="24dp"
-            android:layout_weight="1"
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="10dp"
+            android:layout_marginBottom="10dp"
             android:contentDescription="@string/app_name"
-            android:id="@+id/fillImage"/>
-        <ImageView
-            android:layout_width="24dp"
-            android:layout_height="24dp"
-            android:src="@drawable/ic_watch"
-            android:contentDescription="@string/app_name"
-            android:id="@+id/watchListButton"
-            android:layout_marginEnd="15dp"
-            app:tint="@color/white"
-            />
-        <ImageView
-            android:layout_width="24dp"
-            android:layout_height="24dp"
-            android:src="@drawable/ic_heart"
-            android:contentDescription="@string/app_name"
-            android:id="@+id/likeButton"
-            app:tint="@color/white"
-            android:layout_marginEnd="15dp"/>
+            android:ellipsize="end"
+            android:layout_marginTop="10dp"
+            android:maxLines="1"
+            android:visibility="invisible"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/watchListButton"
+            app:layout_constraintStart_toEndOf="@id/back_button"
+            app:layout_constraintTop_toTopOf="parent" />
 
-    </LinearLayout>
+        <ImageView
+            android:id="@+id/watchListButton"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_marginEnd="15dp"
+            android:layout_marginBottom="10dp"
+            android:layout_marginTop="10dp"
+            android:contentDescription="@string/app_name"
+            android:src="@drawable/ic_watch"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/likeButton"
+            app:layout_constraintTop_toTopOf="parent"
+            app:tint="@color/white" />
+
+        <ImageView
+            android:id="@+id/likeButton"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_marginEnd="20dp"
+            android:layout_marginBottom="10dp"
+            android:layout_marginTop="10dp"
+            android:contentDescription="@string/app_name"
+            android:src="@drawable/ic_heart"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:tint="@color/white" />
+
+       </androidx.constraintlayout.widget.ConstraintLayout>
+
+
 
 </androidx.constraintlayout.motion.widget.MotionLayout>
