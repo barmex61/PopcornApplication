@@ -21,6 +21,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager.widget.ViewPager
+import androidx.viewpager2.widget.ViewPager2
 
 import com.fatih.popcorn.R
 import com.fatih.popcorn.adapter.CastRecyclerViewAdapter
@@ -77,8 +78,7 @@ class DetailsFragment @Inject constructor() : Fragment(R.layout.fragment_details
     private var backgroundList= listOf<String>()
     private var searchLanguage= language
     private var fragmentList : List<Fragment>? =null
-    private var castRecyclerView:RecyclerView?=null
-    private var crewRecyclerView:RecyclerView?=null
+    private var fragmentViewPager:ViewPager2?=null
     private val handler = CoroutineExceptionHandler{ _,throwable->
         println("Caught exception $throwable")
     }
@@ -90,6 +90,7 @@ class DetailsFragment @Inject constructor() : Fragment(R.layout.fragment_details
 
     private fun doInitialization() {
         setStatusBarPadding()
+        fragmentViewPager=binding.detailsViewPager
         setupPosterViewPager(posterList,backgroundList)
         //setupCastRecyclerView()
         //binding.backgroundImage.colorFilter = colorMatrixColorFilter
@@ -115,7 +116,7 @@ class DetailsFragment @Inject constructor() : Fragment(R.layout.fragment_details
         fragmentList= listOf(AboutFragment(selectedResponse!!),CastFragment(),ReviewFragment(),RecommendFragment(),FamiliarFragment(),TrailerFragment())
         _myFragmentManager=childFragmentManager
         fragmentViewPagerAdapter=DetailsFragmentViewPagerAdapter(fragmentList!!,myFragmentManager,lifecycle)
-        binding.detailsViewPager.adapter=fragmentViewPagerAdapter
+        fragmentViewPager!!.adapter=fragmentViewPagerAdapter
         TabLayoutMediator(binding.tabLayout,binding.detailsViewPager,true,true){tab,position->
            when(position){
                0->{ tab.text = "Hakkında" }
@@ -269,7 +270,6 @@ class DetailsFragment @Inject constructor() : Fragment(R.layout.fragment_details
         runnable= Runnable {
             try {
                 binding.posterImageViewPager.apply {
-                    handler.postDelayed(runnable!!,5000)
                     if (currentItem==this.adapter!!.itemCount-1){
                         currentItem=0
                         setCurrentItem(currentItem,true)
@@ -279,6 +279,7 @@ class DetailsFragment @Inject constructor() : Fragment(R.layout.fragment_details
                         setCurrentItem(currentItem+1,true)
                     }
                     started=true
+                    handler.postDelayed(runnable!!,5000)
 
                 }
             }catch (e:Exception){
@@ -490,6 +491,7 @@ class DetailsFragment @Inject constructor() : Fragment(R.layout.fragment_details
         viewPagerHandler?.removeCallbacks(runnable!!)
         binding.detailsViewPager.adapter=null
         _myFragmentManager=null
+        fragmentViewPager=null
         fragmentViewPagerAdapter=null
         viewPagerHandler=null
         runnable=null

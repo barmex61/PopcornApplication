@@ -77,12 +77,22 @@ class AboutFragment @Inject constructor(private val detailResponse: DetailRespon
                 } }?:""
 
             fundText.text=detailResponse.budget?.let {
-                println(it.toString())
-               "$${it/1000000} million "
+                if (it>=1000000){
+                    "$${it/1000000} million "
+                }else if (it>=100000){
+                    "$${it/1000}k"
+                }else{
+                    "$${it}"
+                }
             }?:"-"
             incomeText.text=detailResponse.revenue?.let {
-                println(it.toString())
-                "$${it/1000000} million"
+                if (it>=1000000){
+                    "$${it/1000000} million "
+                }else if (it>=100000){
+                    "$${it/1000}k"
+                }else{
+                    "$${it}"
+                }
             }?:"-"
             taglineText.text=detailResponse.tagline?:"-"
             voteAverageText.text=detailResponse.vote_average?.toString()?:"-"
