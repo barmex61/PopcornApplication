@@ -184,8 +184,10 @@ fun TextView.setRevenue(revenue:Long?){
 @BindingAdapter("tag")
 fun TextView.setTag(tag:String?){
     this.text=(tag?:"-").let {
-        it.ifEmpty {
+        if(it.isEmpty()){
             "-"
+        }else{
+            it
         }
     }
 }

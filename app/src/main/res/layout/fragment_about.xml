@@ -397,12 +397,12 @@
         <TextView
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-
             android:textSize="13sp"
             android:textColor="@color/white"
             app:layout_constraintStart_toStartOf="@id/originalNameText"
             app:layout_constraintTop_toTopOf="@id/voteAverage"
             app:layout_constraintEnd_toStartOf="@id/guideLineVertical3"
+            android:text='@{detailsResponse.vote_average.toString() ?? "-"}'
             android:ellipsize="end"
             android:maxLines="2"
             android:id="@+id/voteAverageText"/>
@@ -411,7 +411,7 @@
             android:paddingStart="10dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text='@{detailsResponse.vote_count ?? "-"}'
+            android:text="@string/oy_say_s"
             android:textColor="#B5ABAB"
             android:layout_marginTop="10dp"
             android:textSize="13sp"
@@ -422,7 +422,7 @@
         <TextView
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text='@{detailsResponse.vote_count ?? "-"}'
+            android:text='@{detailsResponse.vote_count.toString() ?? "-"}'
             android:textSize="13sp"
             android:textColor="@color/white"
             app:layout_constraintStart_toStartOf="@id/originalNameText"
