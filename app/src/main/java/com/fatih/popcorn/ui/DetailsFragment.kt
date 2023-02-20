@@ -113,18 +113,22 @@ class DetailsFragment @Inject constructor() : Fragment(R.layout.fragment_details
     }
 
     private fun setupFragmentViewPager(){
-        fragmentList= listOf(AboutFragment(selectedResponse!!),CastFragment(),ReviewFragment(),RecommendFragment(),FamiliarFragment(),TrailerFragment())
+        val bundle=Bundle()
+        bundle.putSerializable("detailResponse",selectedResponse!!)
+        fragmentList= listOf(AboutFragment().apply {
+            arguments=bundle
+        },CastFragment(),ReviewFragment(),RecommendFragment(),FamiliarFragment(),TrailerFragment())
         _myFragmentManager=childFragmentManager
         fragmentViewPagerAdapter=DetailsFragmentViewPagerAdapter(fragmentList!!,myFragmentManager,lifecycle)
         fragmentViewPager!!.adapter=fragmentViewPagerAdapter
         TabLayoutMediator(binding.tabLayout,binding.detailsViewPager,true,true){tab,position->
            when(position){
-               0->{ tab.text = "Hakkında" }
-               1->{tab.text="Oyuncular"}
-               2->{tab.text="Yorumlar"}
-               3->{tab.text="Önerilenler"}
-               4->{tab.text="Benzerleri"}
-               5->{tab.text="Fragmanlar"}
+               0->{tab.text=resources.getString(R.string.hakkinda)}
+               1->{tab.text=resources.getString(R.string.actor)}
+               2->{tab.text=resources.getString(R.string.comment)}
+               3->{tab.text=resources.getString(R.string.recommendation)}
+               4->{tab.text=resources.getString(R.string.familiar)}
+               5->{tab.text=resources.getString(R.string.trailer)}
            }
 
         }.attach()
@@ -488,11 +492,13 @@ class DetailsFragment @Inject constructor() : Fragment(R.layout.fragment_details
     override fun onDestroyView() {
         job?.cancel()
         job2?.cancel()
+        fragmentList=null
+        fragmentViewPager?.adapter=null
+        fragmentViewPagerAdapter=null
         viewPagerHandler?.removeCallbacks(runnable!!)
         binding.detailsViewPager.adapter=null
         _myFragmentManager=null
         fragmentViewPager=null
-        fragmentViewPagerAdapter=null
         viewPagerHandler=null
         runnable=null
         _binding=null

@@ -20,10 +20,10 @@
     <string name="trailer">FRAGMANLAR</string>
     <string name="seasons">SEZONLAR</string>
     <string name="film_bilgisi">Film Bilgisi</string>
-    <string name="orjinal_smi">Orjinal İsmi</string>
+    <string name="orjinal_smi">Orijinal İsmi</string>
     <string name="durumu">Durumu</string>
     <string name="s_resi">Süresi</string>
-    <string name="orjinal_dili">Orjinal Dili</string>
+    <string name="orjinal_dili">Orijinal Dili</string>
     <string name="yap_mc_lke">Yapımcı Ülke</string>
     <string name="irketler">Şirketler</string>
     <string name="b_t_esi">Bütçesi</string>
@@ -33,5 +33,11 @@
     <string name="oy_say_s">Oy Sayısı</string>
     <string name="a_klama">Açıklama</string>
     <string name="t_r">Tür</string>
+    <string name="hakkinda">Hakkında</string>
+    <string name="actor">Oyuncular</string>
+    <string name="comment">Yorumlar</string>
+    <string name="recommendation">Önerilenler</string>
+    <string name="familiar">Benzerleri</string>
+    <string name="trailers">Fragman</string>
 
 </resources>

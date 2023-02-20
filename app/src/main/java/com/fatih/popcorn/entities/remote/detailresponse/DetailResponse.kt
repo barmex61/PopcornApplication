@@ -1,5 +1,7 @@
 package com.fatih.popcorn.entities.remote.detailresponse
 
+import java.io.Serializable
+
 data class DetailResponse(
     val adult: Boolean?,
     val backdrop_path: String?,
@@ -42,4 +44,4 @@ data class DetailResponse(
     val video: Boolean?,
     val vote_average: Double?,
     val vote_count: Int?
-)
+) : Serializable

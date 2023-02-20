@@ -24,10 +24,10 @@
 
 
 <androidx.core.widget.NestedScrollView
-    android:id="@+id/nestedScrollView3"
+    android:id="@+id/nestedScrollView"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingTop="30dp"
+    android:paddingTop="35dp"
     android:fillViewport="true"
     >
 
@@ -78,6 +78,8 @@
             android:layout_marginTop="10dp"
             app:layout_constraintTop_toTopOf="parent" />
 
+
+
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -88,22 +90,25 @@
                 android:text="@string/t_r"
                 app:layout_constraintTop_toBottomOf="@id/textDescription"
                 app:layout_constraintStart_toStartOf="@id/textDescription"
-                android:layout_marginTop="10dp"
+                android:layout_marginTop="20dp"
                 />
 
 
         <androidx.constraintlayout.helper.widget.Flow
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            app:layout_constraintHorizontal_bias="0"
+            android:layout_marginEnd="20dp"
             app:layout_constraintEnd_toEndOf="@id/guideLineVertical3"
             app:layout_constraintTop_toTopOf="@id/tür"
             app:layout_constraintStart_toStartOf="@id/originalNameText"
             android:id="@+id/flow"
             android:orientation="horizontal"
-            app:flow_wrapMode="chain"
-            app:flow_horizontalGap="2dp"
-            app:flow_verticalGap="2dp"
-            app:flow_verticalStyle = "spread_inside"
+            app:flow_wrapMode="chain2"
+            app:flow_horizontalAlign="start"
+            app:flow_horizontalGap="5dp"
+            app:flow_verticalGap="5dp"
+            app:flow_verticalStyle="spread_inside"
             app:flow_horizontalStyle="packed" />
 
         <TextView
@@ -118,7 +123,33 @@
             android:textStyle="bold"
             android:textSize="16sp"/>
 
-            <TextView
+        <TextView
+            android:paddingStart="10dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Çıkış tarihi"
+            android:textColor="#B5ABAB"
+            android:layout_marginTop="10dp"
+            android:textSize="13sp"
+            app:layout_constraintTop_toBottomOf="@id/bilgiText"
+            app:layout_constraintStart_toStartOf="@id/textDescription"
+            android:id="@+id/releaseDate"/>
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="Ant-Man İki Karınca"
+            android:textSize="13sp"
+            android:textColor="@color/white"
+            app:layout_constraintStart_toStartOf="@id/originalNameText"
+            app:layout_constraintTop_toTopOf="@id/releaseDate"
+            app:layout_constraintEnd_toStartOf="@id/guideLineVertical3"
+            android:ellipsize="end"
+            android:maxLines="2"
+            android:id="@+id/releaseDateText"/>
+
+
+        <TextView
                 android:paddingStart="10dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -126,7 +157,7 @@
                 android:textColor="#B5ABAB"
                 android:layout_marginTop="10dp"
                 android:textSize="13sp"
-                app:layout_constraintTop_toBottomOf="@id/bilgiText"
+                app:layout_constraintTop_toBottomOf="@id/releaseDateText"
                 app:layout_constraintStart_toStartOf="@id/textDescription"
                 android:id="@+id/originalName"/>
 
@@ -244,7 +275,6 @@
             app:layout_constraintTop_toTopOf="@id/country"
             app:layout_constraintEnd_toStartOf="@id/guideLineVertical3"
             android:ellipsize="end"
-            android:maxLines="2"
             android:id="@+id/countryText"/>
 
         <TextView
@@ -269,7 +299,6 @@
             app:layout_constraintTop_toTopOf="@id/companies"
             app:layout_constraintEnd_toStartOf="@id/guideLineVertical3"
             android:ellipsize="end"
-            android:maxLines="2"
             android:id="@+id/companyText"/>
 
         <TextView
@@ -396,6 +425,13 @@
             android:ellipsize="end"
             android:maxLines="2"
             android:id="@+id/voteCountText"/>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            app:layout_constraintTop_toBottomOf="@id/voteCountText"
+            android:visibility="invisible"
+            />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
