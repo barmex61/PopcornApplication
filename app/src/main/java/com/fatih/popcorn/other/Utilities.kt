@@ -46,11 +46,8 @@ fun ImageView.setViewPagerImage(url: String?) {
 
     try {
         url.let {
-
             Picasso.get().load("https://image.tmdb.org/t/p/original$url").into(this)
-
         }
-
     } catch (e: Exception) {
         e.printStackTrace()
     }

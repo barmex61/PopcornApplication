@@ -5,6 +5,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
+    android:id="@+id/aboutMainLayout"
     android:background="@drawable/recycler_bg"
     android:layout_height="match_parent">
 
@@ -58,19 +59,10 @@
             android:orientation="vertical"
             app:layout_constraintGuide_percent="0.95" />
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/a_klama"
-            android:textSize="16sp"
-            android:textStyle="bold"
-            android:textColor="@color/white"
-            android:id="@+id/acıklama"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintStart_toStartOf="@id/guideLineVertical4"
 
-     />
         <TextView
+            android:paddingStart="10dp"
+            android:paddingEnd="10dp"
             android:id="@+id/textDescription"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -84,7 +76,7 @@
             app:layout_constraintEnd_toEndOf="@id/guideLineVertical3"
             app:layout_constraintStart_toStartOf="@id/guideLineVertical4"
             android:layout_marginTop="10dp"
-            app:layout_constraintTop_toBottomOf="@+id/acıklama" />
+            app:layout_constraintTop_toTopOf="parent" />
 
             <TextView
                 android:layout_width="wrap_content"
@@ -101,16 +93,18 @@
 
 
         <androidx.constraintlayout.helper.widget.Flow
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
+            app:layout_constraintEnd_toEndOf="@id/guideLineVertical3"
             app:layout_constraintTop_toTopOf="@id/tür"
             app:layout_constraintStart_toStartOf="@id/originalNameText"
             android:id="@+id/flow"
-            app:flow_horizontalBias="0"
-            app:flow_horizontalGap="10dp"
-            app:flow_horizontalStyle="packed"
-            app:flow_verticalBias="0"
-            app:flow_wrapMode="chain" />
+            android:orientation="horizontal"
+            app:flow_wrapMode="chain"
+            app:flow_horizontalGap="2dp"
+            app:flow_verticalGap="2dp"
+            app:flow_verticalStyle = "spread_inside"
+            app:flow_horizontalStyle="packed" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -125,6 +119,7 @@
             android:textSize="16sp"/>
 
             <TextView
+                android:paddingStart="10dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/orjinal_smi"
@@ -151,6 +146,7 @@
 
 
         <TextView
+            android:paddingStart="10dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/durumu"
@@ -175,6 +171,7 @@
             android:id="@+id/statusText"/>
 
         <TextView
+            android:paddingStart="10dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/s_resi"
@@ -200,6 +197,7 @@
 
 
         <TextView
+            android:paddingStart="10dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/orjinal_dili"
@@ -225,6 +223,7 @@
 
 
         <TextView
+            android:paddingStart="10dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/yap_mc_lke"
@@ -249,6 +248,7 @@
             android:id="@+id/countryText"/>
 
         <TextView
+            android:paddingStart="10dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/irketler"
@@ -273,6 +273,7 @@
             android:id="@+id/companyText"/>
 
         <TextView
+            android:paddingStart="10dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/b_t_esi"
@@ -297,6 +298,7 @@
             android:id="@+id/fundText"/>
 
         <TextView
+            android:paddingStart="10dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/has_lat"
@@ -321,6 +323,7 @@
             android:id="@+id/incomeText"/>
 
         <TextView
+            android:paddingStart="10dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/tagline"
@@ -345,6 +348,7 @@
             android:id="@+id/taglineText"/>
 
         <TextView
+            android:paddingStart="10dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/puan_ortalamas"
@@ -369,6 +373,7 @@
             android:id="@+id/voteAverageText"/>
 
         <TextView
+            android:paddingStart="10dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/oy_say_s"
@@ -395,16 +400,6 @@
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 </androidx.core.widget.NestedScrollView>
-
-    <ProgressBar
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/aboutProgressBar"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        android:visibility="visible"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
 

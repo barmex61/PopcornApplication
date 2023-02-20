@@ -53,8 +53,10 @@ class HomeFragmentAdapter @Inject constructor():RecyclerView.Adapter<HomeFragmen
         holder.binding.discoverResult=discoverList[position]
         holder.itemView.setOnClickListener {
             val pair= getVibrantColor(holder.binding.movieImage)
-            discoverList[position].id?.let { id->
-                myItemClickLambda?.invoke(id,pair)
+            if(position<discoverList.size){
+                discoverList[position].id?.let { id->
+                    myItemClickLambda?.invoke(id,pair)
+                }
             }
         }
     }

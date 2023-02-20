@@ -75,10 +75,18 @@ class HomeFragment @Inject constructor(): Fragment(R.layout.fragment_home) {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         _binding=DataBindingUtil.inflate(inflater,R.layout.fragment_home,container,false)
         view=binding.root
+        genres=savedInstanceState?.getString("genres",genres)?:genres
+        sortString=savedInstanceState?.getString("sort",sortString)?:sortString
         doInitialization()
         return view
     }
 
+    override fun onSaveInstanceState(outState: Bundle) {
+
+        super.onSaveInstanceState(outState)
+        outState.putString("genres",genres)
+        outState.putString("sort",sortString)
+    }
     private fun doInitialization(){
         setStatusBarPadding()
         adapter=HomeFragmentAdapter()
@@ -216,7 +224,6 @@ class HomeFragment @Inject constructor(): Fragment(R.layout.fragment_home) {
                     when(stateList.last()){
                         State.SEARCH->{
                             if(searchText.isNotEmpty()){
-                                println("recycler")
                                 viewModel.search(searchCategory,searchText,false)
                             }
                         }
@@ -288,7 +295,6 @@ class HomeFragment @Inject constructor(): Fragment(R.layout.fragment_home) {
                     setProgressBarVisibility(true)
                 }
                 Status.SUCCESS->{
-                    println("discoverResponse")
                     setProgressBarVisibility(false)
                     adapter.discoverList=it.data?.results?: listOf()
                     totalAvailablePages=it.data?.total_pages?:1
@@ -430,7 +436,7 @@ class HomeFragment @Inject constructor(): Fragment(R.layout.fragment_home) {
                 findNavController().navigate(HomeFragmentDirections.actionHomeFragmentToWatchListFragment())
             }
             else ->{
-                Toast.makeText(requireContext(),"Coming Soon Ins",Toast.LENGTH_SHORT).show()
+                Toast.makeText(context?.applicationContext,"Coming Soon Ins",Toast.LENGTH_SHORT).show()
             }
         }
     }
@@ -444,8 +450,9 @@ class HomeFragment @Inject constructor(): Fragment(R.layout.fragment_home) {
     }
 
     override fun onDestroyView() {
-        binding.moviesRecyclerView.removeOnScrollListener(onScrollListener)
-        binding.moviesRecyclerView.adapter=null
+        recyclerView?.removeOnScrollListener(onScrollListener)
+        recyclerView?.adapter=null
+        recyclerView=null
         view=null
         _binding=null
         super.onDestroyView()

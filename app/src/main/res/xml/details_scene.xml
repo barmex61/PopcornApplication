@@ -7,7 +7,6 @@
         motion:constraintSetEnd="@+id/end"
         motion:constraintSetStart="@id/start"
         motion:autoTransition="animateToEnd"
-        motion:transitionDisable="false"
         motion:duration="7000"
       >
        <KeyFrameSet>
@@ -37,6 +36,28 @@
             <CustomAttribute
                 motion:attributeName="backgroundColor"
                 motion:customColorValue="@android:color/transparent" />
+        </Constraint>
+        <Constraint
+            android:id="@+id/imgPlay"
+            android:elevation="25dp"
+            motion:layout_constraintEnd_toEndOf="@id/saveImage"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            motion:layout_constraintTop_toBottomOf="@id/saveImage"
+            android:alpha="0"
+            android:layout_marginTop="15dp">
+        </Constraint>
+        <Constraint
+            android:id="@+id/saveImage"
+            android:elevation="25dp"
+            motion:layout_constraintEnd_toEndOf="@id/guideLineVertical5"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="10dp"
+            motion:layout_constraintTop_toBottomOf="@id/linearLayout"
+            android:alpha="0"
+            android:layout_marginTop="20dp">
+
         </Constraint>
     </ConstraintSet>
 
@@ -81,7 +102,9 @@
             android:layout_width="wrap_content"
             android:alpha="1"
             android:layout_marginBottom="50dp"
-             />
+             >
+
+        </Constraint>
         <Constraint
             android:layout_height="wrap_content"
             motion:layout_constraintBottom_toTopOf="@id/imgPlay"
@@ -90,7 +113,8 @@
             motion:layout_constraintEnd_toEndOf="@id/imgPlay"
             android:layout_marginBottom="15dp"
             android:id="@+id/saveImage"
-            />
+            >
+        </Constraint>
 
     </ConstraintSet>
 

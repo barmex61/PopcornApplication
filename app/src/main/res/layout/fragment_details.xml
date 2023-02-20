@@ -72,7 +72,7 @@
             app:layout_constraintGuide_percent="0.95" />
 
 
-        <androidx.viewpager.widget.ViewPager
+        <androidx.viewpager2.widget.ViewPager2
             android:id="@+id/posterImageViewPager"
             android:layout_width="match_parent"
             android:layout_height="0dp"
@@ -201,7 +201,7 @@
             app:layout_constraintBottom_toTopOf="@id/circleIndicator"
             app:layout_constraintStart_toEndOf="@id/timeImage" />
 
-        <me.relex.circleindicator.CircleIndicator
+        <me.relex.circleindicator.CircleIndicator3
             android:id="@+id/circleIndicator"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

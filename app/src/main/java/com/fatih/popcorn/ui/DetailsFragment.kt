@@ -2,6 +2,8 @@ package com.fatih.popcorn.ui
 
 import android.annotation.SuppressLint
 import android.content.res.ColorStateList
+import android.content.res.Configuration
+import android.content.res.Resources
 import android.graphics.Bitmap
 import android.graphics.PorterDuff
 import android.os.Bundle
@@ -18,11 +20,12 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.RecyclerView
+import androidx.viewpager.widget.ViewPager
 
 import com.fatih.popcorn.R
 import com.fatih.popcorn.adapter.CastRecyclerViewAdapter
 import com.fatih.popcorn.adapter.DetailsFragmentViewPagerAdapter
-import com.fatih.popcorn.adapter.ViewPagerAdapter
+import com.fatih.popcorn.adapter.PosterImageViewPagerAdapter
 import com.fatih.popcorn.databinding.FragmentDetailsBinding
 import com.fatih.popcorn.entities.local.RoomEntity
 import com.fatih.popcorn.entities.remote.detailresponse.DetailResponse
@@ -70,6 +73,8 @@ class DetailsFragment @Inject constructor() : Fragment(R.layout.fragment_details
     private var job:Job?=null
     private var fragmentViewPagerAdapter:DetailsFragmentViewPagerAdapter?=null
     private var job2:Job?=null
+    private var posterList= listOf<String>()
+    private var backgroundList= listOf<String>()
     private var searchLanguage= language
     private var fragmentList : List<Fragment>? =null
     private var castRecyclerView:RecyclerView?=null
@@ -85,7 +90,7 @@ class DetailsFragment @Inject constructor() : Fragment(R.layout.fragment_details
 
     private fun doInitialization() {
         setStatusBarPadding()
-        setupFragmentViewPager()
+        setupPosterViewPager(posterList,backgroundList)
         //setupCastRecyclerView()
         //binding.backgroundImage.colorFilter = colorMatrixColorFilter
         viewModel = ViewModelProvider(this)[DetailsFragmentViewModel::class.java]
@@ -107,7 +112,7 @@ class DetailsFragment @Inject constructor() : Fragment(R.layout.fragment_details
     }
 
     private fun setupFragmentViewPager(){
-        fragmentList= listOf(AboutFragment(),CastFragment(),ReviewFragment(),RecommendFragment(),FamiliarFragment(),TrailerFragment())
+        fragmentList= listOf(AboutFragment(selectedResponse!!),CastFragment(),ReviewFragment(),RecommendFragment(),FamiliarFragment(),TrailerFragment())
         _myFragmentManager=childFragmentManager
         fragmentViewPagerAdapter=DetailsFragmentViewPagerAdapter(fragmentList!!,myFragmentManager,lifecycle)
         binding.detailsViewPager.adapter=fragmentViewPagerAdapter
@@ -154,10 +159,10 @@ class DetailsFragment @Inject constructor() : Fragment(R.layout.fragment_details
                     Status.SUCCESS -> {
 
                         resource.data?.let {
-                            println("detailresponse")
                             selectedResponse = it
                             viewModel.isItIntDatabase(it.id!!)
                             setLayoutVisibility(show = true, showToast = false, null)
+                            setupFragmentViewPager()
                         }
                     }
                 }
@@ -179,7 +184,6 @@ class DetailsFragment @Inject constructor() : Fragment(R.layout.fragment_details
                 Status.SUCCESS->{
 
                     it.data?.let {
-                        println("creditsResponse")
                         job2?.cancel()
                         job2=lifecycleScope.launch(Dispatchers.Main + handler){
                             val castList=async(Dispatchers.Default){
@@ -214,19 +218,18 @@ class DetailsFragment @Inject constructor() : Fragment(R.layout.fragment_details
                 when (resource.status) {
                   Status.SUCCESS -> {
                         resource.data?.let { it ->
-                            println("imageResponse")
                             selectedImageResponse=it
 
-                            val imageUrls=selectedImageResponse!!.backdrops.map {backdrop->
+                            backgroundList=selectedImageResponse!!.backdrops.map {backdrop->
                                 backdrop.file_path
                             }
-                            val portraitList=selectedImageResponse!!.posters.filter {
+                            posterList=selectedImageResponse!!.posters.filter {
                                 it.iso_639_1=="en"
                             }.map {
                                 it.file_path
                             }
-                            setImageAnimations(imageUrls)
-                            setupViewPager(portraitList,imageUrls)
+                            setImageAnimations(backgroundList)
+                            setupPosterViewPager(posterList,backgroundList)
                         }
                     }
                     else->Unit
@@ -235,7 +238,8 @@ class DetailsFragment @Inject constructor() : Fragment(R.layout.fragment_details
         }
     }
 
-    private fun setupViewPager(portraitList: List<String>,landscapeList:List<String>){
+    private fun setupPosterViewPager(portraitList: List<String>,landscapeList:List<String>){
+        if (portraitList.isEmpty() && landscapeList.isEmpty()) return
         var portraits=portraitList
         var landscapes=landscapeList
         var shouldFitXY=false
@@ -246,22 +250,27 @@ class DetailsFragment @Inject constructor() : Fragment(R.layout.fragment_details
         if (landscapeList.isEmpty()){
             landscapes=portraitList
         }
-        portraits=if (portraits.size>=9) portraits.subList(0,9) else portraits.subList(0,portraits.size)
-        landscapes=if (landscapes.size>=9) landscapes.subList(0,9) else landscapes.subList(0,landscapes.size)
-        val viewPagerAdapter=ViewPagerAdapter(requireContext(),portraits,landscapes,shouldFitXY)
+        portraits=if (portraits.size>=10) portraits.subList(0,10) else portraits.subList(0,portraits.size)
+        landscapes=if (landscapes.size>=10) landscapes.subList(0,10) else landscapes.subList(0,landscapes.size)
+        val adapterList = if(Resources.getSystem().configuration.orientation==Configuration.ORIENTATION_PORTRAIT){
+            portraits
+        }else landscapes
+
+        val viewPagerAdapter=PosterImageViewPagerAdapter(shouldFitXY).apply {
+            urlList=adapterList
+        }
         binding.posterImageViewPager.apply {
             adapter=viewPagerAdapter
             offscreenPageLimit=3
+            binding.circleIndicator.setViewPager(this)
         }
-        binding.circleIndicator.setViewPager(binding.posterImageViewPager)
-        binding.posterImageViewPager.setCurrentItem(0,true)
         viewPagerHandler= Handler(Looper.getMainLooper())
         var started=false
         runnable= Runnable {
             try {
                 binding.posterImageViewPager.apply {
                     handler.postDelayed(runnable!!,5000)
-                    if (currentItem==this.adapter!!.count-1){
+                    if (currentItem==this.adapter!!.itemCount-1){
                         currentItem=0
                         setCurrentItem(currentItem,true)
                         return@apply
@@ -321,7 +330,6 @@ class DetailsFragment @Inject constructor() : Fragment(R.layout.fragment_details
             job=lifecycleScope.launch (Dispatchers.Main + handler){
                 val subList=if (imageUrls.size>=9) imageUrls.subList(0,9) else imageUrls.subList(0,imageUrls.size-1)
                 try {
-                    println("called")
                     for (url in subList){
                         val job=async(Dispatchers.IO){
                             Picasso.get().load("https://image.tmdb.org/t/p/original$url").get()
@@ -479,14 +487,10 @@ class DetailsFragment @Inject constructor() : Fragment(R.layout.fragment_details
     override fun onDestroyView() {
         job?.cancel()
         job2?.cancel()
+        viewPagerHandler?.removeCallbacks(runnable!!)
         binding.detailsViewPager.adapter=null
         _myFragmentManager=null
-        castRecyclerView?.adapter=null
-        crewRecyclerView?.adapter=null
-        castRecyclerView=null
-        crewRecyclerView=null
         fragmentViewPagerAdapter=null
-        fragmentList=null
         viewPagerHandler=null
         runnable=null
         _binding=null
