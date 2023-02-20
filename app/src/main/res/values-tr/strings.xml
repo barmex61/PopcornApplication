@@ -39,5 +39,6 @@
     <string name="recommendation">Önerilenler</string>
     <string name="familiar">Benzerleri</string>
     <string name="trailers">Fragman</string>
+    <string name="k_tarihi">Çıkış tarihi</string>
 
 </resources>

@@ -1,9 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
-
+<layout>
+    <data>
+        <variable
+            name="detailsResponse"
+            type="com.fatih.popcorn.entities.remote.detailresponse.DetailResponse" />
+    </data>
 <androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:id="@+id/aboutMainLayout"
     android:background="@drawable/recycler_bg"
@@ -72,7 +76,7 @@
             android:lineSpacingExtra="2dp"
             android:textColor="@color/white"
             android:textSize="13sp"
-            android:text="Lorem ımpsum Lorem ımpsum Lorem ımpsum Lorem ımpsumLorem ımpsum Lorem ımpsumLorem ımpsum Lorem ımpsumLorem ımpsum Lorem ımpsumLorem ımpsum Lorem ımpsumLorem ımpsum Lorem ımpsumLorem ımpsum Lorem ımpsumLorem ımpsumLorem ımpsum Lorem ımpsumLorem ımpsum Lorem ımpsumLorem ımpsum Lorem ımpsum Lorem ımpsum"
+            android:text='@{detailsResponse.overview ?? "-"}'
             app:layout_constraintEnd_toEndOf="@id/guideLineVertical3"
             app:layout_constraintStart_toStartOf="@id/guideLineVertical4"
             android:layout_marginTop="10dp"
@@ -127,7 +131,7 @@
             android:paddingStart="10dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Çıkış tarihi"
+            android:text="@string/k_tarihi"
             android:textColor="#B5ABAB"
             android:layout_marginTop="10dp"
             android:textSize="13sp"
@@ -138,7 +142,8 @@
         <TextView
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="Ant-Man İki Karınca"
+            releaseDate="@{detailsResponse.release_date}"
+            lastAirDate="@{detailsResponse.last_air_date}"
             android:textSize="13sp"
             android:textColor="@color/white"
             app:layout_constraintStart_toStartOf="@id/originalNameText"
@@ -164,7 +169,7 @@
         <TextView
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="Ant-Man İki Karınca"
+            android:text='@{detailsResponse.original_name ?? detailsResponse.original_title ?? "-"}'
             android:textSize="13sp"
             android:textColor="@color/white"
             app:layout_constraintStart_toEndOf="@id/originalName"
@@ -191,7 +196,7 @@
         <TextView
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="Yayınlandı"
+            android:text='@{detailsResponse.status ?? "-"}'
             android:textSize="13sp"
             android:textColor="@color/white"
             app:layout_constraintStart_toStartOf="@id/originalNameText"
@@ -216,7 +221,8 @@
         <TextView
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="2 saat 15 dk"
+            runtime="@{detailsResponse.runtime}"
+            episode_runtime="@{detailsResponse.episode_run_time}"
             android:textSize="13sp"
             android:textColor="@color/white"
             app:layout_constraintStart_toStartOf="@id/originalNameText"
@@ -242,7 +248,7 @@
         <TextView
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="İngilizce"
+            android:text='@{detailsResponse.original_language ?? "-"}'
             android:textSize="13sp"
             android:textColor="@color/white"
             app:layout_constraintStart_toStartOf="@id/originalNameText"
@@ -268,7 +274,7 @@
         <TextView
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="Türkiye"
+            country="@{detailsResponse.production_countries}"
             android:textSize="13sp"
             android:textColor="@color/white"
             app:layout_constraintStart_toStartOf="@id/originalNameText"
@@ -292,7 +298,7 @@
         <TextView
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="Marvel Studios"
+            companies="@{detailsResponse.production_companies}"
             android:textSize="13sp"
             android:textColor="@color/white"
             app:layout_constraintStart_toStartOf="@id/originalNameText"
@@ -316,7 +322,7 @@
         <TextView
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="1.5 m $"
+            budget="@{detailsResponse.budget}"
             android:textSize="13sp"
             android:textColor="@color/white"
             app:layout_constraintStart_toStartOf="@id/originalNameText"
@@ -341,7 +347,7 @@
         <TextView
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="2.5 m $"
+            revenue="@{detailsResponse.revenue}"
             android:textSize="13sp"
             android:textColor="@color/white"
             app:layout_constraintStart_toStartOf="@id/originalNameText"
@@ -366,7 +372,7 @@
         <TextView
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="Wakanda Forever"
+            tag="@{detailsResponse.tagline}"
             android:textSize="13sp"
             android:textColor="@color/white"
             app:layout_constraintStart_toStartOf="@id/originalNameText"
@@ -391,7 +397,7 @@
         <TextView
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="7.2"
+
             android:textSize="13sp"
             android:textColor="@color/white"
             app:layout_constraintStart_toStartOf="@id/originalNameText"
@@ -405,7 +411,7 @@
             android:paddingStart="10dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/oy_say_s"
+            android:text='@{detailsResponse.vote_count ?? "-"}'
             android:textColor="#B5ABAB"
             android:layout_marginTop="10dp"
             android:textSize="13sp"
@@ -416,7 +422,7 @@
         <TextView
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="550"
+            android:text='@{detailsResponse.vote_count ?? "-"}'
             android:textSize="13sp"
             android:textColor="@color/white"
             app:layout_constraintStart_toStartOf="@id/originalNameText"
@@ -438,4 +444,6 @@
 </androidx.core.widget.NestedScrollView>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>
+
 

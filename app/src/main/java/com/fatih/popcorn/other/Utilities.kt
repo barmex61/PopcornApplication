@@ -3,11 +3,14 @@ package com.fatih.popcorn.other
 import android.content.res.Resources
 import android.view.Gravity
 import android.view.animation.AnimationUtils
+import android.widget.EditText
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.databinding.BindingAdapter
 import com.fatih.popcorn.R
+import com.fatih.popcorn.entities.remote.detailresponse.ProductionCompany
+import com.fatih.popcorn.entities.remote.detailresponse.ProductionCountry
 import com.fatih.popcorn.entities.remote.discoverresponse.DiscoverResponse
 import com.squareup.picasso.Callback
 import com.squareup.picasso.Picasso
@@ -104,3 +107,92 @@ fun DiscoverResponse?.add(data: DiscoverResponse): DiscoverResponse {
     } ?: data
 }
 
+@BindingAdapter("episode_runtime","runtime")
+fun TextView.setRuntime(episode_runtime: List<Int>?,runtime:Int?){
+    this.text=runtime?.let {
+        "$it min"
+    }?:episode_runtime?.let {
+        if (it.isNotEmpty()){
+            "${it[0]} min average"
+        }else{
+            "-"
+        } }?:"-"
+}
+
+@BindingAdapter("country")
+fun TextView.setCountry(country:List<ProductionCountry>?){
+    this.text=country?.let {
+        if(it.isNotEmpty()){
+            var countryText=""
+            for (index in it.indices){
+                countryText += if (index == 0){
+                    it[index].name
+                }else{
+                    ",\n${it[index].name}"
+                }
+            }
+            countryText
+        }else{
+            "-"
+        } }?:"-"
+}
+
+@BindingAdapter("companies")
+fun TextView.setCompanies(company:List<ProductionCompany>?){
+    this.text=company?.let {
+        if(it.isNotEmpty()){
+            var companyText=""
+            for (index in it.indices){
+                companyText += if (index == 0){
+                    it[index].name
+                }else{
+                    ",\n${it[index].name}"
+                }
+            }
+            companyText
+        }else{
+            "-"
+        } }?:"-"
+}
+
+@BindingAdapter("budget")
+fun TextView.setBudget(budget:Int?){
+    this.text=budget?.let {
+        if (it>=1000000){
+            "$${it/1000000} million "
+        }else if (it>=100000){
+            "$${it/1000}k"
+        }else{
+            "$${it}"
+        }
+    }?:"-"
+}
+
+@BindingAdapter("revenue")
+fun TextView.setRevenue(revenue:Long?){
+    this.text=revenue?.let {
+        if (it>=1000000){
+            "$${it/1000000} million "
+        }else if (it>=100000){
+            "$${it/1000}k"
+        }else{
+            "$${it}"
+        }
+    }?:"-"
+}
+
+@BindingAdapter("tag")
+fun TextView.setTag(tag:String?){
+    this.text=(tag?:"-").let {
+        it.ifEmpty {
+            "-"
+        }
+    }
+}
+
+@BindingAdapter("releaseDate","lastAirDate")
+fun TextView.setRelease(releaseDate: String?,lastAirDate:String?){
+    this.text=releaseDate?:lastAirDate?.let {
+        "Last episode : $it"
+    }
+}
