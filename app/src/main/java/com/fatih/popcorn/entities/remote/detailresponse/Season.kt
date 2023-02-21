@@ -8,4 +8,4 @@ data class Season(
     val overview: String,
     val poster_path: String,
     val season_number: Int
-)
+):java.io.Serializable

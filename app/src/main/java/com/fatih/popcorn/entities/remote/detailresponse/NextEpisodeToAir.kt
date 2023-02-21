@@ -13,4 +13,4 @@ data class NextEpisodeToAir(
     val still_path: Any,
     val vote_average: Double,
     val vote_count: Int
-)
+):java.io.Serializable

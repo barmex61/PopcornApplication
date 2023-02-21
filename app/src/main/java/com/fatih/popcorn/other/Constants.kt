@@ -22,10 +22,9 @@ import java.util.Locale
 
 
 object Constants {
-    var language=Locale.getDefault().language
+    var language=Locale.getDefault().language ?: ""
     const val BASE_URL="https://api.themoviedb.org/3/"
     val sortList= listOf("popularity.desc","release_date.desc","vote_average.desc","first_air_date.desc")
-    val genreList= listOf(10759,16,35,28,12,80,99,18,10751,10762,9648,14,10763,36,27,10764,10402,10765,10766,10749,10767,10768,10770,37,53,10752)
     const val tvSearch="tv"
     const val movieSearch="movie"
     var stateList= mutableListOf(State.MOVIE)
@@ -38,9 +37,6 @@ object Constants {
     val tvShowGenreMap:HashMap<String,Int> = hashMapOf("Action" to 10759,"Animation" to 16,"Comedy" to 35,"Crime" to 80,"Documentary" to 99,"Drame" to 18,"Family" to 10751,"Kids" to 10762,"Mystery" to 9648,"News" to 10763,"Reality" to 10764,"Science Fiction" to 10765,"Soap" to 10766,"Talk" to 10767,"War" to 10768,"Western" to 37)
     val qualityArray= arrayOf("360p","480p","720p","1080p")
     val qualityBooleanArray=BooleanArray(qualityArray.size)
-    val colorMatrixColorFilter= ColorMatrixColorFilter(ColorMatrix().apply {
-        setSaturation(0f)
-    })
     var orientation=Resources.getSystem().configuration.orientation
     var isFirstRun=true
     fun checkIsItInMovieListOrNot():Boolean{

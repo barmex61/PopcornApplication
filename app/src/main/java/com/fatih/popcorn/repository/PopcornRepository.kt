@@ -8,6 +8,7 @@ import com.fatih.popcorn.entities.remote.creditsresponse.CreditsResponse
 import com.fatih.popcorn.entities.remote.detailresponse.DetailResponse
 import com.fatih.popcorn.entities.remote.discoverresponse.DiscoverResponse
 import com.fatih.popcorn.entities.remote.imageresponse.ImageResponse
+import com.fatih.popcorn.entities.remote.reviewresponse.ReviewResponse
 import com.fatih.popcorn.movieapi.PopcornApi
 import com.fatih.popcorn.other.Resource
 import kotlinx.coroutines.InternalCoroutinesApi
@@ -128,6 +129,21 @@ class PopcornRepository (
            println(e.message)
            null
        }
+    }
+
+    override suspend fun getReviews(name: String, id: Int, page: Int): Resource<ReviewResponse> {
+        return try {
+            val response=popcornApi.getReviews(name = name,id = id, page= page)
+            if(response.isSuccessful){
+                response.body()?.let {
+                    Resource.success(it)
+                }?:Resource.error("Response body null")
+            }else{
+                Resource.error("Response failed")
+            }
+        }catch (e:Exception){
+            Resource.error(e.message)
+        }
     }
 
     override suspend fun getCredits(name: String, id: Int): Resource<CreditsResponse> {

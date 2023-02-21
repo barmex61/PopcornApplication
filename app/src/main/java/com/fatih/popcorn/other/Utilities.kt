@@ -2,6 +2,7 @@ package com.fatih.popcorn.other
 
 import android.content.res.Resources
 import android.view.Gravity
+import android.view.View
 import android.view.animation.AnimationUtils
 import android.widget.EditText
 import android.widget.ImageView
@@ -54,7 +55,24 @@ fun ImageView.setViewPagerImage(url: String?) {
     } catch (e: Exception) {
         e.printStackTrace()
     }
+}
 
+fun ImageView.setCastImage(url: String?,callBack:(Boolean) -> Unit){
+
+    try {
+        url.let {
+            Picasso.get().load("https://image.tmdb.org/t/p/original$url").into(this,object:Callback{
+                override fun onSuccess() {
+                    callBack(true)
+                }
+                override fun onError(e: java.lang.Exception?) {
+                    callBack(false)
+                }
+            })
+        }
+    } catch (e: Exception) {
+        e.printStackTrace()
+    }
 }
 
 @BindingAdapter("android:setVoteAverage")
@@ -92,9 +110,7 @@ fun DiscoverResponse?.add(data: DiscoverResponse): DiscoverResponse {
             this.total_pages = data.total_pages
             this.total_results = data.total_results
             this.page = data.page
-            println("if")
         } else if (this.genres != data.genres || this.sortBy != data.sortBy) {
-            println("else if")
             this.results = data.results
             this.total_pages = data.total_pages
             this.total_results = data.total_results
@@ -119,6 +135,16 @@ fun TextView.setRuntime(episode_runtime: List<Int>?,runtime:Int?){
         } }?:"-"
 }
 
+@BindingAdapter("overview")
+fun TextView.setOverview(overview:String?){
+    overview?.let {
+        if (it.isEmpty()){
+            "-"
+        }else{
+            this.text=it
+        }
+    }?:"-"
+}
 @BindingAdapter("country")
 fun TextView.setCountry(country:List<ProductionCountry>?){
     this.text=country?.let {

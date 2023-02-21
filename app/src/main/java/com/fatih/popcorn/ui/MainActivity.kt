@@ -19,10 +19,7 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var navController: NavController
     private lateinit var navHostFragment:NavHostFragment
-
-    companion object {
-        lateinit var viewModel: HomeFragmentViewModel
-    }
+    private lateinit var viewModel:HomeFragmentViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
 

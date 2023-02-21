@@ -5,6 +5,7 @@ import com.fatih.popcorn.entities.local.RoomEntity
 import com.fatih.popcorn.entities.remote.creditsresponse.CreditsResponse
 import com.fatih.popcorn.entities.remote.detailresponse.DetailResponse
 import com.fatih.popcorn.entities.remote.imageresponse.ImageResponse
+import com.fatih.popcorn.entities.remote.reviewresponse.ReviewResponse
 import com.fatih.popcorn.other.Resource
 import com.fatih.popcorn.repository.PopcornRepositoryInterface
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -32,6 +33,12 @@ class DetailsFragmentViewModel @Inject constructor(private val popcornRepo:Popco
     private var _creditsResponse=MutableLiveData<Resource<CreditsResponse>>()
     val creditsResponse:LiveData<Resource<CreditsResponse>>
     get() = _creditsResponse
+
+    private var _reviewResponse=MutableLiveData<Resource<ReviewResponse>>()
+    val reviewResponse:LiveData<Resource<ReviewResponse>>
+    get() = _reviewResponse
+
+    var reviewCurrentPage=MutableLiveData<Int>(1)
     fun getDetails(searchName:String,id:Int,language:String) {
 
        _detailResponse= popcornRepo.getDetails(searchName,id, language).catch {
@@ -72,7 +79,12 @@ class DetailsFragmentViewModel @Inject constructor(private val popcornRepo:Popco
         _imageResponse=MutableLiveData<Resource<ImageResponse>>()
         _isItInDatabase= MutableLiveData<Boolean>()
         _creditsResponse=MutableLiveData<Resource<CreditsResponse>>()
+        _reviewResponse=MutableLiveData<Resource<ReviewResponse>>()
+    }
 
+    fun getReviews(name:String,id:Int,page:Int)=viewModelScope.launch {
+        _reviewResponse.value=Resource.loading(null)
+        _reviewResponse.value=popcornRepo.getReviews(name, id, page)
     }
 
 }

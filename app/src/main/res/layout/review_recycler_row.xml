@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout>
+
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@drawable/cast_bg"
+    android:backgroundTint="#24284A"
+    android:layoutAnimation="@anim/layout_animation"
+    android:layout_marginTop="20dp"
+    android:layout_height="wrap_content">
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:src="@drawable/popcorn"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginTop="15dp"
+        android:layout_marginStart="15dp"
+        android:id="@+id/reviewProfileImg"
+        android:scaleType="centerCrop"
+        android:elevation="20dp"
+        />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Obione_tdg"
+        android:textColor="@color/white"
+        app:layout_constraintTop_toTopOf="@id/reviewProfileImg"
+        app:layout_constraintStart_toEndOf="@id/reviewProfileImg"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="10dp"
+        android:textSize="15sp"
+        android:id="@+id/profileNameText"
+        />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Rating : 7/10"
+        app:layout_constraintBottom_toBottomOf="@id/profileNameText"
+        android:textColor="@color/gray"
+        app:layout_constraintTop_toTopOf="@id/profileNameText"
+        app:layout_constraintStart_toEndOf="@id/profileNameText"
+        android:layout_marginStart="20dp"
+        android:textSize="12sp"
+        android:id="@+id/ratingText"
+        />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="7 gün önce"
+        android:textColor="@color/gray"
+        app:layout_constraintTop_toBottomOf="@id/profileNameText"
+        app:layout_constraintStart_toEndOf="@id/reviewProfileImg"
+        android:layout_marginStart="20dp"
+        android:id="@+id/dateText"
+        android:textSize="10sp"
+        />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:maxLines="7"
+        android:ellipsize="end"
+        android:fontFamily="@font/adamina"
+        android:includeFontPadding="false"
+        android:lineSpacingExtra="2dp"
+        android:text="Lorem Impsum Lorem Impsum Lorem ImpsumLorem Impsum Lorem Impsum Lorem Impsum Lorem Impsum Lorem Impsum Lorem Impsum Lorem Impsum Lorem Impsum Lorem Impsum Lorem Impsum Lorem Impsum Lorem Impsum Lorem Impsum Lorem Impsum Lorem Impsum Lorem Impsum Lorem Impsum Lorem Impsum"
+        app:layout_constraintTop_toBottomOf="@id/reviewProfileImg"
+        android:layout_margin="15dp"
+        app:layout_constraintStart_toStartOf="@id/reviewProfileImg"
+        app:layout_constraintBottom_toBottomOf="parent"
+
+        />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

@@ -49,14 +49,9 @@ import javax.inject.Inject
 import kotlin.Exception
 
 @AndroidEntryPoint
-class DetailsFragment @Inject constructor() : Fragment(R.layout.fragment_details) {
+class DetailsFragment : Fragment(R.layout.fragment_details) {
 
-    @Inject
-    lateinit var castAdapter:CastRecyclerViewAdapter
-    @Inject
-    lateinit var crewAdapter:CastRecyclerViewAdapter
 
-    private lateinit var viewModel: DetailsFragmentViewModel
     private var _binding: FragmentDetailsBinding?=null
     private val binding:FragmentDetailsBinding
         get() = _binding!!
@@ -68,8 +63,6 @@ class DetailsFragment @Inject constructor() : Fragment(R.layout.fragment_details
     get() = _myFragmentManager!!
     private var selectedResponse: DetailResponse? = null
     private var selectedImageResponse:ImageResponse?=null
-    private var vibrantColor: Int? = null
-    private var darkMutedColor: Int? = null
     private var isItInDatabase = false
     private var job:Job?=null
     private var fragmentViewPagerAdapter:DetailsFragmentViewPagerAdapter?=null
@@ -79,9 +72,13 @@ class DetailsFragment @Inject constructor() : Fragment(R.layout.fragment_details
     private var searchLanguage= language
     private var fragmentList : List<Fragment>? =null
     private var fragmentViewPager:ViewPager2?=null
-    private val handler = CoroutineExceptionHandler{ _,throwable->
-        println("Caught exception $throwable")
+    private lateinit var viewModel: DetailsFragmentViewModel
+
+    companion object{
+       var vibrantColor : Int ?=null
+       var darkMutedColor : Int ?=null
     }
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentDetailsBinding.inflate(inflater, container, false)
         doInitialization()
@@ -89,12 +86,10 @@ class DetailsFragment @Inject constructor() : Fragment(R.layout.fragment_details
     }
 
     private fun doInitialization() {
+        viewModel = ViewModelProvider(requireActivity())[DetailsFragmentViewModel::class.java]
         setStatusBarPadding()
         fragmentViewPager=binding.detailsViewPager
         setupPosterViewPager(posterList,backgroundList)
-        //setupCastRecyclerView()
-        //binding.backgroundImage.colorFilter = colorMatrixColorFilter
-        viewModel = ViewModelProvider(this)[DetailsFragmentViewModel::class.java]
         //binding.watchList.setOnClickListener { watchList() }
         binding.watchListButton.setOnClickListener { findNavController().navigate(DetailsFragmentDirections.actionDetailsFragmentToWatchListFragment()) }
         binding.backButton.setOnClickListener { findNavController().navigateUp() }
@@ -135,14 +130,6 @@ class DetailsFragment @Inject constructor() : Fragment(R.layout.fragment_details
 
     }
 
-    /* private fun setupCastRecyclerView(){
-        crewRecyclerView=binding.crewRecyclerView
-        crewRecyclerView!!.layoutManager=LinearLayoutManager(requireContext(),LinearLayoutManager.HORIZONTAL,false)
-        crewRecyclerView!!.adapter=crewAdapter
-        castRecyclerView=binding.castRecyclerView
-        castRecyclerView!!.layoutManager=LinearLayoutManager(requireContext(),LinearLayoutManager.HORIZONTAL,false)
-        castRecyclerView!!.adapter=castAdapter
-    } */
     @SuppressLint("InternalInsetResource", "DiscouragedApi")
     private fun setStatusBarPadding() {
         val statusBarHeightId = resources.getIdentifier("status_bar_height", "dimen", "android")
@@ -184,40 +171,6 @@ class DetailsFragment @Inject constructor() : Fragment(R.layout.fragment_details
             }
         }
 
-        viewModel.creditsResponse.observe(viewLifecycleOwner){
-            when(it.status){
-                Status.SUCCESS->{
-
-                    it.data?.let {
-                        job2?.cancel()
-                        job2=lifecycleScope.launch(Dispatchers.Main + handler){
-                            val castList=async(Dispatchers.Default){
-                                it.cast.filter {
-                                    !it.profile_path.isNullOrEmpty() && it.profile_path != "null"
-                                }.distinctBy {
-                                    it.profile_path
-                                }.map { cast->
-                                    Triple(cast.name,cast.character,cast.profile_path!!)
-                                }
-                            }
-                            val crewList=async(Dispatchers.Default){
-                                it.crew.filter {
-                                    !it.profile_path.isNullOrEmpty() && it.profile_path != "null"
-                                }.distinctBy {
-                                    it.profile_path
-                                }.map { crew->
-                                    Triple(crew.name,crew.job,crew.profile_path!!)
-                                }
-                            }
-                            crewAdapter.castList=crewList.await()
-                            castAdapter.castList=castList.await()
-                        }
-                    }
-                }
-                else->Unit
-            }
-        }
-
         viewModel.imageResponse.observe(viewLifecycleOwner){ resource->
             if (resource != null) {
                 when (resource.status) {
@@ -233,7 +186,6 @@ class DetailsFragment @Inject constructor() : Fragment(R.layout.fragment_details
                             }.map {
                                 it.file_path
                             }
-                            setImageAnimations(backgroundList)
                             setupPosterViewPager(posterList,backgroundList)
                         }
                     }
@@ -277,6 +229,8 @@ class DetailsFragment @Inject constructor() : Fragment(R.layout.fragment_details
                     if (currentItem==this.adapter!!.itemCount-1){
                         currentItem=0
                         setCurrentItem(currentItem,true)
+                        handler.removeCallbacks(runnable!!)
+                        handler.postDelayed(runnable!!,5000)
                         return@apply
                     }
                     if(started){
@@ -293,98 +247,10 @@ class DetailsFragment @Inject constructor() : Fragment(R.layout.fragment_details
         viewPagerHandler!!.post(runnable!!)
     }
 
-
-    /* private fun startAnimation(bitmapList: List<Bitmap>){
-        val imageView=binding.backgroundImage
-        imageView.scaleType=ImageView.ScaleType.FIT_XY
-        imageView.clearAnimation()
-        val size=bitmapList.size-1
-        var index=0
-        val animation=AnimationUtils.loadAnimation(requireContext(),android.R.anim.fade_in).apply {
-            repeatCount=Animation.INFINITE
-            repeatMode=Animation.REVERSE
-            duration=2000L
-            setAnimationListener( object :Animation.AnimationListener{
-                var repeatCount=0
-                    override fun onAnimationEnd(animation: Animation?) {
-                    }
-                    override fun onAnimationRepeat(animation: Animation?) {
-                        if (index<size && repeatCount%2==0){
-                            index++
-                            imageView.setImageBitmap(bitmapList[index])
-                        }else if (index==size){
-                            repeatCount=0
-                            index=0
-                        }
-                        repeatCount++
-                    }
-
-                    override fun onAnimationStart(animation: Animation?) {
-                        repeatCount++
-                        imageView.setImageBitmap(bitmapList[index])
-                    }
-                })
-        }
-        imageView.startAnimation(animation)
-    }  */
-
-    private fun setImageAnimations(imageUrls:List<String>){
-        job?.cancel()
-        val bitmapList= mutableListOf<Bitmap>()
-        if (imageUrls.isNotEmpty()){
-            job=lifecycleScope.launch (Dispatchers.Main + handler){
-                val subList=if (imageUrls.size>=9) imageUrls.subList(0,9) else imageUrls.subList(0,imageUrls.size-1)
-                try {
-                    for (url in subList){
-                        val job=async(Dispatchers.IO){
-                            Picasso.get().load("https://image.tmdb.org/t/p/original$url").get()
-                        }
-                        bitmapList.add(job.await())
-                    }
-                    withContext(Dispatchers.Main){
-                        if (bitmapList.isNotEmpty()){
-                           // startAnimation(bitmapList)
-                        }
-                    }
-                }catch (e:Exception){
-                    println(e.message)
-                }
-            }
-        }
-
-        /*    job=lifecycleScope.launch(Dispatchers.IO + handler) {
-                try {
-                    while (true){
-                        for(url in imageUrls){
-                            imageView.alpha=0f
-                            val job= async(Dispatchers.IO) {
-                                Picasso.get().load("https://image.tmdb.org/t/p/original$url").get()
-                            }
-                            val bitmap=job.await()
-                            val job2=launch(Dispatchers.Main){
-                                imageView.apply {
-                                    setImageBitmap(bitmap)
-                                    animate().alpha(1f).setDuration(2000L).withEndAction {
-                                        this.animate().alpha(0f).setDuration(2000L).start()
-                                    }.start()
-                                }
-                            }
-                            delay(4000L)
-                            job.cancel()
-                            job2.cancel()
-                        }
-                    }
-
-                }
-                catch (e:Exception){
-                    println(e.message)
-                }
-            } */
-    }
     private fun setLayoutVisibility(show: Boolean, showToast: Boolean, message: String?) {
         if (showToast) {
             binding.mainLayout.visibility = View.GONE
-            Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
+            Toast.makeText(context?.applicationContext, message, Toast.LENGTH_SHORT).show()
             return
         }
         if (show) {
@@ -407,40 +273,35 @@ class DetailsFragment @Inject constructor() : Fragment(R.layout.fragment_details
         }
         val vibrantColor=ColorStateList.valueOf(vibrantColor!!)
         val darkMutedColor=ColorStateList.valueOf(darkMutedColor!!)
-        binding.imgPlay.backgroundTintList = vibrantColor
-        binding.imgPlay.imageTintList= darkMutedColor
-        //binding.ratingBar.progressTintMode=PorterDuff.Mode.SRC_ATOP
+        binding.saveButton.backgroundTintList = vibrantColor
+        binding.saveButton.imageTintList= darkMutedColor
+        binding.episodesButton.backgroundTintList=vibrantColor
+        binding.episodesButton.imageTintList=darkMutedColor
         binding.ratingBar.progressTintList=vibrantColor
         binding.linearLayout.backgroundTintList=vibrantColor
-        binding.tabLayout.setTabTextColors(ContextCompat.getColor(requireContext(),R.color.white),this.vibrantColor!!)
-        binding.tabLayout.setSelectedTabIndicatorColor(this.vibrantColor!!)
-        binding.saveImage.backgroundTintList = vibrantColor
-        binding.saveImage.imageTintList = darkMutedColor
-       // binding.trailerImage.imageTintList = vibrantColor
-        //binding.trailerText.setTextColor(darkMutedColor)
-        //binding.videoImage.imageTintList=darkMutedColor
-        //binding.reviewImage.imageTintList = darkMutedColor
-        //binding.reviewText.setTextColor(vibrantColor)
+        binding.tabLayout.setTabTextColors(ContextCompat.getColor(requireContext(),R.color.white),DetailsFragment.vibrantColor!!)
+        binding.tabLayout.setSelectedTabIndicatorColor(DetailsFragment.vibrantColor!!)
+        binding.trailerButton.backgroundTintList = vibrantColor
+        binding.trailerButton.imageTintList = darkMutedColor
         binding.ratingBar.rating = (selectedResponse?.vote_average?.toFloat()?.div(2f))?:0f
         selectedResponse?.let { it ->
 
             it.genres?.let {
             var name=""
                 for(i in it.indices){
-                    if (i == it.size-1){
-                        name += it[i]
-                    }
-                    else{
-                        name += "${it[i]} , "
+                    name += if (i == it.size-1){
+                        it[i].name
+                    } else{
+                        "${it[i].name} , "
                     }
                     if(i == 5) break
                 }
+            binding.genreText.text=name
             }
             var text=""
             if (it.episode_run_time?.isNotEmpty() == true) {
                 text= it.episode_run_time.last().toString()
             }
-            //binding.textDescription.text = it.overview
             binding.runtimeText.text = "${it.runtime?:text} min"
             binding.ratingText.text = it.vote_average?.toBigDecimal()?.setScale(1, RoundingMode.UP)?.toString() + "/10"
             binding.nameText.text = it.original_title?:it.original_name
@@ -470,9 +331,9 @@ class DetailsFragment @Inject constructor() : Fragment(R.layout.fragment_details
                 viewModel.isItIntDatabase(detailResponse.id)
             }
             if(isTvShow){
-                Toast.makeText(requireContext(),"Tv show added into Watchlist",Toast.LENGTH_SHORT).show()
+                Toast.makeText(context?.applicationContext,"Tv show added into Watchlist",Toast.LENGTH_SHORT).show()
             }else{
-                Toast.makeText(requireContext(),"Movie added into Watchlist",Toast.LENGTH_SHORT).show()
+                Toast.makeText(context?.applicationContext,"Movie added into Watchlist",Toast.LENGTH_SHORT).show()
             }
 
         }else{
@@ -482,9 +343,9 @@ class DetailsFragment @Inject constructor() : Fragment(R.layout.fragment_details
                 viewModel.isItIntDatabase(it.id)
             }
             if(isTvShow){
-                Toast.makeText(requireContext(),"Tv show deleted from Watchlist",Toast.LENGTH_SHORT).show()
+                Toast.makeText(context?.applicationContext,"Tv show deleted from Watchlist",Toast.LENGTH_SHORT).show()
             }else{
-                Toast.makeText(requireContext(),"Movie deleted from Watchlist",Toast.LENGTH_SHORT).show()
+                Toast.makeText(context?.applicationContext,"Movie deleted from Watchlist",Toast.LENGTH_SHORT).show()
             }
         }
     }

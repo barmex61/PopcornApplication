@@ -35,9 +35,10 @@
     <string name="t_r">Genre</string>
     <string name="hakkinda">About</string>
     <string name="actor">Actors</string>
-    <string name="comment">Comments</string>
+    <string name="comment">Reviews</string>
     <string name="recommendation">Recommendation</string>
     <string name="familiar">Familiar</string>
     <string name="trailers">Trailer</string>
     <string name="k_tarihi">Release date</string>
+    <string name="s_rala">Sırala</string>
 </resources>

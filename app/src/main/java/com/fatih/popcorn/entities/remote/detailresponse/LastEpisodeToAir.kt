@@ -13,4 +13,4 @@ data class LastEpisodeToAir(
     val still_path: String,
     val vote_average: Double,
     val vote_count: Int
-)
+):java.io.Serializable

@@ -35,10 +35,11 @@
     <string name="t_r">Tür</string>
     <string name="hakkinda">Hakkında</string>
     <string name="actor">Oyuncular</string>
-    <string name="comment">Yorumlar</string>
+    <string name="comment">İncelemeler</string>
     <string name="recommendation">Önerilenler</string>
     <string name="familiar">Benzerleri</string>
     <string name="trailers">Fragman</string>
     <string name="k_tarihi">Çıkış tarihi</string>
+    <string name="s_rala">Sırala</string>
 
 </resources>

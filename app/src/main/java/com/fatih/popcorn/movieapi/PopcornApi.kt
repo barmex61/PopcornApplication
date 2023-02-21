@@ -5,6 +5,7 @@ import com.fatih.popcorn.entities.remote.creditsresponse.CreditsResponse
 import com.fatih.popcorn.entities.remote.detailresponse.DetailResponse
 import com.fatih.popcorn.entities.remote.discoverresponse.DiscoverResponse
 import com.fatih.popcorn.entities.remote.imageresponse.ImageResponse
+import com.fatih.popcorn.entities.remote.reviewresponse.ReviewResponse
 
 import retrofit2.Response
 import retrofit2.http.GET
@@ -20,7 +21,14 @@ interface PopcornApi {
     //https://api.themoviedb.org/3/tv/85552/videos?api_key=ae624ef782f69d5092464dffa234178b
     //https://api.themoviedb.org/3/movie/1037353/credits?api_key=ae624ef782f69d5092464dffa234178b&language=en-US
     //https://api.themoviedb.org/3/discover/movie?api_key=ae624ef782f69d5092464dffa234178b&sort_by=popularity.desc&page=1&with_genres=80
+    //https://api.themoviedb.org/3/movie/505642/reviews?api_key=ae624ef782f69d5092464dffa234178b&language=en-US&page=1
 
+   @GET("{name}/{id}/reviews")
+   suspend fun getReviews(
+       @Path("name") name:String,
+       @Path("id") id:Int,
+       @Query("api_key") api_key: String = BuildConfig.API_KEY,
+       @Query("page") page:Int):Response<ReviewResponse>
    @GET("{name}/{id}/credits")
    suspend fun getCredits(
        @Path("name") name: String,

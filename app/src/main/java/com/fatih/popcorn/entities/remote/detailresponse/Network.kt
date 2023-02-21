@@ -5,4 +5,4 @@ data class Network(
     val logo_path: String,
     val name: String,
     val origin_country: String
-)
+):java.io.Serializable

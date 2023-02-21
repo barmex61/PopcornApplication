@@ -1,6 +1,7 @@
 package com.fatih.popcorn.adapter
 
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.AsyncListDiffer
@@ -8,9 +9,12 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.fatih.popcorn.R
 import com.fatih.popcorn.databinding.CastRviewRowBinding
+import com.fatih.popcorn.other.setCastImage
 import javax.inject.Inject
 
 class CastRecyclerViewAdapter @Inject constructor():RecyclerView.Adapter<CastRecyclerViewAdapter.CastRecyclerViewHolder>() {
+
+    var vibrantColor:Int=0
 
     private val diffUtil=object :DiffUtil.ItemCallback<Triple<String,String,String>>(){
         override fun areContentsTheSame(oldItem: Triple<String, String, String>, newItem: Triple<String, String, String>): Boolean {
@@ -40,8 +44,17 @@ class CastRecyclerViewAdapter @Inject constructor():RecyclerView.Adapter<CastRec
     }
 
     override fun onBindViewHolder(holder: CastRecyclerViewHolder, position: Int) {
-        holder.castRecyclerRowBinding.imageUrl=castList[position].third
+        holder.castRecyclerRowBinding.nameText.setTextColor(vibrantColor)
+        holder.castRecyclerRowBinding.characterText.setTextColor(vibrantColor)
         holder.castRecyclerRowBinding.name=castList[position].first
         holder.castRecyclerRowBinding.charecter="(${castList[position].second})"
+        holder.castRecyclerRowBinding.circleImageView.setCastImage(castList[position].third){
+
+            if (it && holder.castRecyclerRowBinding.castRowLayout.visibility==View.GONE){
+                holder.castRecyclerRowBinding.castRowLayout.visibility=View.VISIBLE
+            }else if (!it){
+                holder.castRecyclerRowBinding.castRowLayout.visibility=View.GONE
+            }
+        }
     }
 }

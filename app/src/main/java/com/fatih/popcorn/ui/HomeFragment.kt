@@ -17,6 +17,7 @@ import androidx.core.view.GravityCompat
 import androidx.core.view.updatePadding
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
@@ -48,8 +49,8 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-@AndroidEntryPoint
-class HomeFragment @Inject constructor(): Fragment(R.layout.fragment_home) {
+
+class HomeFragment : Fragment(R.layout.fragment_home) {
 
     private var _binding:FragmentHomeBinding?=null
     private val binding:FragmentHomeBinding
@@ -68,13 +69,12 @@ class HomeFragment @Inject constructor(): Fragment(R.layout.fragment_home) {
     private lateinit var adapter: HomeFragmentAdapter
     private var view:View?=null
     private var movieSortPosition=0
-    private val viewModel:HomeFragmentViewModel by lazy{
-        MainActivity.viewModel
-    }
+    private lateinit var viewModel:HomeFragmentViewModel
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         _binding=DataBindingUtil.inflate(inflater,R.layout.fragment_home,container,false)
         view=binding.root
+        viewModel=ViewModelProvider(requireActivity())[HomeFragmentViewModel::class.java]
         genres=savedInstanceState?.getString("genres",genres)?:genres
         sortString=savedInstanceState?.getString("sort",sortString)?:sortString
         doInitialization()
@@ -107,7 +107,7 @@ class HomeFragment @Inject constructor(): Fragment(R.layout.fragment_home) {
         adapter.setMyOnClickLambda { id, pair ->
             pair?.let {
                 findNavController().navigate(HomeFragmentDirections.actionHomeFragmentToDetailsFragment(id,pair.first,pair.second))
-            }?: findNavController().navigate(HomeFragmentDirections.actionHomeFragmentToDetailsFragment(id,R.color.black2,R.color.white))
+            }?: findNavController().navigate(HomeFragmentDirections.actionHomeFragmentToDetailsFragment(id,R.color.white,R.color.black2))
         }
         binding.navigationView.setNavigationItemSelectedListener {
             setNavigation(it)
@@ -215,8 +215,7 @@ class HomeFragment @Inject constructor(): Fragment(R.layout.fragment_home) {
         recyclerView =binding.moviesRecyclerView
         recyclerView!!.setItemViewCacheSize(100)
         recyclerView!!.adapter=adapter
-        recyclerView!!.layoutManager= GridLayoutManager(requireContext(),
-            Resources.getSystem().displayMetrics.widthPixels/200)
+        recyclerView!!.layoutManager= GridLayoutManager(requireContext(), Resources.getSystem().displayMetrics.widthPixels/200)
         onScrollListener=object:OnScrollListener() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                 if (!recyclerView.canScrollVertically(1) && viewModel.currentPage.value!! < totalAvailablePages) {
