@@ -1,6 +1,6 @@
 <resources>
     <string name="app_name">PopcornApp</string>
-    <string name="p0pc0rn_time">P0PC0RN Time</string>
+    <string name="p0pc0rn_time">P0PC0RN\u0020Time</string>
     <string name="movies">FİLMLER</string>
     <string name="tv_shows">DİZİLER</string>
     <string name="index">Dizin</string>
@@ -12,24 +12,24 @@
     <string name="notifications">Bildirimler</string>
     <string name="downloads">İndirilenler</string>
     <string name="settings">Ayarlar</string>
-    <string name="version_1_0">Version 1.0</string>
-    <string name="popcorn_time">POPCORN Time</string>
+    <string name="version_1_0">Version\u00201.0</string>
+    <string name="popcorn_time">POPCORN\u0020Time</string>
     <string name="enter_tv_show">Arama…</string>
     <string name="tv_show">DİZİLER</string>
     <string name="reviews">İNCELEMELER</string>
     <string name="trailer">FRAGMANLAR</string>
     <string name="seasons">SEZONLAR</string>
-    <string name="film_bilgisi">Film Bilgisi</string>
-    <string name="orjinal_smi">Orijinal İsmi</string>
+    <string name="film_bilgisi">Film\u0020Bilgisi</string>
+    <string name="orjinal_smi">Orijinal\u0020İsmi</string>
     <string name="durumu">Durumu</string>
     <string name="s_resi">Süresi</string>
-    <string name="orjinal_dili">Orijinal Dili</string>
+    <string name="orjinal_dili">Orijinal\u0020Dili</string>
     <string name="yap_mc_lke">Yapımcı Ülke</string>
     <string name="irketler">Şirketler</string>
     <string name="b_t_esi">Bütçesi</string>
     <string name="has_lat">Hasılatı</string>
     <string name="tagline">Tagline</string>
-    <string name="puan_ortalamas">Puan Ortalaması</string>
+    <string name="puan_ortalamas">Puan\u0020Ortalaması</string>
     <string name="oy_say_s">Oy Sayısı</string>
     <string name="a_klama">Açıklama</string>
     <string name="t_r">Tür</string>
@@ -39,7 +39,15 @@
     <string name="recommendation">Önerilenler</string>
     <string name="familiar">Benzerleri</string>
     <string name="trailers">Fragman</string>
-    <string name="k_tarihi">Çıkış tarihi</string>
+    <string name="k_tarihi">Çıkış\u0020tarihi</string>
     <string name="s_rala">Sırala</string>
+    <string name="rviewcount">0\u0020inceleme</string>
+    <string name="review">\u0020inceleme</string>
+    <string name="yearsago">yıl\u0020önce</string>
+    <string name="monthago">ay\u0020önce</string>
+    <string name="dayago">gün\u0020önce</string>
+    <string name="today">Bugün</string>
+    <string name="date">Tarih</string>
+    <string name="rating">Derece</string>
 
 </resources>

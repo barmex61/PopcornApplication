@@ -1,16 +1,21 @@
 package com.fatih.popcorn.ui.tabfragments
 
+import android.app.AlertDialog
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.AdapterView
+import android.widget.ArrayAdapter
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.fatih.popcorn.R
 import com.fatih.popcorn.adapter.ReviewAdapter
 import com.fatih.popcorn.databinding.FragmentReviewBinding
+import com.fatih.popcorn.entities.remote.reviewresponse.ReviewResult
 import com.fatih.popcorn.other.Constants
 import com.fatih.popcorn.other.Constants.checkIsItInMovieListOrNot
 import com.fatih.popcorn.other.Constants.movieSearch
@@ -28,37 +33,72 @@ class ReviewFragment:Fragment(R.layout.fragment_review) {
     private var adapter: ReviewAdapter?=null
     private var viewModel:DetailsFragmentViewModel?=null
     private var selectedId:Int=1
+    private var position=0
+    private var resultList= listOf<ReviewResult>()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         _binding=DataBindingUtil.inflate(inflater,R.layout.fragment_review,container,false)
         view=binding.root
+        selectedId= arguments?.getInt("id") ?:selectedId
         viewModel=ViewModelProvider(requireActivity())[DetailsFragmentViewModel::class.java]
         if (checkIsItInMovieListOrNot()){
             viewModel?.getReviews(movieSearch,selectedId,viewModel!!.reviewCurrentPage.value!!)
         }else{
             viewModel?.getReviews(tvSearch,selectedId,viewModel!!.reviewCurrentPage.value!!)
         }
-        recyclerView=binding.reciewRecyclerView
         adapter= ReviewAdapter(R.layout.review_recycler_row)
+        recyclerView=binding.reciewRecyclerView
+        recyclerView!!.layoutManager=LinearLayoutManager(requireContext())
+        recyclerView!!.adapter=adapter
+        val spinnerArray= arrayOf(resources.getString(R.string.date),resources.getString(R.string.rating))
+        val arrayAdapter=ArrayAdapter(requireContext(), androidx.appcompat.R.layout.support_simple_spinner_dropdown_item,spinnerArray)
+        binding.spinner.apply {
+            adapter=arrayAdapter
+            onItemSelectedListener=object:AdapterView.OnItemSelectedListener{
+                override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+                    if(this@ReviewFragment.position!=position){
+                        val sortedList=  if (position==0){
+                          resultList.sortedByDescending {
+                               it.updated_at
+                           }
+
+                        }else{
+                            resultList.sortedByDescending {
+                                it.author_details.rating
+                            }
+                        }
+                        this@ReviewFragment.adapter?.list=sortedList
+                    }
+                }
+
+                override fun onNothingSelected(parent: AdapterView<*>?)=Unit
+            }
+        }
         observeLiveData()
         return view
     }
 
+
     private fun observeLiveData(){
         viewModel?.reviewResponse?.observe(viewLifecycleOwner){
             when(it.status){
+                Status.LOADING->{}
+                Status.ERROR->{
+                    println(it.message)
+                }
                 Status.SUCCESS->{
                     it.data?.let {
-                        adapter?.list=it.results
-                        println(adapter?.list?.size)
+                        resultList=it.results
+                        adapter?.list=resultList
                     }
+                    binding.count=it.data?.total_results
                 }
-                else->Unit
             }
         }
     }
 
     override fun onDestroyView() {
+        resultList= listOf()
         adapter=null
         recyclerView=null
         view=null

@@ -1,32 +1,36 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout>
+    <data>
+        <variable
+            name="result"
+            type="com.fatih.popcorn.entities.remote.reviewresponse.ReviewResult" />
 
+    </data>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:background="@drawable/cast_bg"
-    android:backgroundTint="#24284A"
-    android:layoutAnimation="@anim/layout_animation"
+    android:background="@drawable/review_bg"
     android:layout_marginTop="20dp"
     android:layout_height="wrap_content">
 
     <de.hdodenhof.circleimageview.CircleImageView
         android:layout_width="60dp"
         android:layout_height="60dp"
-        android:src="@drawable/popcorn"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         android:layout_marginTop="15dp"
         android:layout_marginStart="15dp"
+        placeHolder="@{result.author_details.avatar_path}"
         android:id="@+id/reviewProfileImg"
         android:scaleType="centerCrop"
-        android:elevation="20dp"
         />
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Obione_tdg"
+        android:text="@{result.author}"
+        android:elevation="40dp"
+        android:outlineProvider="bounds"
         android:textColor="@color/white"
         app:layout_constraintTop_toTopOf="@id/reviewProfileImg"
         app:layout_constraintStart_toEndOf="@id/reviewProfileImg"
@@ -39,7 +43,7 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Rating : 7/10"
+        android:text='@{"Rating: "+String.valueOf(result.author_details.rating)}'
         app:layout_constraintBottom_toBottomOf="@id/profileNameText"
         android:textColor="@color/gray"
         app:layout_constraintTop_toTopOf="@id/profileNameText"
@@ -52,7 +56,7 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="7 gün önce"
+        date="@{result.updated_at}"
         android:textColor="@color/gray"
         app:layout_constraintTop_toBottomOf="@id/profileNameText"
         app:layout_constraintStart_toEndOf="@id/reviewProfileImg"
@@ -65,11 +69,12 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:maxLines="7"
-        android:ellipsize="end"
+        android:ellipsize="marquee"
         android:fontFamily="@font/adamina"
         android:includeFontPadding="false"
         android:lineSpacingExtra="2dp"
-        android:text="Lorem Impsum Lorem Impsum Lorem ImpsumLorem Impsum Lorem Impsum Lorem Impsum Lorem Impsum Lorem Impsum Lorem Impsum Lorem Impsum Lorem Impsum Lorem Impsum Lorem Impsum Lorem Impsum Lorem Impsum Lorem Impsum Lorem Impsum Lorem Impsum Lorem Impsum Lorem Impsum Lorem Impsum"
+        android:textColor="@color/white"
+        android:text="@{result.content}"
         app:layout_constraintTop_toBottomOf="@id/reviewProfileImg"
         android:layout_margin="15dp"
         app:layout_constraintStart_toStartOf="@id/reviewProfileImg"

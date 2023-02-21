@@ -1,12 +1,8 @@
 package com.fatih.popcorn.other
 
-import android.content.res.Resources
-import android.view.Gravity
-import android.view.View
+import android.annotation.SuppressLint
 import android.view.animation.AnimationUtils
-import android.widget.EditText
 import android.widget.ImageView
-import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.databinding.BindingAdapter
 import com.fatih.popcorn.R
@@ -15,6 +11,8 @@ import com.fatih.popcorn.entities.remote.detailresponse.ProductionCountry
 import com.fatih.popcorn.entities.remote.discoverresponse.DiscoverResponse
 import com.squareup.picasso.Callback
 import com.squareup.picasso.Picasso
+import java.text.SimpleDateFormat
+import java.util.*
 
 
 @BindingAdapter("android:downloadUrl")
@@ -49,8 +47,20 @@ fun ImageView.setImageUrl(url: String?) {
 fun ImageView.setViewPagerImage(url: String?) {
 
     try {
-        url.let {
+        url?.let {
             Picasso.get().load("https://image.tmdb.org/t/p/original$url").into(this)
+        }
+    } catch (e: Exception) {
+        e.printStackTrace()
+    }
+}
+
+@BindingAdapter("placeHolder")
+fun ImageView.setPlaceHolder(placeHolder: String?) {
+
+    try {
+        placeHolder?.let {
+            Picasso.get().load("https://image.tmdb.org/t/p/original$it").placeholder(R.drawable.baseline_account_circle_24).into(this)
         }
     } catch (e: Exception) {
         e.printStackTrace()
@@ -224,3 +234,37 @@ fun TextView.setRelease(releaseDate: String?,lastAirDate:String?){
         "Last episode : $it"
     }
 }
+
+@SuppressLint("SetTextI18n")
+@BindingAdapter("date")
+fun TextView.setDate(date:String?){
+    val sdf = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+    val currentDate: String = sdf.format(Date())
+    date?.let {
+        try {
+            val year=currentDate.substring(0,4).toInt()-it.substring(0,4).toInt()
+            val month=currentDate.substring(5,7).toInt()-it.substring(5,7).toInt()
+            val day=currentDate.substring(8,10).toInt()-it.substring(8,10).toInt()
+            if (year>=1){
+                this.text="$year " + resources.getString(R.string.yearsago)
+            }else if(month>=1){
+                this.text="$month "+ resources.getString(R.string.monthago)
+            }else if(day>=1){
+                this.text="$day " + resources.getString(R.string.dayago)
+            }else{
+                this.text=resources.getString(R.string.today)
+            }
+        }catch (e:Exception){
+
+        }
+    }
+}
+
+@SuppressLint("SetTextI18n")
+@BindingAdapter("review")
+fun TextView.setReview(review:Int?){
+    this.text=review?.let {
+        "$review "+ resources.getString(R.string.review)
+    }?:resources.getString(R.string.rviewcount)
+}
+

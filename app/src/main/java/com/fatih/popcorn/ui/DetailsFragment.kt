@@ -112,7 +112,11 @@ class DetailsFragment : Fragment(R.layout.fragment_details) {
         bundle.putSerializable("detailResponse",selectedResponse!!)
         fragmentList= listOf(AboutFragment().apply {
             arguments=bundle
-        },CastFragment(),ReviewFragment(),RecommendFragment(),FamiliarFragment(),TrailerFragment())
+        },CastFragment(),ReviewFragment().apply {
+            val castBundle=Bundle()
+            castBundle.putInt("id",selectedId!!)
+            arguments=castBundle
+        },RecommendFragment(),FamiliarFragment(),TrailerFragment())
         _myFragmentManager=childFragmentManager
         fragmentViewPagerAdapter=DetailsFragmentViewPagerAdapter(fragmentList!!,myFragmentManager,lifecycle)
         fragmentViewPager!!.adapter=fragmentViewPagerAdapter

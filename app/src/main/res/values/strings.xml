@@ -40,5 +40,14 @@
     <string name="familiar">Familiar</string>
     <string name="trailers">Trailer</string>
     <string name="k_tarihi">Release date</string>
-    <string name="s_rala">Sırala</string>
+    <string name="s_rala">Sort</string>
+    <string name="rviewcount">0 review</string>
+    <string name="review"> review</string>
+    <string name="yearsago">years\u0020ago</string>
+    <string name="monthago">month\u0020ago</string>
+    <string name="dayago">day\u0020ago</string>
+    <string name="today">Today</string>
+    <string name="date">Date</string>
+    <string name="rating">Rating</string>
+
 </resources>

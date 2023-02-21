@@ -12,7 +12,9 @@ import com.fatih.popcorn.databinding.CastRviewRowBinding
 import com.fatih.popcorn.other.setCastImage
 import javax.inject.Inject
 
-class CastRecyclerViewAdapter @Inject constructor():RecyclerView.Adapter<CastRecyclerViewAdapter.CastRecyclerViewHolder>() {
+class CastRecyclerViewAdapter @Inject constructor(
+    val hideProgressBar:(Boolean)->Unit
+):RecyclerView.Adapter<CastRecyclerViewAdapter.CastRecyclerViewHolder>() {
 
     var vibrantColor:Int=0
 
@@ -52,6 +54,7 @@ class CastRecyclerViewAdapter @Inject constructor():RecyclerView.Adapter<CastRec
 
             if (it && holder.castRecyclerRowBinding.castRowLayout.visibility==View.GONE){
                 holder.castRecyclerRowBinding.castRowLayout.visibility=View.VISIBLE
+                hideProgressBar(true)
             }else if (!it){
                 holder.castRecyclerRowBinding.castRowLayout.visibility=View.GONE
             }

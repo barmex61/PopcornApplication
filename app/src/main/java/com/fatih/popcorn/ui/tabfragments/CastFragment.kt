@@ -33,8 +33,7 @@ class CastFragment : Fragment(R.layout.fragment_cast) {
     private val handler = CoroutineExceptionHandler{ _,throwable->
         println("Caught exception $throwable")
     }
-    @Inject
-    lateinit var castAdapter:CastRecyclerViewAdapter
+    private lateinit var castAdapter:CastRecyclerViewAdapter
     private lateinit var viewModel: DetailsFragmentViewModel
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -46,9 +45,16 @@ class CastFragment : Fragment(R.layout.fragment_cast) {
     }
 
     private fun doInitialization(){
-
+        castAdapter=CastRecyclerViewAdapter { result->
+            _binding?.let {
+                if (result && it.castProgressBar.visibility==View.VISIBLE){
+                    it.castProgressBar.visibility=View.GONE
+                }
+            }
+        }
         recyclerView=binding.veilRecyclerView
         recyclerView!!.layoutManager = GridLayoutManager(requireContext(),Resources.getSystem().displayMetrics.widthPixels/200)
+        recyclerView!!.setHasFixedSize(true)
         castAdapter.vibrantColor=DetailsFragment.vibrantColor!!
         recyclerView!!.adapter = castAdapter
         observeLiveData()
@@ -89,6 +95,7 @@ class CastFragment : Fragment(R.layout.fragment_cast) {
     }
 
     override fun onDestroyView() {
+        job?.cancel()
         recyclerView=null
         _binding=null
         view=null
