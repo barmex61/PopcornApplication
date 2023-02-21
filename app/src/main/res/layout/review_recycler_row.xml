@@ -35,7 +35,7 @@
         app:layout_constraintTop_toTopOf="@id/reviewProfileImg"
         app:layout_constraintStart_toEndOf="@id/reviewProfileImg"
         android:layout_marginStart="20dp"
-        android:layout_marginTop="10dp"
+        android:layout_marginTop="5dp"
         android:textSize="15sp"
         android:id="@+id/profileNameText"
         />
@@ -44,12 +44,11 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text='@{"Rating: "+String.valueOf(result.author_details.rating)}'
-        app:layout_constraintBottom_toBottomOf="@id/profileNameText"
         android:textColor="@color/gray"
-        app:layout_constraintTop_toTopOf="@id/profileNameText"
+        app:layout_constraintTop_toBottomOf="@id/dateText"
         app:layout_constraintStart_toEndOf="@id/profileNameText"
-        android:layout_marginStart="20dp"
-        android:textSize="12sp"
+        android:textSize="10sp"
+        android:layout_marginTop="1dp"
         android:id="@+id/ratingText"
         />
 

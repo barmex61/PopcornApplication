@@ -153,7 +153,7 @@ class DetailsFragment : Fragment(R.layout.fragment_details) {
                         setLayoutVisibility(show = false, showToast = true, resource.message)
                     }
                     Status.SUCCESS -> {
-
+                        println("success")
                         resource.data?.let {
                             selectedResponse = it
                             viewModel.isItIntDatabase(it.id!!)

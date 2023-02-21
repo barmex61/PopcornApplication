@@ -68,18 +68,23 @@ class PopcornRepository (
 
     @InternalCoroutinesApi
     override fun getDetails(name: String, id: Int, language: String): Flow<Resource<DetailResponse>> = flow{
-       emit(Resource.loading(null))
+       println("getdetails")
+        emit(Resource.loading(null))
        val resource= try {
             val result=popcornApi.getDetails(searchName = name,id = id,language = language)
             if(result.isSuccessful){
+                println("succesfully")
                 result.body()?.let {
                     Resource.success(it)
                 }?: Resource.error("Response body empty")
             }else{
+                println("unseccess")
+
                 Resource.error("Response failed")
             }
         }catch (e:Exception){
-          Resource.error(e.message)
+           println("qqqq")
+           Resource.error(e.message)
         }
         emit(resource)
     }
@@ -123,10 +128,8 @@ class PopcornRepository (
 
     override suspend fun getSelectedRoomEntity(idInput: Int): RoomEntity? {
        return try {
-           delay(300)
            roomDao.getSelectedRoomEntity(idInput)
        }catch (e:Exception){
-           println(e.message)
            null
        }
     }

@@ -57,6 +57,7 @@ class ReviewFragment:Fragment(R.layout.fragment_review) {
             onItemSelectedListener=object:AdapterView.OnItemSelectedListener{
                 override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
                     if(this@ReviewFragment.position!=position){
+                        this@ReviewFragment.position=position
                         val sortedList=  if (position==0){
                           resultList.sortedByDescending {
                                it.updated_at
@@ -68,6 +69,7 @@ class ReviewFragment:Fragment(R.layout.fragment_review) {
                             }
                         }
                         this@ReviewFragment.adapter?.list=sortedList
+                        this@ReviewFragment.recyclerView?.smoothScrollToPosition(0)
                     }
                 }
 
@@ -84,7 +86,6 @@ class ReviewFragment:Fragment(R.layout.fragment_review) {
             when(it.status){
                 Status.LOADING->{}
                 Status.ERROR->{
-                    println(it.message)
                 }
                 Status.SUCCESS->{
                     it.data?.let {
