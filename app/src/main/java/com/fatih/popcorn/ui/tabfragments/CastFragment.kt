@@ -18,7 +18,6 @@ import com.fatih.popcorn.ui.DetailsFragment
 import com.fatih.popcorn.viewmodel.DetailsFragmentViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.*
-import javax.inject.Inject
 
 
 @AndroidEntryPoint
@@ -45,7 +44,7 @@ class CastFragment : Fragment(R.layout.fragment_cast) {
     }
 
     private fun doInitialization(){
-        castAdapter=CastRecyclerViewAdapter { result->
+        castAdapter=CastRecyclerViewAdapter(R.layout.cast_rview_row) { result->
             _binding?.let {
                 if (result && it.castProgressBar.visibility==View.VISIBLE){
                     it.castProgressBar.visibility=View.GONE
@@ -85,7 +84,7 @@ class CastFragment : Fragment(R.layout.fragment_cast) {
                                     Triple(crew.name,crew.job,crew.profile_path!!)
                                 }
                             }
-                            castAdapter.castList=castList.await() + crewList.await()
+                            castAdapter.list=castList.await() + crewList.await()
                         }
                     }
                 }

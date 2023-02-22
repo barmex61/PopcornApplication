@@ -1,7 +1,6 @@
 package com.fatih.popcorn.repository
 
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.liveData
 import com.fatih.popcorn.database.RoomDao
 import com.fatih.popcorn.entities.local.RoomEntity
 import com.fatih.popcorn.entities.remote.creditsresponse.CreditsResponse
@@ -12,10 +11,8 @@ import com.fatih.popcorn.entities.remote.reviewresponse.ReviewResponse
 import com.fatih.popcorn.movieapi.PopcornApi
 import com.fatih.popcorn.other.Resource
 import kotlinx.coroutines.InternalCoroutinesApi
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
-import retrofit2.Response
 
 class PopcornRepository (
     private val popcornApi: PopcornApi,
@@ -68,22 +65,17 @@ class PopcornRepository (
 
     @InternalCoroutinesApi
     override fun getDetails(name: String, id: Int, language: String): Flow<Resource<DetailResponse>> = flow{
-       println("getdetails")
         emit(Resource.loading(null))
        val resource= try {
             val result=popcornApi.getDetails(searchName = name,id = id,language = language)
             if(result.isSuccessful){
-                println("succesfully")
                 result.body()?.let {
                     Resource.success(it)
                 }?: Resource.error("Response body empty")
             }else{
-                println("unseccess")
-
                 Resource.error("Response failed")
             }
         }catch (e:Exception){
-           println("qqqq")
            Resource.error(e.message)
         }
         emit(resource)
@@ -163,4 +155,20 @@ class PopcornRepository (
             Resource.error(e.message)
         }
     }
+
+    override suspend fun getRecommendations(name: String, id: Int, page: Int): Resource<DiscoverResponse> {
+        return try {
+            val response=popcornApi.getRecommendations(name = name, id = id, page = page)
+            if(response.isSuccessful){
+                response.body()?.let {
+                    Resource.success(it)
+                }?:Resource.error("Response body null")
+            }else{
+                Resource.error("Response failed")
+            }
+        }catch (e:Exception){
+            Resource.error(e.message)
+        }
+    }
+
 }

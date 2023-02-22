@@ -1,12 +1,13 @@
 package com.fatih.popcorn.ui.tabfragments
 
-import android.app.AlertDialog
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.animation.AnimationUtils
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
+import android.widget.TextView
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
@@ -16,7 +17,6 @@ import com.fatih.popcorn.R
 import com.fatih.popcorn.adapter.ReviewAdapter
 import com.fatih.popcorn.databinding.FragmentReviewBinding
 import com.fatih.popcorn.entities.remote.reviewresponse.ReviewResult
-import com.fatih.popcorn.other.Constants
 import com.fatih.popcorn.other.Constants.checkIsItInMovieListOrNot
 import com.fatih.popcorn.other.Constants.movieSearch
 import com.fatih.popcorn.other.Constants.tvSearch
@@ -35,16 +35,18 @@ class ReviewFragment:Fragment(R.layout.fragment_review) {
     private var selectedId:Int=1
     private var position=0
     private var resultList= listOf<ReviewResult>()
+    private var vibrantColor : Int=0
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         _binding=DataBindingUtil.inflate(inflater,R.layout.fragment_review,container,false)
         view=binding.root
         selectedId= arguments?.getInt("id") ?:selectedId
+        vibrantColor = arguments?.getInt("vibrantColor") ?: vibrantColor
         viewModel=ViewModelProvider(requireActivity())[DetailsFragmentViewModel::class.java]
         if (checkIsItInMovieListOrNot()){
-            viewModel?.getReviews(movieSearch,selectedId,viewModel!!.reviewCurrentPage.value!!)
+            viewModel?.getReviews(movieSearch,selectedId,1)
         }else{
-            viewModel?.getReviews(tvSearch,selectedId,viewModel!!.reviewCurrentPage.value!!)
+            viewModel?.getReviews(tvSearch,selectedId,1)
         }
         adapter= ReviewAdapter(R.layout.review_recycler_row)
         recyclerView=binding.reciewRecyclerView
@@ -85,10 +87,25 @@ class ReviewFragment:Fragment(R.layout.fragment_review) {
         viewModel?.reviewResponse?.observe(viewLifecycleOwner){
             when(it.status){
                 Status.LOADING->{}
-                Status.ERROR->{
-                }
+                Status.ERROR->{}
                 Status.SUCCESS->{
+
+                    if(it.data?.results?.isEmpty() == true){
+                        binding.sortText.visibility=View.GONE
+                        binding.reviewCountText.visibility=View.GONE
+                        binding.oopsText.apply {
+                            setTextColor(vibrantColor)
+                            visibility=View.VISIBLE
+                            startAnimation(AnimationUtils.loadAnimation(this.context,R.anim.oops_anim))
+                        }
+                        binding.lottieView.apply {
+                            visibility=View.VISIBLE
+                            playAnimation()
+                        }
+                        return@observe
+                    }
                     it.data?.let {
+                        println(adapter?.list?.size)
                         resultList=it.results
                         adapter?.list=resultList
                     }
@@ -97,6 +114,7 @@ class ReviewFragment:Fragment(R.layout.fragment_review) {
             }
         }
     }
+
 
     override fun onDestroyView() {
         resultList= listOf()

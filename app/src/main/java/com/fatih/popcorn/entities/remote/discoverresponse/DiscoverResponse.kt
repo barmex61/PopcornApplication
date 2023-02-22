@@ -6,5 +6,6 @@ data class DiscoverResponse(
     var total_pages: Int,
     var total_results: Int,
     var genres:String?,
-    var sortBy:String?
+    var sortBy:String?,
+    var recommendationId:Int?
 )

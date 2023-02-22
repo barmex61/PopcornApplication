@@ -7,6 +7,7 @@ import com.fatih.popcorn.entities.remote.detailresponse.DetailResponse
 import com.fatih.popcorn.entities.remote.imageresponse.ImageResponse
 import com.fatih.popcorn.entities.remote.reviewresponse.ReviewResponse
 import com.fatih.popcorn.other.Resource
+import com.fatih.popcorn.other.Status
 import com.fatih.popcorn.repository.PopcornRepositoryInterface
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -37,8 +38,6 @@ class DetailsFragmentViewModel @Inject constructor(private val popcornRepo:Popco
     private var _reviewResponse=MutableLiveData<Resource<ReviewResponse>>()
     val reviewResponse:LiveData<Resource<ReviewResponse>>
     get() = _reviewResponse
-
-    var reviewCurrentPage=MutableLiveData<Int>(1)
     fun getDetails(searchName:String,id:Int,language:String) {
 
        _detailResponse= popcornRepo.getDetails(searchName,id, language).catch {
@@ -85,6 +84,7 @@ class DetailsFragmentViewModel @Inject constructor(private val popcornRepo:Popco
     fun getReviews(name:String,id:Int,page:Int)=viewModelScope.launch {
         _reviewResponse.value=Resource.loading(null)
         _reviewResponse.value=popcornRepo.getReviews(name, id, page)
+
     }
 
 }

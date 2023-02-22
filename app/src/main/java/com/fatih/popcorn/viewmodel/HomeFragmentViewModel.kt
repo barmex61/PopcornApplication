@@ -5,6 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.fatih.popcorn.entities.remote.discoverresponse.DiscoverResponse
+import com.fatih.popcorn.entities.remote.discoverresponse.DiscoverResult
 import com.fatih.popcorn.other.*
 import com.fatih.popcorn.other.Constants.movieSearch
 import com.fatih.popcorn.other.Constants.stateList

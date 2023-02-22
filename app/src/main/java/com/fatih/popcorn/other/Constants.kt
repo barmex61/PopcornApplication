@@ -22,6 +22,7 @@ import java.util.Locale
 
 
 object Constants {
+
     var language=Locale.getDefault().language ?: ""
     const val BASE_URL="https://api.themoviedb.org/3/"
     val sortList= listOf("popularity.desc","release_date.desc","vote_average.desc","first_air_date.desc")

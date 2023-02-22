@@ -4,8 +4,6 @@ import android.annotation.SuppressLint
 import android.content.res.ColorStateList
 import android.content.res.Configuration
 import android.content.res.Resources
-import android.graphics.Bitmap
-import android.graphics.PorterDuff
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -17,14 +15,10 @@ import androidx.core.view.updatePadding
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
-import androidx.recyclerview.widget.RecyclerView
-import androidx.viewpager.widget.ViewPager
 import androidx.viewpager2.widget.ViewPager2
 
 import com.fatih.popcorn.R
-import com.fatih.popcorn.adapter.CastRecyclerViewAdapter
 import com.fatih.popcorn.adapter.DetailsFragmentViewPagerAdapter
 import com.fatih.popcorn.adapter.PosterImageViewPagerAdapter
 import com.fatih.popcorn.databinding.FragmentDetailsBinding
@@ -39,13 +33,11 @@ import com.fatih.popcorn.other.Status
 import com.fatih.popcorn.ui.tabfragments.*
 import com.fatih.popcorn.viewmodel.DetailsFragmentViewModel
 import com.google.android.material.tabs.TabLayoutMediator
-import com.squareup.picasso.Picasso
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.*
 import kotlinx.coroutines.Runnable
 import java.math.RoundingMode
 import java.util.*
-import javax.inject.Inject
 import kotlin.Exception
 
 @AndroidEntryPoint
@@ -70,7 +62,7 @@ class DetailsFragment : Fragment(R.layout.fragment_details) {
     private var posterList= listOf<String>()
     private var backgroundList= listOf<String>()
     private var searchLanguage= language
-    private var fragmentList : List<Fragment>? =null
+    private var fragmentList = listOf<Fragment>()
     private var fragmentViewPager:ViewPager2?=null
     private lateinit var viewModel: DetailsFragmentViewModel
 
@@ -114,11 +106,16 @@ class DetailsFragment : Fragment(R.layout.fragment_details) {
             arguments=bundle
         },CastFragment(),ReviewFragment().apply {
             val castBundle=Bundle()
+            castBundle.putInt("vibrantColor", vibrantColor!!)
             castBundle.putInt("id",selectedId!!)
             arguments=castBundle
-        },RecommendFragment(),FamiliarFragment(),TrailerFragment())
+        },RecommendFragment().apply {
+            val recommendBundle=Bundle()
+            recommendBundle.putInt("id",selectedId!!)
+            arguments=recommendBundle
+        },FamiliarFragment(),TrailerFragment())
         _myFragmentManager=childFragmentManager
-        fragmentViewPagerAdapter=DetailsFragmentViewPagerAdapter(fragmentList!!,myFragmentManager,lifecycle)
+        fragmentViewPagerAdapter=DetailsFragmentViewPagerAdapter(fragmentList,myFragmentManager,lifecycle)
         fragmentViewPager!!.adapter=fragmentViewPagerAdapter
         TabLayoutMediator(binding.tabLayout,binding.detailsViewPager,true,true){tab,position->
            when(position){
@@ -153,7 +150,6 @@ class DetailsFragment : Fragment(R.layout.fragment_details) {
                         setLayoutVisibility(show = false, showToast = true, resource.message)
                     }
                     Status.SUCCESS -> {
-                        println("success")
                         resource.data?.let {
                             selectedResponse = it
                             viewModel.isItIntDatabase(it.id!!)
@@ -357,12 +353,12 @@ class DetailsFragment : Fragment(R.layout.fragment_details) {
     override fun onDestroyView() {
         job?.cancel()
         job2?.cancel()
-        fragmentList=null
+        _myFragmentManager=null
+        fragmentList= listOf()
         fragmentViewPager?.adapter=null
         fragmentViewPagerAdapter=null
         viewPagerHandler?.removeCallbacks(runnable!!)
         binding.detailsViewPager.adapter=null
-        _myFragmentManager=null
         fragmentViewPager=null
         viewPagerHandler=null
         runnable=null

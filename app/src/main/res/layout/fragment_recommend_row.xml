@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:tools="http://schemas.android.com/tools">
+    <data>
+        <variable
+            name="imageUrl"
+            type="String" />
+
+        <variable
+            name="voteAverage"
+            type="Double" />
+
+        <variable
+            name="releaseDate"
+            type="String" />
+        <variable
+            name="firstAirDate"
+            type="String" />
+
+        <variable
+            name="name"
+            type="String" />
+
+    </data>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <ImageView
+        android:layout_width="120dp"
+        android:layout_height="150dp"
+        android:scaleType="centerCrop"
+        android:id="@+id/recommendImageView"
+        app:layout_constraintStart_toStartOf="parent"
+        android:downloadUrl="@{imageUrl}"
+        app:layout_constraintTop_toTopOf="parent"
+        />
+
+    <ImageView
+        android:layout_width="10dp"
+        android:layout_height="10dp"
+        android:contentDescription="@string/app_name"
+        android:id="@+id/heartImage"
+        android:src="@drawable/ic_heart"
+        app:layout_constraintBottom_toBottomOf="@id/recommendImageView"
+        app:layout_constraintStart_toStartOf="@id/recommendImageView"
+        android:layout_marginStart="6dp"
+        android:layout_marginBottom="4dp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toEndOf="@id/heartImage"
+        app:layout_constraintTop_toTopOf="@id/heartImage"
+        app:layout_constraintBottom_toBottomOf="@id/heartImage"
+        android:setVoteAverage="@{voteAverage}"
+        android:textSize="10sp"
+        android:textAlignment="center"
+        android:includeFontPadding="false"
+        android:maxLines="1"
+        android:ellipsize="none"
+        android:paddingStart="2dp"
+        android:textColor="@color/white"
+        />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="@id/heartImage"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="@id/heartImage"
+        app:releaseDate="@{releaseDate}"
+        app:firstAirDate="@{firstAirDate}"
+        android:textSize="10sp"
+        android:textColor="@color/white"
+        android:includeFontPadding="false"
+        android:maxLines="1"
+        android:ellipsize="none"
+        android:layout_marginEnd="13dp"
+        android:textAlignment="center"
+        tools:ignore="SmallSp" />
+
+    <TextView
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:ellipsize="marquee"
+        android:textSize="12sp"
+        android:marqueeRepeatLimit="marquee_forever"
+        android:background="@drawable/review_bg"
+        android:textAlignment="center"
+        android:textAllCaps="false"
+        android:textColor="@color/white"
+        android:id="@+id/recommendNameText"
+        android:padding="1dp"
+        android:text="@{name}"
+        app:layout_constraintTop_toBottomOf="@id/recommendImageView"
+        app:layout_constraintStart_toStartOf="@id/recommendImageView"
+        app:layout_constraintEnd_toEndOf="@id/recommendImageView"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

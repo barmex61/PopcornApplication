@@ -89,7 +89,7 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
     }
     private fun doInitialization(){
         setStatusBarPadding()
-        adapter=HomeFragmentAdapter()
+        adapter=HomeFragmentAdapter(R.layout.fragment_main_rv_row)
         searchCategory=if(checkIsItInMovieListOrNot()) movieSearch else tvSearch
         if(viewModel.searchQuery.value!!.isNotEmpty()){
             searchText= viewModel.searchQuery.value!!
@@ -213,7 +213,7 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
     }
     private fun setupRecyclerView(){
         recyclerView =binding.moviesRecyclerView
-        recyclerView!!.setItemViewCacheSize(100)
+        recyclerView!!.setItemViewCacheSize(50)
         recyclerView!!.adapter=adapter
         recyclerView!!.layoutManager= GridLayoutManager(requireContext(), Resources.getSystem().displayMetrics.widthPixels/200)
         onScrollListener=object:OnScrollListener() {
@@ -295,7 +295,7 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
                 }
                 Status.SUCCESS->{
                     setProgressBarVisibility(false)
-                    adapter.discoverList=it.data?.results?: listOf()
+                    adapter.list=it.data?.results?: listOf()
                     totalAvailablePages=it.data?.total_pages?:1
                 }
                 Status.ERROR->{
