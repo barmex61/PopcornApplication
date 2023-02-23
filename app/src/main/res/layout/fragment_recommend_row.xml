@@ -85,6 +85,7 @@
         android:layout_height="wrap_content"
         android:ellipsize="marquee"
         android:textSize="12sp"
+        android:singleLine="true"
         android:marqueeRepeatLimit="marquee_forever"
         android:background="@drawable/review_bg"
         android:textAlignment="center"

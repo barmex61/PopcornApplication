@@ -5,39 +5,28 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.lifecycleScope
+import androidx.navigation.NavOptions
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import androidx.recyclerview.widget.StaggeredGridLayoutManager
-import androidx.recyclerview.widget.StaggeredGridLayoutManager.VERTICAL
 import com.fatih.popcorn.R
-import com.fatih.popcorn.adapter.CastRecyclerViewAdapter
 import com.fatih.popcorn.adapter.RecommendFragmentAdapter
-import com.fatih.popcorn.databinding.FragmentCastBinding
 import com.fatih.popcorn.databinding.FragmentRecommendBinding
 import com.fatih.popcorn.other.Constants
 import com.fatih.popcorn.other.Constants.movieSearch
 import com.fatih.popcorn.other.Constants.tvSearch
-import com.fatih.popcorn.other.State
 import com.fatih.popcorn.other.Status
-import com.fatih.popcorn.ui.DetailsFragment
-import com.fatih.popcorn.viewmodel.DetailsFragmentViewModel
 import com.fatih.popcorn.viewmodel.RecommendationFragmentViewModel
-import kotlinx.coroutines.*
 
 class RecommendFragment:Fragment(R.layout.fragment_recommend) {
 
     private var _binding: FragmentRecommendBinding?=null
     private val binding: FragmentRecommendBinding
         get() = _binding!!
-    private var view: View?=null
     private var recyclerView: RecyclerView?=null
-    private var job: Job?=null
-    private val handler = CoroutineExceptionHandler{ _,throwable->
-        println("Caught exception $throwable")
-    }
     private var totalAvailablePages=2
     private lateinit var onScrollListener:RecyclerView.OnScrollListener
     private var selectedId=1
@@ -46,17 +35,26 @@ class RecommendFragment:Fragment(R.layout.fragment_recommend) {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         _binding= FragmentRecommendBinding.inflate(inflater,container,false)
-        view=binding.root
-        selectedId=arguments?.getInt("id")?:selectedId
         viewModel= ViewModelProvider(requireActivity())[RecommendationFragmentViewModel::class.java]
+        recommendAdapter= RecommendFragmentAdapter(R.layout.fragment_recommend_row)
+        selectedId=arguments?.getInt("id")?:selectedId
+        if (savedInstanceState?.getBoolean("isRotated") != true){
+            viewModel.resetData()
+        }
+        recommendAdapter.setMyOnClickLambda {url, id, pair ->
+            pair?.let {
+                findNavController().navigate(R.id.action_detailsFragment_self, bundleOf("id" to id,"vibrantColor" to it.first,"darkMutedColor" to it.second,"url" to url)
+                ,NavOptions.Builder().setPopUpTo(R.id.detailsFragment,true).build())
+            }?: findNavController().navigate(R.id.action_detailsFragment_self, bundleOf("id" to id,"vibrantColor" to R.color.white,"darkMutedColor" to R.color.black2,"url" to url),
+                NavOptions.Builder().setPopUpTo(R.id.detailsFragment,true).build())
+        }
         doInitialization()
-        return view
+        return binding.root
     }
 
     private fun doInitialization(){
-        recommendAdapter= RecommendFragmentAdapter(R.layout.fragment_recommend_row)
         recyclerView=binding.recommendRecyclerView
-        recyclerView!!.layoutManager = StaggeredGridLayoutManager(Resources.getSystem().displayMetrics.widthPixels/200, VERTICAL)
+        recyclerView!!.layoutManager = GridLayoutManager(requireContext(), Resources.getSystem().displayMetrics.widthPixels/200)
         recyclerView!!.adapter = recommendAdapter
         onScrollListener=object: RecyclerView.OnScrollListener() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
@@ -85,7 +83,15 @@ class RecommendFragment:Fragment(R.layout.fragment_recommend) {
             when(it.status){
                 Status.SUCCESS->{
                     it.data?.let {
+                        totalAvailablePages=it.total_pages
                         recommendAdapter.list=it.results
+                    }?:{
+                        binding.recommendationLottie.visibility=View.VISIBLE
+                        binding.recommendationLottie.playAnimation()
+                    }
+                    if (it.data?.total_results == 0){
+                        binding.recommendationLottie.visibility=View.VISIBLE
+                        binding.recommendationLottie.playAnimation()
                     }
                 }
                 else->Unit
@@ -93,12 +99,15 @@ class RecommendFragment:Fragment(R.layout.fragment_recommend) {
         }
     }
 
+    override fun onSaveInstanceState(outState: Bundle) {
+        outState.putBoolean("isRotated",true)
+        super.onSaveInstanceState(outState)
+    }
+
     override fun onDestroyView() {
-        job?.cancel()
         recyclerView?.adapter = null
         recyclerView=null
         _binding=null
-        view=null
         super.onDestroyView()
     }
 }

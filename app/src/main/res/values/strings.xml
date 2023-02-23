@@ -3,7 +3,7 @@
     <string name="p0pc0rn_time">P0PC0RN Time</string>
     <string name="movies">MOVIES</string>
     <string name="tv_shows">TV SHOWS</string>
-    <string name="tv_show">TV SHOW</string>
+    <string name="tv_show">TV SHOWS</string>
     <string name="index">Index</string>
     <string name="genres">Genres</string>
     <string name="sort_by">Sort By</string>
@@ -49,5 +49,6 @@
     <string name="today">Today</string>
     <string name="date">Date</string>
     <string name="rating">Rating</string>
+    <string name="oops_nothing_found">Oops!\u0020Nothing\u0020found</string>
 
 </resources>

@@ -15,7 +15,6 @@ import com.fatih.popcorn.entities.remote.detailresponse.DetailResponse
 
 class AboutFragment:Fragment() {
 
-    private var view: View?=null
     private var _binding: FragmentAboutBinding? = null
     private val binding:FragmentAboutBinding
     get() = _binding!!
@@ -24,12 +23,11 @@ class AboutFragment:Fragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         _binding= DataBindingUtil.inflate(inflater,R.layout.fragment_about,container,false)
-        view=binding.root
         detailResponse=arguments?.getSerializable("detailResponse")?.let {
             it as DetailResponse
         }?:detailResponse
         doInitialization()
-        return view
+        return binding.root
     }
 
     private fun doInitialization(){
@@ -41,7 +39,7 @@ class AboutFragment:Fragment() {
                     binding.tR.visibility=View.VISIBLE
                     binding.flow.visibility=View.VISIBLE
                     for (text in list.map { it.name }){
-                        val textView=TextView(requireContext())
+                        val textView=TextView(context?.applicationContext)
                         val layoutParams=ConstraintLayout.LayoutParams(ConstraintLayout.LayoutParams.WRAP_CONTENT,ConstraintLayout.LayoutParams.WRAP_CONTENT)
                         textView.layoutParams=layoutParams
                         textView.text = text
@@ -60,9 +58,4 @@ class AboutFragment:Fragment() {
         }
     }
 
-    override fun onDestroyView() {
-        _binding=null
-        view=null
-        super.onDestroyView()
-    }
 }

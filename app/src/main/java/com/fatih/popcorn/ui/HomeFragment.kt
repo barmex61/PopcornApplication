@@ -104,10 +104,10 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
         setupRecyclerView()
         setIndicatorColor(checkIsItInMovieListOrNot())
         binding.watchImage.setOnClickListener { findNavController().navigate(HomeFragmentDirections.actionHomeFragmentToWatchListFragment()) }
-        adapter.setMyOnClickLambda { id, pair ->
+        adapter.setMyOnClickLambda { url,id, pair ->
             pair?.let {
-                findNavController().navigate(HomeFragmentDirections.actionHomeFragmentToDetailsFragment(id,pair.first,pair.second))
-            }?: findNavController().navigate(HomeFragmentDirections.actionHomeFragmentToDetailsFragment(id,R.color.white,R.color.black2))
+                findNavController().navigate(HomeFragmentDirections.actionHomeFragmentToDetailsFragment(id,pair.first,pair.second,url))
+            }?: findNavController().navigate(HomeFragmentDirections.actionHomeFragmentToDetailsFragment(id,R.color.white,R.color.black2,url))
         }
         binding.navigationView.setNavigationItemSelectedListener {
             setNavigation(it)
@@ -213,7 +213,6 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
     }
     private fun setupRecyclerView(){
         recyclerView =binding.moviesRecyclerView
-        recyclerView!!.setItemViewCacheSize(50)
         recyclerView!!.adapter=adapter
         recyclerView!!.layoutManager= GridLayoutManager(requireContext(), Resources.getSystem().displayMetrics.widthPixels/200)
         onScrollListener=object:OnScrollListener() {
@@ -274,12 +273,12 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
 
     private fun setIndicatorColor(isItInMovie:Boolean){
         if(isItInMovie){
-            binding.movieButtonIndicator.setBackgroundColor(ContextCompat.getColor(requireContext(),R.color.indicatorColor))
+            binding.movieButtonIndicator.setBackgroundResource(R.drawable.view_divider_bg)
             binding.tvShowButtonIndicator.setBackgroundColor(
                 ContextCompat.getColor(requireContext(),
                     android.R.color.transparent))
         }else{
-            binding.tvShowButtonIndicator.setBackgroundColor(ContextCompat.getColor(requireContext(),R.color.indicatorColor))
+            binding.tvShowButtonIndicator.setBackgroundResource(R.drawable.view_divider_bg)
             binding.movieButtonIndicator.setBackgroundColor(
                 ContextCompat.getColor(requireContext(),
                     android.R.color.transparent))

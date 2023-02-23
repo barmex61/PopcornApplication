@@ -1,23 +1,11 @@
 package com.fatih.popcorn.other
 
-import android.annotation.SuppressLint
-import android.content.res.Configuration
 import android.content.res.Resources
-import android.graphics.Bitmap
-import android.graphics.ColorMatrix
-import android.graphics.ColorMatrixColorFilter
 import android.graphics.drawable.BitmapDrawable
 import android.widget.ImageView
-import android.widget.Toast
 import androidx.core.content.ContextCompat
-import androidx.lifecycle.MutableLiveData
 import androidx.palette.graphics.Palette
 import com.fatih.popcorn.R
-import com.google.android.material.color.utilities.CorePalette
-import com.squareup.picasso.Picasso
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.async
 import java.util.Locale
 
 

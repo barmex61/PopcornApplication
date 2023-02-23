@@ -1,16 +1,26 @@
 package com.fatih.popcorn.adapter
 
 import android.view.View
+import android.widget.ImageView
 import androidx.recyclerview.widget.AsyncListDiffer
 import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.RecyclerView
+import com.fatih.popcorn.R
 import com.fatih.popcorn.databinding.CastRviewRowBinding
-import com.fatih.popcorn.other.setCastImage
+import com.squareup.picasso.Callback
+import com.squareup.picasso.Picasso
 import javax.inject.Inject
 
 class CastRecyclerViewAdapter @Inject constructor(
-    val layout:Int,
-    val hideProgressBar:(Boolean)->Unit
+    val layout:Int
 ):BaseAdapter<Triple<String,String,String>,CastRviewRowBinding>(layout) {
+
+    private var hideProgressBar:((Boolean)->Unit)? =null
+    private var onlyOnce=false
+
+    fun setHideProgressBar(lambda:(Boolean)->Unit){
+        this.hideProgressBar=lambda
+    }
 
     override var vibrantColor: Int = 0
 
@@ -31,14 +41,33 @@ class CastRecyclerViewAdapter @Inject constructor(
         holder.binding.characterText.setTextColor(vibrantColor)
         holder.binding.name=list[position].first
         holder.binding.charecter="(${list[position].second})"
-        holder.binding.circleImageView.setCastImage(list[position].third){
-
-            if (it && holder.binding.castRowLayout.visibility==View.GONE){
-                holder.binding.castRowLayout.visibility=View.VISIBLE
-                hideProgressBar(true)
-            }else if (!it){
-                holder.binding.castRowLayout.visibility=View.GONE
+        val imageView=holder.binding.circleImageView
+        list[position].third.let {
+            val castView=holder.binding.castRowLayout
+            if (castView.visibility!=View.VISIBLE){
+                setImages(it,imageView,castView)
             }
         }
+    }
+
+    private fun setImages(url:String,imageView:ImageView,layout: View){
+        Picasso.get().load("https://image.tmdb.org/t/p/original$url").fit().centerCrop().placeholder(
+            R.drawable.baseline_account_circle_24).into(imageView,object: Callback {
+            override fun onSuccess() {
+                if (layout.visibility != View.VISIBLE)
+                layout.visibility = View.VISIBLE
+                if(!onlyOnce){
+                    hideProgressBar?.invoke(true)
+                    onlyOnce=true
+                }
+            }
+            override fun onError(e: java.lang.Exception?) =Unit
+        })
+    }
+
+    override fun onDetachedFromRecyclerView(recyclerView: RecyclerView) {
+        onlyOnce=false
+        hideProgressBar=null
+        super.onDetachedFromRecyclerView(recyclerView)
     }
 }

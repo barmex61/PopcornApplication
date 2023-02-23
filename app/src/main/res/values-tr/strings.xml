@@ -49,5 +49,6 @@
     <string name="today">Bugün</string>
     <string name="date">Tarih</string>
     <string name="rating">Derece</string>
+    <string name="oops_nothing_found">Burası\u0020bayağı\u0020sessiz</string>
 
 </resources>

@@ -7,6 +7,7 @@ import com.fatih.popcorn.entities.remote.discoverresponse.DiscoverResponse
 import com.fatih.popcorn.entities.remote.discoverresponse.DiscoverResult
 import com.fatih.popcorn.entities.remote.imageresponse.ImageResponse
 import com.fatih.popcorn.entities.remote.reviewresponse.ReviewResponse
+import com.fatih.popcorn.entities.remote.videoresponse.VideoResponse
 
 import retrofit2.Response
 import retrofit2.http.GET
@@ -14,6 +15,7 @@ import retrofit2.http.Path
 import retrofit2.http.Query
 
 interface PopcornApi {
+    //https://api.themoviedb.org/3/movie/505642/similar?api_key=ae624ef782f69d5092464dffa234178b&language=en-US&page=1
     //https://api.themoviedb.org/3/movie/{movie_id}/recommendations?api_key=ae624ef782f69d5092464dffa234178b&language=en-US&page=1
     //https://api.themoviedb.org/3/movie/505642?api_key=ae624ef782f69d5092464dffa234178b&language=en-US
     //https://api.themoviedb.org/3/tv/100088/watch/providers?api_key=ae624ef782f69d5092464dffa234178b
@@ -24,6 +26,18 @@ interface PopcornApi {
     //https://api.themoviedb.org/3/movie/1037353/credits?api_key=ae624ef782f69d5092464dffa234178b&language=en-US
     //https://api.themoviedb.org/3/discover/movie?api_key=ae624ef782f69d5092464dffa234178b&sort_by=popularity.desc&page=1&with_genres=80
     //https://api.themoviedb.org/3/movie/505642/reviews?api_key=ae624ef782f69d5092464dffa234178b&language=en-US&page=1
+
+    @GET("{name}/{id}/videos")
+    suspend fun getVideos(
+        @Path("name")name:String,
+        @Path("id")id:Int,
+        @Query("api_key") api_key: String = BuildConfig.API_KEY):Response<VideoResponse>
+    @GET("{name}/{id}/similar")
+    suspend fun getFamiliar(
+        @Path("name") name:String,
+        @Path("id") id:Int,
+        @Query("api_key") api_key: String=BuildConfig.API_KEY,
+        @Query("page") page:Int):Response<DiscoverResponse>
     @GET("{name}/{id}/recommendations")
     suspend fun getRecommendations(
         @Path("name") name:String,

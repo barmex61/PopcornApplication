@@ -65,6 +65,8 @@ class DetailsFragment : Fragment(R.layout.fragment_details) {
     private var fragmentList = listOf<Fragment>()
     private var fragmentViewPager:ViewPager2?=null
     private lateinit var viewModel: DetailsFragmentViewModel
+    private var selectedUrl=""
+    private var isSingleUrl=false
 
     companion object{
        var vibrantColor : Int ?=null
@@ -87,6 +89,7 @@ class DetailsFragment : Fragment(R.layout.fragment_details) {
         binding.backButton.setOnClickListener { findNavController().navigateUp() }
         //binding.episodesImage.setOnClickListener {view-> goEpisodes(view) }
         arguments?.let {
+           // selectedUrl=DetailsFragmentArgs.fromBundle(it)
             selectedId = DetailsFragmentArgs.fromBundle(it).id
             darkMutedColor = DetailsFragmentArgs.fromBundle(it).darkMutedColor
             vibrantColor = DetailsFragmentArgs.fromBundle(it).vibrantColor
@@ -113,7 +116,16 @@ class DetailsFragment : Fragment(R.layout.fragment_details) {
             val recommendBundle=Bundle()
             recommendBundle.putInt("id",selectedId!!)
             arguments=recommendBundle
-        },FamiliarFragment(),TrailerFragment())
+        },FamiliarFragment().apply{
+            val familiarBundle=Bundle()
+            familiarBundle.putInt("id",selectedId!!)
+            arguments=familiarBundle
+        },TrailerFragment().apply {
+            val trailerBundle=Bundle().apply {
+                putInt("id",selectedId!!)
+            }
+            arguments=trailerBundle
+        })
         _myFragmentManager=childFragmentManager
         fragmentViewPagerAdapter=DetailsFragmentViewPagerAdapter(fragmentList,myFragmentManager,lifecycle)
         fragmentViewPager!!.adapter=fragmentViewPagerAdapter
@@ -186,6 +198,10 @@ class DetailsFragment : Fragment(R.layout.fragment_details) {
                             }.map {
                                 it.file_path
                             }
+                            if (posterList.isEmpty() && backgroundList.isEmpty()){
+                                posterList= listOf(selectedUrl)
+                                isSingleUrl=true
+                            }
                             setupPosterViewPager(posterList,backgroundList)
                         }
                     }
@@ -215,6 +231,7 @@ class DetailsFragment : Fragment(R.layout.fragment_details) {
 
         val viewPagerAdapter=PosterImageViewPagerAdapter(shouldFitXY).apply {
             urlList=adapterList
+            singleUrl=isSingleUrl
         }
         binding.posterImageViewPager.apply {
             adapter=viewPagerAdapter
@@ -353,8 +370,9 @@ class DetailsFragment : Fragment(R.layout.fragment_details) {
     override fun onDestroyView() {
         job?.cancel()
         job2?.cancel()
-        _myFragmentManager=null
+        isSingleUrl=false
         fragmentList= listOf()
+        _myFragmentManager=null
         fragmentViewPager?.adapter=null
         fragmentViewPagerAdapter=null
         viewPagerHandler?.removeCallbacks(runnable!!)

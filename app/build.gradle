@@ -94,6 +94,8 @@ dependencies {
     implementation "androidx.lifecycle:lifecycle-livedata-ktx:2.5.1"
     implementation "androidx.lifecycle:lifecycle-viewmodel-savedstate:2.5.1"
 
+    implementation files('libs/YouTubeAndroidPlayerApi.jar')
+
     // Retrofit
     implementation 'com.squareup.retrofit2:retrofit:2.9.0'
     implementation 'com.squareup.retrofit2:converter-gson:2.9.0'
@@ -109,8 +111,8 @@ dependencies {
     // Picasso
     implementation 'com.squareup.picasso:picasso:2.71828'
 
-    implementation 'androidx.core:core-splashscreen:1.0.0'
     implementation 'me.relex:circleindicator:2.1.6'
+
 
     debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.8.1'
     implementation "com.airbnb.android:lottie:3.4.0"

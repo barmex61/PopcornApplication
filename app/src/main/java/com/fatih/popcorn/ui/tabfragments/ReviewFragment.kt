@@ -28,7 +28,6 @@ class ReviewFragment:Fragment(R.layout.fragment_review) {
     private var _binding:FragmentReviewBinding?=null
     private val binding:FragmentReviewBinding
     get() = _binding!!
-    private var view: View?=null
     private var recyclerView:RecyclerView?=null
     private var adapter: ReviewAdapter?=null
     private var viewModel:DetailsFragmentViewModel?=null
@@ -39,7 +38,6 @@ class ReviewFragment:Fragment(R.layout.fragment_review) {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         _binding=DataBindingUtil.inflate(inflater,R.layout.fragment_review,container,false)
-        view=binding.root
         selectedId= arguments?.getInt("id") ?:selectedId
         vibrantColor = arguments?.getInt("vibrantColor") ?: vibrantColor
         viewModel=ViewModelProvider(requireActivity())[DetailsFragmentViewModel::class.java]
@@ -79,7 +77,7 @@ class ReviewFragment:Fragment(R.layout.fragment_review) {
             }
         }
         observeLiveData()
-        return view
+        return binding.root
     }
 
 
@@ -105,7 +103,6 @@ class ReviewFragment:Fragment(R.layout.fragment_review) {
                         return@observe
                     }
                     it.data?.let {
-                        println(adapter?.list?.size)
                         resultList=it.results
                         adapter?.list=resultList
                     }
@@ -120,7 +117,6 @@ class ReviewFragment:Fragment(R.layout.fragment_review) {
         resultList= listOf()
         adapter=null
         recyclerView=null
-        view=null
         viewModel=null
         super.onDestroyView()
     }

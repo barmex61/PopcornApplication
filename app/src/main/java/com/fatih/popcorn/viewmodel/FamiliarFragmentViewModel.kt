@@ -14,18 +14,18 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class RecommendationFragmentViewModel @Inject constructor(private val popcornRepository: PopcornRepositoryInterface) :ViewModel(){
+class FamiliarFragmentViewModel @Inject constructor(private val popcornRepository: PopcornRepositoryInterface) :ViewModel(){
 
 
     private var _discoverResponse=MutableLiveData<Resource<DiscoverResponse>>()
     val discoverResponse:LiveData<Resource<DiscoverResponse>>
     get() = _discoverResponse
 
-    var recommendationCurrentPage=MutableLiveData(1)
+    var familiarCurrentPage=MutableLiveData(1)
 
-    fun getRecommendations(name: String, id: Int)=viewModelScope.launch {
+    fun getFamiliars(name: String, id: Int)=viewModelScope.launch {
         _discoverResponse.value= Resource.loading(_discoverResponse.value?.data)
-        val response=popcornRepository.getRecommendations(name, id, recommendationCurrentPage.value!!)
+        val response=popcornRepository.getFamiliars(name, id, familiarCurrentPage.value!!)
         when(response.status){
             Status.SUCCESS->{
                 _discoverResponse.value= Resource.success(_discoverResponse.value?.data.recommend(response.data!!.apply {
@@ -41,8 +41,7 @@ class RecommendationFragmentViewModel @Inject constructor(private val popcornRep
 
     fun resetData(){
         _discoverResponse=MutableLiveData<Resource<DiscoverResponse>>()
-        recommendationCurrentPage=MutableLiveData(1)
+        familiarCurrentPage=MutableLiveData(1)
     }
-
 
 }

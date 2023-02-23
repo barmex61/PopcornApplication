@@ -26,7 +26,6 @@ class CastFragment : Fragment(R.layout.fragment_cast) {
     private var _binding:FragmentCastBinding?=null
     private val binding:FragmentCastBinding
     get() = _binding!!
-    private var view:View?=null
     private var recyclerView:RecyclerView?=null
     private var job: Job?=null
     private val handler = CoroutineExceptionHandler{ _,throwable->
@@ -37,16 +36,16 @@ class CastFragment : Fragment(R.layout.fragment_cast) {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         _binding= FragmentCastBinding.inflate(inflater,container,false)
-        view=binding.root
         viewModel=ViewModelProvider(requireActivity())[DetailsFragmentViewModel::class.java]
         doInitialization()
-        return view
+        return binding.root
     }
 
     private fun doInitialization(){
-        castAdapter=CastRecyclerViewAdapter(R.layout.cast_rview_row) { result->
+        castAdapter=CastRecyclerViewAdapter(R.layout.cast_rview_row)
+        castAdapter.setHideProgressBar {result->
             _binding?.let {
-                if (result && it.castProgressBar.visibility==View.VISIBLE){
+                if ( result && it.castProgressBar.visibility==View.VISIBLE){
                     it.castProgressBar.visibility=View.GONE
                 }
             }
@@ -97,7 +96,6 @@ class CastFragment : Fragment(R.layout.fragment_cast) {
         job?.cancel()
         recyclerView=null
         _binding=null
-        view=null
         super.onDestroyView()
     }
 

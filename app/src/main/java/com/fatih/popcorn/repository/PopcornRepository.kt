@@ -8,6 +8,7 @@ import com.fatih.popcorn.entities.remote.detailresponse.DetailResponse
 import com.fatih.popcorn.entities.remote.discoverresponse.DiscoverResponse
 import com.fatih.popcorn.entities.remote.imageresponse.ImageResponse
 import com.fatih.popcorn.entities.remote.reviewresponse.ReviewResponse
+import com.fatih.popcorn.entities.remote.videoresponse.VideoResponse
 import com.fatih.popcorn.movieapi.PopcornApi
 import com.fatih.popcorn.other.Resource
 import kotlinx.coroutines.InternalCoroutinesApi
@@ -171,4 +172,33 @@ class PopcornRepository (
         }
     }
 
+    override suspend fun getFamiliars(name: String, id: Int, page: Int): Resource<DiscoverResponse> {
+        return try {
+            val response=popcornApi.getFamiliar(name = name, id = id, page = page)
+            if(response.isSuccessful){
+                response.body()?.let {
+                    Resource.success(it)
+                }?:Resource.error("Response body null")
+            }else{
+                Resource.error("Response failed")
+            }
+        }catch (e:Exception){
+            Resource.error(e.message)
+        }
+    }
+
+    override suspend fun getVideos(name: String, id: Int): Resource<VideoResponse> {
+        return try {
+            val response=popcornApi.getVideos(name = name, id = id)
+            if(response.isSuccessful){
+                response.body()?.let {
+                    Resource.success(it)
+                }?:Resource.error("Response body null")
+            }else{
+                Resource.error("Response failed")
+            }
+        }catch (e:Exception){
+            Resource.error(e.message)
+        }
+    }
 }

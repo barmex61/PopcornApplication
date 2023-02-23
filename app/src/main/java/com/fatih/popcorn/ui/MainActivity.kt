@@ -2,7 +2,6 @@ package com.fatih.popcorn.ui
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.core.view.WindowCompat
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavController
@@ -10,9 +9,7 @@ import androidx.navigation.fragment.NavHostFragment
 import com.fatih.popcorn.R
 import com.fatih.popcorn.other.Constants.isFirstRun
 import com.fatih.popcorn.other.Constants.orientation
-import com.fatih.popcorn.other.Status
 import com.fatih.popcorn.viewmodel.HomeFragmentViewModel
-import com.squareup.picasso.Picasso
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -33,11 +30,6 @@ class MainActivity : AppCompatActivity() {
             isFirstRun=false
         }
         orientation=currentOrientation
-        installSplashScreen().apply {
-            setKeepOnScreenCondition{
-                viewModel.discoverData.value?.status== Status.LOADING
-            }
-        }
         setContentView(R.layout.activity_main)
         setupNavController()
     }

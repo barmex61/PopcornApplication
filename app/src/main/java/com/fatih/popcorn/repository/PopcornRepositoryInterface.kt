@@ -1,6 +1,7 @@
 package com.fatih.popcorn.repository
 
 import androidx.lifecycle.LiveData
+import com.fatih.popcorn.BuildConfig
 import com.fatih.popcorn.entities.local.RoomEntity
 import com.fatih.popcorn.entities.remote.creditsresponse.CreditsResponse
 import com.fatih.popcorn.entities.remote.detailresponse.DetailResponse
@@ -8,8 +9,11 @@ import com.fatih.popcorn.entities.remote.discoverresponse.DiscoverResponse
 import com.fatih.popcorn.entities.remote.discoverresponse.DiscoverResult
 import com.fatih.popcorn.entities.remote.imageresponse.ImageResponse
 import com.fatih.popcorn.entities.remote.reviewresponse.ReviewResponse
+import com.fatih.popcorn.entities.remote.videoresponse.VideoResponse
 import com.fatih.popcorn.other.Resource
 import kotlinx.coroutines.flow.Flow
+import retrofit2.http.Path
+import retrofit2.http.Query
 
 interface PopcornRepositoryInterface {
 
@@ -25,6 +29,7 @@ interface PopcornRepositoryInterface {
     suspend fun getSelectedRoomEntity(idInput:Int):RoomEntity?
     suspend fun getReviews(name:String, id:Int, page:Int):Resource<ReviewResponse>
     suspend fun getRecommendations(name:String,id:Int,page:Int):Resource<DiscoverResponse>
-
+    suspend fun getFamiliars(name:String,id:Int,page:Int):Resource<DiscoverResponse>
+    suspend fun getVideos(name:String, id:Int):Resource<VideoResponse>
 
 }

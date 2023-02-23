@@ -9,6 +9,7 @@ import androidx.databinding.ViewDataBinding
 import androidx.recyclerview.widget.AsyncListDiffer
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
+import com.fatih.popcorn.databinding.CastRviewRowBinding
 import com.fatih.popcorn.databinding.ReviewRecyclerRowBinding
 
 abstract class BaseAdapter <T,K:ViewDataBinding> (val layoutId:Int):RecyclerView.Adapter<BaseAdapter.MyViewHolder<K>>(){
@@ -23,13 +24,14 @@ abstract class BaseAdapter <T,K:ViewDataBinding> (val layoutId:Int):RecyclerView
     get() = asyncListDiffer.currentList
     set(value) = asyncListDiffer.submitList(value)
 
-    open var myItemClickLambda:((Int,Pair<Int,Int>?)->Unit)?=null
+    open var myItemClickLambda:((String?,Int,Pair<Int,Int>?)->Unit)?=null
 
-    open fun setMyOnClickLambda(lambda:(Int,Pair<Int,Int>?) ->Unit){
+    open fun setMyOnClickLambda(lambda:(String?,Int,Pair<Int,Int>?) ->Unit){
         this.myItemClickLambda=lambda
     }
 
-    class MyViewHolder <K>(val binding:K):RecyclerView.ViewHolder((binding as ViewDataBinding).root)
+    open class MyViewHolder <K>(val binding:K):RecyclerView.ViewHolder((binding as ViewDataBinding).root)
+
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyViewHolder<K> {
        val binding=DataBindingUtil.inflate<K>(LayoutInflater.from(parent.context),layoutId,parent,false)

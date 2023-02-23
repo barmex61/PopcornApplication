@@ -25,16 +25,24 @@ class PosterImageViewPagerAdapter (private val shouldFitXY:Boolean) :RecyclerVie
     var urlList:List<String>
     get() = asyncListDiffer.currentList
     set(value) = asyncListDiffer.submitList(value)
+
+    var singleUrl:Boolean = false
+
     class PosterImageViewHolder(val imageView:ImageView):RecyclerView.ViewHolder(imageView)
     override fun getItemCount(): Int {
         return urlList.size
     }
 
     override fun onBindViewHolder(holder:PosterImageViewHolder, position: Int) {
-        holder.imageView.apply {
-           scaleType = if(shouldFitXY) ImageView.ScaleType.FIT_XY else ImageView.ScaleType.CENTER_CROP
-            setViewPagerImage(urlList[position])
+        if (singleUrl){
+            holder.imageView.setViewPagerImage(urlList[position])
+        }else{
+            holder.imageView.apply {
+                scaleType = if(shouldFitXY) ImageView.ScaleType.FIT_XY else ImageView.ScaleType.CENTER_CROP
+                setViewPagerImage(urlList[position])
+            }
         }
+
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int):PosterImageViewHolder {

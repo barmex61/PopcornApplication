@@ -48,10 +48,28 @@ fun ImageView.setViewPagerImage(url: String?) {
 
     try {
         url?.let {
-            Picasso.get().load("https://image.tmdb.org/t/p/original$url").fit().centerCrop().into(this)
+            Picasso.get().load("https://image.tmdb.org/t/p/original$url").fit().into(this)
         }
     } catch (e: Exception) {
         e.printStackTrace()
+    }
+}
+
+@BindingAdapter("android:youtubeUrl")
+fun getYoutubeThumbnail(view: ImageView, url:String?){
+    view.alpha=0.4f
+    try {
+        url?.let {
+            Picasso.get().load(url).noFade().into(view,object : Callback {
+                    override fun onSuccess() {
+                        view.animate().alpha(1f).setDuration(600).start()
+                    }
+
+                    override fun onError(e: java.lang.Exception?)=Unit
+                })
+        }
+    }catch (_:Exception){
+
     }
 }
 
@@ -67,28 +85,14 @@ fun ImageView.setPlaceHolder(placeHolder: String?) {
     }
 }
 
-fun ImageView.setCastImage(url: String?,callBack:(Boolean) -> Unit){
-
-    try {
-        url.let {
-           Picasso.get().load("https://image.tmdb.org/t/p/original$url").fit().centerCrop().into(this,object:Callback{
-                override fun onSuccess() {
-                    callBack(true)
-                }
-                override fun onError(e: java.lang.Exception?) {
-                    callBack(false)
-                }
-            })
-        }
-    } catch (e: Exception) {
-        e.printStackTrace()
-    }
-}
-
 @BindingAdapter("android:setVoteAverage")
 fun TextView.setVoteAverageText(voteAverage: Double?) {
     voteAverage?.let {
-        this.text = it.toString()
+        this.text=if (it.toString().length>2){
+            it.toString().substring(0..2)
+        }else{
+            it.toString()
+        }
     }
 }
 
@@ -135,11 +139,12 @@ fun DiscoverResponse?.add(data: DiscoverResponse): DiscoverResponse {
 
 fun DiscoverResponse?.recommend(data:DiscoverResponse):DiscoverResponse{
     return this?.let {
-        if (it.recommendationId==data.recommendationId && it.page != data.page){
+        if (it.recommendationId==data.recommendationId && it.page != data.page ){
             it.results += data.results
             it.total_pages = data.total_pages
             it.total_results = data.total_results
             it.page = data.page
+            println("${it.recommendationId} ${it.page}")
         }else if (it.recommendationId != data.recommendationId){
             it.results = data.results
             it.total_pages = data.total_pages

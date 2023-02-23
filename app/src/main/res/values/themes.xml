@@ -5,13 +5,14 @@
         <item name="colorPrimary"> @color/royalBlue</item>
         <item name="colorPrimaryVariant">@color/teal_700</item>
         <item name="colorOnPrimary">@color/white</item>
+        <item name="android:windowBackground">@drawable/splash_bg</item>
         <!-- Secondary brand color. -->
         <item name="colorSecondary">@color/royalBlue</item>
         <item name="colorSecondaryVariant">@color/teal_700</item>
         <item name="colorOnSecondary">@color/white</item>
         <!-- Status bar color. -->
         <item name="android:statusBarColor" >@android:color/transparent</item>
-        <item name="android:navigationBarColor">#44000000</item>
+        <item name="android:navigationBarColor">@android:color/transparent</item>
         <!-- Customize your theme here. -->
     </style>
     <style name="BottomSheetDialog" parent="Theme.Design.Light.BottomSheetDialog">
@@ -29,4 +30,6 @@
         <item name="android:progressTint">@color/white</item>
         <item name="android:progressBackgroundTint">@color/white</item>
     </style>
+
+
 </resources>

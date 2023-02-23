@@ -33,7 +33,7 @@ class HomeFragmentAdapter(private val layout:Int) :BaseAdapter<DiscoverResult,Fr
             val pair= getVibrantColor(holder.binding.movieImage)
             if(position<list.size){
                 list[position].id?.let { id->
-                    myItemClickLambda?.invoke(id,pair)
+                    myItemClickLambda?.invoke(list[position].poster_path,id,pair)
                 }
             }
         }
