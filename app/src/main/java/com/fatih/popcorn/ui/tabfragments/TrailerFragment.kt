@@ -122,7 +122,7 @@ class TrailerFragment @Inject constructor(): Fragment(R.layout.fragment_trailer)
                                     }
                                 }
                                 myVideoId.let {
-                                    viewModel.getYoutubeResponse(it,part)
+                                    viewModel.getYoutubeResponse(part,it)
                                 }
                             }
                         }else->Unit

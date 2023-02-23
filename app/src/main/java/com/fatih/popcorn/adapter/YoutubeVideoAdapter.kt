@@ -48,6 +48,8 @@ class YoutubeVideoAdapter (val layout:Int):BaseAdapter<İtem,FragmentTrailerRowB
             holder.binding.viewText=coolNumberFormat(list[position].statistics.viewCount.toLong())
             holder.binding.titleText=list[position].snippet.title
             holder.binding.dateText=niceDateStr.toString()
+            holder.binding.runTime=list[position].contentDetails.duration
+            holder.binding.channelImage
         }catch (e:Exception){
             println(e.message)
         }

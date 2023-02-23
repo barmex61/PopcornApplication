@@ -15,10 +15,12 @@ import com.fatih.popcorn.other.Resource
 import kotlinx.coroutines.InternalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
+import javax.inject.Named
 
 class PopcornRepository (
     private val popcornApi: PopcornApi,
-    private val roomDao:RoomDao)   :PopcornRepositoryInterface {
+    private val roomDao:RoomDao,
+    private val youtubeApi:PopcornApi)   :PopcornRepositoryInterface {
 
     override suspend fun getMovies(sort_by: String, page: Int, genres: String): Resource<DiscoverResponse> {
         return try {
@@ -205,7 +207,8 @@ class PopcornRepository (
 
     override suspend fun getYoutubeVideoDetails(part:String,id:String): Resource<YoutubeResponse> {
         return try {
-            val response=popcornApi.getYoutubeVideoDetails(part,id)
+            val response=youtubeApi.getYoutubeVideoDetails(part,id)
+            println(response.errorBody()?.string())
             if(response.isSuccessful){
                 response.body()?.let {
                     Resource.success(it)

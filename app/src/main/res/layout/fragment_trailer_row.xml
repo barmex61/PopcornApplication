@@ -21,6 +21,9 @@
         <variable
             name="description"
             type="String" />
+        <variable
+            name="runTime"
+            type="String" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -40,8 +43,8 @@
 
 
         <ImageView
-            android:layout_width="35dp"
-            android:layout_height="35dp"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
             android:background="@drawable/play_button_bg"
             android:src="@drawable/ic_baseline_play_arrow_24"
             app:layout_constraintTop_toTopOf="@id/thumbnailImage"
@@ -53,8 +56,9 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="2:38"
             android:textSize="13sp"
+            android:id="@+id/runtimeText"
+            android:text="@{runTime}"
             app:layout_constraintBottom_toBottomOf="@id/thumbnailImage"
             app:layout_constraintEnd_toEndOf="@id/thumbnailImage"
             android:layout_marginEnd="5dp"

@@ -28,12 +28,13 @@ object AppModule {
 
     @Provides
     @Singleton
+    @Named("PopcornApi")
     fun providePopcornApi()=Retrofit.Builder().baseUrl(BASE_URL).addConverterFactory(GsonConverterFactory.create())
         .build().create(PopcornApi::class.java)
 
     @Provides
     @Singleton
-    fun providePopcornRepo(popcornApi: PopcornApi, roomDao: RoomDao)=PopcornRepository(popcornApi,roomDao) as PopcornRepositoryInterface
+    fun providePopcornRepo(@Named("PopcornApi")popcornApi: PopcornApi, roomDao: RoomDao, @Named("YoutubeApi") youtubeApi: PopcornApi)=PopcornRepository(popcornApi = popcornApi,roomDao, youtubeApi = youtubeApi) as PopcornRepositoryInterface
 
     @Provides
     @Singleton
