@@ -8,6 +8,7 @@ import com.fatih.popcorn.entities.remote.discoverresponse.DiscoverResult
 import com.fatih.popcorn.entities.remote.imageresponse.ImageResponse
 import com.fatih.popcorn.entities.remote.reviewresponse.ReviewResponse
 import com.fatih.popcorn.entities.remote.videoresponse.VideoResponse
+import com.fatih.popcorn.entities.remote.youtuberesponse.YoutubeResponse
 
 import retrofit2.Response
 import retrofit2.http.GET
@@ -99,6 +100,12 @@ interface PopcornApi {
     suspend fun getImages(@Path("name") name:String,
                           @Path("id") id:Int,
                           @Query("api_key") api_key: String = BuildConfig.API_KEY):Response<ImageResponse>
+
+    @GET("videos")
+    suspend fun getYoutubeVideoDetails(
+        @Query("part")part:String,
+        @Query("id")id:String,
+        @Query("key")key:String = BuildConfig.YOUTUBE_API_KEY): Response<YoutubeResponse>
 
 
 }

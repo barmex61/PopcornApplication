@@ -20,7 +20,7 @@ android {
 
         Properties properties=new Properties()
         properties.load(project.rootProject.file("local.properties").newDataInputStream())
-
+        buildConfigField "String","YOUTUBE_API_KEY","\"${properties.getProperty("YOUTUBE_API_KEY")}\""
         buildConfigField "String","API_KEY","\"${properties.getProperty("API_KEY")}\""
     }
 

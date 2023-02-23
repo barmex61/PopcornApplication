@@ -11,6 +11,7 @@ import java.util.Locale
 
 object Constants {
 
+    const val YOUTUBE_BASE_URL="https://youtube.googleapis.com/youtube/v3/"
     var language=Locale.getDefault().language ?: ""
     const val BASE_URL="https://api.themoviedb.org/3/"
     val sortList= listOf("popularity.desc","release_date.desc","vote_average.desc","first_air_date.desc")

@@ -10,6 +10,7 @@ import com.fatih.popcorn.entities.remote.discoverresponse.DiscoverResult
 import com.fatih.popcorn.entities.remote.imageresponse.ImageResponse
 import com.fatih.popcorn.entities.remote.reviewresponse.ReviewResponse
 import com.fatih.popcorn.entities.remote.videoresponse.VideoResponse
+import com.fatih.popcorn.entities.remote.youtuberesponse.YoutubeResponse
 import com.fatih.popcorn.other.Resource
 import kotlinx.coroutines.flow.Flow
 import retrofit2.http.Path
@@ -31,5 +32,6 @@ interface PopcornRepositoryInterface {
     suspend fun getRecommendations(name:String,id:Int,page:Int):Resource<DiscoverResponse>
     suspend fun getFamiliars(name:String,id:Int,page:Int):Resource<DiscoverResponse>
     suspend fun getVideos(name:String, id:Int):Resource<VideoResponse>
+    suspend fun getYoutubeVideoDetails(part:String,id:String):Resource<YoutubeResponse>
 
 }

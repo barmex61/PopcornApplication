@@ -4,12 +4,15 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.fatih.popcorn.R
+import com.fatih.popcorn.adapter.YoutubeVideoAdapter
 import com.fatih.popcorn.databinding.FragmentTrailerBinding
+import com.fatih.popcorn.entities.remote.youtuberesponse.İtem
 import com.fatih.popcorn.other.Constants
 import com.fatih.popcorn.other.Constants.movieSearch
 import com.fatih.popcorn.other.Constants.tvSearch
@@ -18,6 +21,7 @@ import com.fatih.popcorn.viewmodel.TrailerFragmentViewModel
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.PlayerConstants
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.YouTubePlayer
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.listeners.AbstractYouTubePlayerListener
+import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.listeners.YouTubePlayerCallback
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.views.YouTubePlayerView
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
@@ -32,13 +36,11 @@ class TrailerFragment @Inject constructor(): Fragment(R.layout.fragment_trailer)
         private var myVideoId:String=""
         private var selectedId=0
         private var videoUrlArrayList=ArrayList<String>()
-        //private var itemList=ArrayList<İtem>()
         private var part="snippet,contentDetails,statistics"
         private lateinit var youtubePlayerView: YouTubePlayerView
         private var position=0
         private var listener: AbstractYouTubePlayerListener?=null
-
-
+        private var youtubeVideoAdapter : YoutubeVideoAdapter?=null
 
         override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
             _binding= FragmentTrailerBinding.inflate(inflater,container,false)
@@ -51,6 +53,16 @@ class TrailerFragment @Inject constructor(): Fragment(R.layout.fragment_trailer)
 
         }
         private fun doInitialization(){
+            youtubeVideoAdapter= YoutubeVideoAdapter(R.layout.fragment_trailer_row)
+            youtubeVideoAdapter!!.setOnItemClickListener {
+                position=it
+                binding.youtubePlayer.getYouTubePlayerWhenReady(object : YouTubePlayerCallback {
+                    override fun onYouTubePlayer(youTubePlayer: YouTubePlayer) {
+                        youTubePlayer.cueVideo(youtubeVideoAdapter!!.list[position].id,0f)
+                    }
+                })
+
+            }
             arguments?.let {
                 selectedId=TrailerFragmentArgs.fromBundle(it).id
             }
@@ -61,7 +73,7 @@ class TrailerFragment @Inject constructor(): Fragment(R.layout.fragment_trailer)
                 viewModel.getVideos(tvSearch,selectedId)
             }
             binding.youtubeRecyclerView.layoutManager= LinearLayoutManager(requireContext())
-            //binding.youtubeRecyclerView.adapter=youtubeVideoAdapter
+            binding.youtubeRecyclerView.adapter=youtubeVideoAdapter
 
             observeLiveData()
             youtubePlayerView=binding.youtubePlayer
@@ -91,15 +103,6 @@ class TrailerFragment @Inject constructor(): Fragment(R.layout.fragment_trailer)
             }
 
             youtubePlayerView.addYouTubePlayerListener(listener as AbstractYouTubePlayerListener)
-            /*youtubeVideoAdapter.setOnItemClickListener {
-                position=it
-                youtubePlayerView.getYouTubePlayerWhenReady(object : YouTubePlayerCallback {
-                    override fun onYouTubePlayer(youTubePlayer: YouTubePlayer) {
-                        youTubePlayer.cueVideo(videoUrlArrayList[position],0f)
-                    }
-                })
-
-            } */
 
         }
         private fun observeLiveData(){
@@ -118,18 +121,16 @@ class TrailerFragment @Inject constructor(): Fragment(R.layout.fragment_trailer)
                                         }
                                     }
                                 }
-                                /*myVideoId.let {
-                                    viewModel.getYoutubeVideos(it,part)
-                                } */
+                                myVideoId.let {
+                                    viewModel.getYoutubeResponse(it,part)
+                                }
                             }
-                        }else->{
-
-                    }
+                        }else->Unit
                     }
                 }
             }
 
-          /*  viewModel.youtubeVideos.observe(viewLifecycleOwner){resources->
+           viewModel.youtubeResponse.observe(viewLifecycleOwner){resources->
                 if(resources!=null){
                     when(resources.status){
                         Status.ERROR->{
@@ -138,24 +139,21 @@ class TrailerFragment @Inject constructor(): Fragment(R.layout.fragment_trailer)
                         }
                         Status.LOADING->{
                             binding.isLoading=true
-
                         }
                         Status.SUCCESS->{
                             binding.isLoading=false
                             resources.data?.let { it->
-
-                                itemList=ArrayList(it.items)
-                                youtubeVideoAdapter.youtubeList=itemList
-                                youtubeVideoAdapter.notifyDataSetChanged()
+                                youtubeVideoAdapter?.list=it.items
                             }
                         }
 
                     }
                 }
-            } */
+            }
         }
 
         override fun onDestroy() {
+            youtubeVideoAdapter=null
             _binding=null
             videoUrlArrayList.clear()
             super.onDestroy()

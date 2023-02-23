@@ -9,6 +9,7 @@ import com.fatih.popcorn.entities.remote.discoverresponse.DiscoverResponse
 import com.fatih.popcorn.entities.remote.imageresponse.ImageResponse
 import com.fatih.popcorn.entities.remote.reviewresponse.ReviewResponse
 import com.fatih.popcorn.entities.remote.videoresponse.VideoResponse
+import com.fatih.popcorn.entities.remote.youtuberesponse.YoutubeResponse
 import com.fatih.popcorn.movieapi.PopcornApi
 import com.fatih.popcorn.other.Resource
 import kotlinx.coroutines.InternalCoroutinesApi
@@ -190,6 +191,21 @@ class PopcornRepository (
     override suspend fun getVideos(name: String, id: Int): Resource<VideoResponse> {
         return try {
             val response=popcornApi.getVideos(name = name, id = id)
+            if(response.isSuccessful){
+                response.body()?.let {
+                    Resource.success(it)
+                }?:Resource.error("Response body null")
+            }else{
+                Resource.error("Response failed")
+            }
+        }catch (e:Exception){
+            Resource.error(e.message)
+        }
+    }
+
+    override suspend fun getYoutubeVideoDetails(part:String,id:String): Resource<YoutubeResponse> {
+        return try {
+            val response=popcornApi.getYoutubeVideoDetails(part,id)
             if(response.isSuccessful){
                 response.body()?.let {
                     Resource.success(it)
