@@ -62,7 +62,6 @@ class DetailsFragment : Fragment(R.layout.fragment_details) {
     private var posterList= listOf<String>()
     private var backgroundList= listOf<String>()
     private var searchLanguage= language
-    private var fragmentList = listOf<Fragment>()
     private var fragmentViewPager:ViewPager2?=null
     private lateinit var viewModel: DetailsFragmentViewModel
     private var selectedUrl=""
@@ -82,14 +81,17 @@ class DetailsFragment : Fragment(R.layout.fragment_details) {
     private fun doInitialization() {
         viewModel = ViewModelProvider(requireActivity())[DetailsFragmentViewModel::class.java]
         setStatusBarPadding()
+        _myFragmentManager=childFragmentManager
         fragmentViewPager=binding.detailsViewPager
+        fragmentViewPagerAdapter=DetailsFragmentViewPagerAdapter(listOf(),myFragmentManager,lifecycle)
+        fragmentViewPager!!.adapter=fragmentViewPagerAdapter
         setupPosterViewPager(posterList,backgroundList)
         //binding.watchList.setOnClickListener { watchList() }
         binding.watchListButton.setOnClickListener { findNavController().navigate(DetailsFragmentDirections.actionDetailsFragmentToWatchListFragment()) }
         binding.backButton.setOnClickListener { findNavController().navigateUp() }
         //binding.episodesImage.setOnClickListener {view-> goEpisodes(view) }
         arguments?.let {
-           // selectedUrl=DetailsFragmentArgs.fromBundle(it)
+            selectedUrl=DetailsFragmentArgs.fromBundle(it).url?:""
             selectedId = DetailsFragmentArgs.fromBundle(it).id
             darkMutedColor = DetailsFragmentArgs.fromBundle(it).darkMutedColor
             vibrantColor = DetailsFragmentArgs.fromBundle(it).vibrantColor
@@ -99,13 +101,25 @@ class DetailsFragment : Fragment(R.layout.fragment_details) {
         } else {
             viewModel.getDetails(tvSearch, selectedId!!, searchLanguage)
         }
+        TabLayoutMediator(binding.tabLayout,binding.detailsViewPager,true,true){tab,position->
+            when(position){
+                0->{tab.text=resources.getString(R.string.hakkinda)}
+                1->{tab.text=resources.getString(R.string.actor)}
+                2->{tab.text=resources.getString(R.string.comment)}
+                3->{tab.text=resources.getString(R.string.recommendation)}
+                4->{tab.text=resources.getString(R.string.familiar)}
+                5->{tab.text=resources.getString(R.string.trailer)}
+            }
+
+        }.attach()
         observeLiveData()
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     private fun setupFragmentViewPager(){
         val bundle=Bundle()
         bundle.putSerializable("detailResponse",selectedResponse!!)
-        fragmentList= listOf(AboutFragment().apply {
+        val fragmentList= listOf(AboutFragment().apply {
             arguments=bundle
         },CastFragment(),ReviewFragment().apply {
             val castBundle=Bundle()
@@ -126,21 +140,8 @@ class DetailsFragment : Fragment(R.layout.fragment_details) {
             }
             arguments=trailerBundle
         })
-        _myFragmentManager=childFragmentManager
-        fragmentViewPagerAdapter=DetailsFragmentViewPagerAdapter(fragmentList,myFragmentManager,lifecycle)
-        fragmentViewPager!!.adapter=fragmentViewPagerAdapter
-        TabLayoutMediator(binding.tabLayout,binding.detailsViewPager,true,true){tab,position->
-           when(position){
-               0->{tab.text=resources.getString(R.string.hakkinda)}
-               1->{tab.text=resources.getString(R.string.actor)}
-               2->{tab.text=resources.getString(R.string.comment)}
-               3->{tab.text=resources.getString(R.string.recommendation)}
-               4->{tab.text=resources.getString(R.string.familiar)}
-               5->{tab.text=resources.getString(R.string.trailer)}
-           }
-
-        }.attach()
-
+        fragmentViewPagerAdapter?.fragmentList=fragmentList
+        fragmentViewPagerAdapter?.notifyDataSetChanged()
     }
 
     @SuppressLint("InternalInsetResource", "DiscouragedApi")
@@ -371,7 +372,6 @@ class DetailsFragment : Fragment(R.layout.fragment_details) {
         job?.cancel()
         job2?.cancel()
         isSingleUrl=false
-        fragmentList= listOf()
         _myFragmentManager=null
         fragmentViewPager?.adapter=null
         fragmentViewPagerAdapter=null

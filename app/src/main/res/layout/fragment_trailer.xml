@@ -2,13 +2,6 @@
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <data>
-        <variable
-            name="isLoading"
-            type="Boolean" />
-        <import type="android.view.View"/>
-
-    </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:paddingTop="33dp"
@@ -31,19 +24,11 @@
             android:layout_height="0dp"
             android:paddingTop="5dp"
             android:id="@+id/youtubeRecyclerView"
+            android:orientation="vertical"
             app:layout_constraintTop_toBottomOf="@id/youtube_player"
             app:layout_constraintStart_toStartOf="parent"
-            android:orientation="vertical"
             app:layout_constraintBottom_toBottomOf="parent"/>
 
-        <ProgressBar
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            android:visibility="@{isLoading?View.VISIBLE:View.INVISIBLE,default=gone}" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

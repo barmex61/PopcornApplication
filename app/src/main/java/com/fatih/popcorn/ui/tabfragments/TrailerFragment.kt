@@ -4,15 +4,12 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
-import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.fatih.popcorn.R
 import com.fatih.popcorn.adapter.YoutubeVideoAdapter
 import com.fatih.popcorn.databinding.FragmentTrailerBinding
-import com.fatih.popcorn.entities.remote.youtuberesponse.İtem
 import com.fatih.popcorn.other.Constants
 import com.fatih.popcorn.other.Constants.movieSearch
 import com.fatih.popcorn.other.Constants.tvSearch
@@ -22,9 +19,13 @@ import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.PlayerConstan
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.YouTubePlayer
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.listeners.AbstractYouTubePlayerListener
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.listeners.YouTubePlayerCallback
+import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.listeners.YouTubePlayerListener
+import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.options.IFramePlayerOptions
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.views.YouTubePlayerView
+import com.pierfrancescosoffritti.androidyoutubeplayer.core.ui.DefaultPlayerUiController
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
+
 
 @AndroidEntryPoint
 class TrailerFragment @Inject constructor(): Fragment(R.layout.fragment_trailer) {
@@ -44,6 +45,7 @@ class TrailerFragment @Inject constructor(): Fragment(R.layout.fragment_trailer)
 
         override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
             _binding= FragmentTrailerBinding.inflate(inflater,container,false)
+
             return binding.root
         }
 
@@ -53,37 +55,15 @@ class TrailerFragment @Inject constructor(): Fragment(R.layout.fragment_trailer)
 
         }
         private fun doInitialization(){
-            youtubeVideoAdapter= YoutubeVideoAdapter(R.layout.fragment_trailer_row)
-            youtubeVideoAdapter!!.setOnItemClickListener {
-                position=it
-                binding.youtubePlayer.getYouTubePlayerWhenReady(object : YouTubePlayerCallback {
-                    override fun onYouTubePlayer(youTubePlayer: YouTubePlayer) {
-                        youTubePlayer.cueVideo(youtubeVideoAdapter!!.list[position].id,0f)
-                    }
-                })
-
-            }
-            arguments?.let {
-                selectedId=TrailerFragmentArgs.fromBundle(it).id
-            }
-            viewModel= ViewModelProvider(requireActivity())[TrailerFragmentViewModel::class.java]
-            if (Constants.checkIsItInMovieListOrNot()){
-                viewModel.getVideos(movieSearch,selectedId)
-            }else{
-                viewModel.getVideos(tvSearch,selectedId)
-            }
-            binding.youtubeRecyclerView.layoutManager= LinearLayoutManager(requireContext())
-            binding.youtubeRecyclerView.adapter=youtubeVideoAdapter
-
-            observeLiveData()
             youtubePlayerView=binding.youtubePlayer
-            youtubePlayerView.apply {
-                enableAutomaticInitialization=true
-            }
+            youtubePlayerView.enableAutomaticInitialization=false
             lifecycle.addObserver(youtubePlayerView)
             listener=object:AbstractYouTubePlayerListener(){
                 override fun onReady(youTubePlayer: YouTubePlayer) {
                     super.onReady(youTubePlayer)
+                    val defaultPlayerUiController = DefaultPlayerUiController(youtubePlayerView, youTubePlayer)
+                    defaultPlayerUiController.showMenuButton(true)
+                    youtubePlayerView.setCustomPlayerUi(defaultPlayerUiController.rootView)
                     youTubePlayer.cueVideo(videoUrlArrayList[0],0f)
                 }
 
@@ -97,12 +77,39 @@ class TrailerFragment @Inject constructor(): Fragment(R.layout.fragment_trailer)
 
                 override fun onVideoId(youTubePlayer: YouTubePlayer, videoId: String) {
                     super.onVideoId(youTubePlayer, videoId)
-                    println("videoıd")
                 }
 
             }
+            val options: IFramePlayerOptions = IFramePlayerOptions.Builder().controls(0).build()
+            youtubePlayerView.initialize(listener as AbstractYouTubePlayerListener, options)
 
-            youtubePlayerView.addYouTubePlayerListener(listener as AbstractYouTubePlayerListener)
+            youtubeVideoAdapter= YoutubeVideoAdapter(R.layout.fragment_trailer_row)
+            youtubeVideoAdapter!!.setOnItemClickListener {
+                position=it
+                youtubePlayerView.toggleFullScreen()
+                binding.youtubePlayer.getYouTubePlayerWhenReady(object : YouTubePlayerCallback {
+                    override fun onYouTubePlayer(youTubePlayer: YouTubePlayer) {
+                        youTubePlayer.cueVideo(youtubeVideoAdapter!!.list[position].id,0f)
+                    }
+                })
+
+            }
+            binding.youtubeRecyclerView.layoutManager = LinearLayoutManager(requireContext())
+            binding.youtubeRecyclerView.adapter = youtubeVideoAdapter
+
+            arguments?.let {
+                selectedId=TrailerFragmentArgs.fromBundle(it).id
+            }
+
+            viewModel= ViewModelProvider(requireActivity())[TrailerFragmentViewModel::class.java]
+            if (Constants.checkIsItInMovieListOrNot()){
+                viewModel.getVideos(movieSearch,selectedId)
+            }else{
+                viewModel.getVideos(tvSearch,selectedId)
+            }
+
+            observeLiveData()
+
 
         }
         private fun observeLiveData(){
@@ -133,19 +140,13 @@ class TrailerFragment @Inject constructor(): Fragment(R.layout.fragment_trailer)
            viewModel.youtubeResponse.observe(viewLifecycleOwner){resources->
                 if(resources!=null){
                     when(resources.status){
-                        Status.ERROR->{
-                            binding.isLoading=false
-                            Toast.makeText(requireContext(),resources.message,Toast.LENGTH_LONG).show()
-                        }
-                        Status.LOADING->{
-                            binding.isLoading=true
-                        }
+
                         Status.SUCCESS->{
-                            binding.isLoading=false
                             resources.data?.let { it->
                                 youtubeVideoAdapter?.list=it.items
                             }
                         }
+                        else->Unit
 
                     }
                 }

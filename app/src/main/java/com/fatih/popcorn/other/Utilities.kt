@@ -60,7 +60,7 @@ fun getYoutubeThumbnail(view: ImageView, url:String?){
     view.alpha=0.4f
     try {
         url?.let {
-            Picasso.get().load(url).noFade().into(view,object : Callback {
+            Picasso.get().load(url).fit().centerCrop().into(view,object : Callback {
                     override fun onSuccess() {
                         view.animate().alpha(1f).setDuration(600).start()
                     }

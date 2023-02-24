@@ -18,9 +18,8 @@
        </KeyFrameSet>
 
         <OnSwipe
-            motion:touchAnchorId="@+id/layoutHeader"
-            motion:touchAnchorSide="bottom"
-
+            motion:touchAnchorId="@+id/detailsViewPager"
+            motion:touchAnchorSide="top"
            />
 
     </Transition>
