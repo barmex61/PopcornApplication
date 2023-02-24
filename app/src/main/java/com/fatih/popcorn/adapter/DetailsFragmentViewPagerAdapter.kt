@@ -16,11 +16,4 @@ class DetailsFragmentViewPagerAdapter (var fragmentList:List<Fragment>,fm:Fragme
         return fragmentList[position]
     }
 
-    override fun onDetachedFromRecyclerView(recyclerView: RecyclerView) {
-        val count=itemCount
-        fragmentList= listOf()
-        notifyItemRangeRemoved(0,count)
-        super.onDetachedFromRecyclerView(recyclerView)
-    }
-
 }

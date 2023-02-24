@@ -81,10 +81,7 @@ class DetailsFragment : Fragment(R.layout.fragment_details) {
     private fun doInitialization() {
         viewModel = ViewModelProvider(requireActivity())[DetailsFragmentViewModel::class.java]
         setStatusBarPadding()
-        _myFragmentManager=childFragmentManager
         fragmentViewPager=binding.detailsViewPager
-        fragmentViewPagerAdapter=DetailsFragmentViewPagerAdapter(listOf(),myFragmentManager,lifecycle)
-        fragmentViewPager!!.adapter=fragmentViewPagerAdapter
         setupPosterViewPager(posterList,backgroundList)
         //binding.watchList.setOnClickListener { watchList() }
         binding.watchListButton.setOnClickListener { findNavController().navigate(DetailsFragmentDirections.actionDetailsFragmentToWatchListFragment()) }
@@ -101,21 +98,10 @@ class DetailsFragment : Fragment(R.layout.fragment_details) {
         } else {
             viewModel.getDetails(tvSearch, selectedId!!, searchLanguage)
         }
-        TabLayoutMediator(binding.tabLayout,binding.detailsViewPager,true,true){tab,position->
-            when(position){
-                0->{tab.text=resources.getString(R.string.hakkinda)}
-                1->{tab.text=resources.getString(R.string.actor)}
-                2->{tab.text=resources.getString(R.string.comment)}
-                3->{tab.text=resources.getString(R.string.recommendation)}
-                4->{tab.text=resources.getString(R.string.familiar)}
-                5->{tab.text=resources.getString(R.string.trailer)}
-            }
 
-        }.attach()
         observeLiveData()
     }
 
-    @SuppressLint("NotifyDataSetChanged")
     private fun setupFragmentViewPager(){
         val bundle=Bundle()
         bundle.putSerializable("detailResponse",selectedResponse!!)
@@ -140,8 +126,22 @@ class DetailsFragment : Fragment(R.layout.fragment_details) {
             }
             arguments=trailerBundle
         })
+        _myFragmentManager=childFragmentManager
+        fragmentViewPagerAdapter=DetailsFragmentViewPagerAdapter(listOf(),myFragmentManager,lifecycle)
         fragmentViewPagerAdapter?.fragmentList=fragmentList
-        fragmentViewPagerAdapter?.notifyDataSetChanged()
+        fragmentViewPager!!.adapter=fragmentViewPagerAdapter
+
+        TabLayoutMediator(binding.tabLayout,binding.detailsViewPager,true,true){tab,position->
+            when(position){
+                0->{tab.text=resources.getString(R.string.hakkinda)}
+                1->{tab.text=resources.getString(R.string.actor)}
+                2->{tab.text=resources.getString(R.string.comment)}
+                3->{tab.text=resources.getString(R.string.recommendation)}
+                4->{tab.text=resources.getString(R.string.familiar)}
+                5->{tab.text=resources.getString(R.string.trailer)}
+            }
+
+        }.attach()
     }
 
     @SuppressLint("InternalInsetResource", "DiscouragedApi")
