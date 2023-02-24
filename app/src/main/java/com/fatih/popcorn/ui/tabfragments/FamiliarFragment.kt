@@ -102,6 +102,7 @@ class FamiliarFragment:Fragment(R.layout.fragment_familiar) {
 
     override fun onSaveInstanceState(outState: Bundle) {
         outState.putBoolean("isRotated",true)
+        println("onsave")
         super.onSaveInstanceState(outState)
     }
 

@@ -7,6 +7,7 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.fatih.popcorn.R
 import com.fatih.popcorn.databinding.CastRviewRowBinding
+import com.fatih.popcorn.other.Constants
 import com.squareup.picasso.Callback
 import com.squareup.picasso.Picasso
 import javax.inject.Inject
@@ -51,11 +52,12 @@ class CastRecyclerViewAdapter @Inject constructor(
     }
 
     private fun setImages(url:String,imageView:ImageView,layout: View){
-        Picasso.get().load("https://image.tmdb.org/t/p/original$url").fit().centerCrop().placeholder(
+        Constants.picasso.load("https://image.tmdb.org/t/p/original$url").fit().centerCrop().placeholder(
             R.drawable.baseline_account_circle_24).into(imageView,object: Callback {
             override fun onSuccess() {
-                if (layout.visibility != View.VISIBLE)
-                layout.visibility = View.VISIBLE
+                if (layout.visibility != View.VISIBLE){
+                    layout.visibility = View.VISIBLE
+                }
                 if(!onlyOnce){
                     hideProgressBar?.invoke(true)
                     onlyOnce=true

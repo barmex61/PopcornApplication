@@ -40,6 +40,7 @@ class YoutubeVideoAdapter (val layout:Int):BaseAdapter<İtem,FragmentTrailerRowB
                 listener?.let {
                     it(position)
                 }
+                println("$position ${list[position].contentDetails.duration}")
             }
             val dateStr = list[position].snippet.publishedAt
             val date= inputFormat.parse(dateStr)
@@ -53,7 +54,7 @@ class YoutubeVideoAdapter (val layout:Int):BaseAdapter<İtem,FragmentTrailerRowB
             holder.binding.runTime=formatDuration(list[position].contentDetails.duration)
             holder.binding.channelImage
         }catch (e:Exception){
-            println(e.message)
+
         }
     }
 
@@ -64,16 +65,26 @@ class YoutubeVideoAdapter (val layout:Int):BaseAdapter<İtem,FragmentTrailerRowB
         val value: String = format.format(count / 1000.0.pow(exp.toDouble()))
         return String.format("%s%c", value, "kMBTPE"[exp - 1])
     }
-
     fun formatDuration(duration: String): String {
-        val seconds = TimeUnit.SECONDS.convert(parseDuration(duration), TimeUnit.MILLISECONDS)
-        return DateFormat.format("mm:ss", seconds * 1000L).toString()
+        val millis = parseDuration(duration)
+        val minutes = TimeUnit.MILLISECONDS.toMinutes(millis)
+        val seconds = TimeUnit.MILLISECONDS.toSeconds(millis - TimeUnit.MINUTES.toMillis(minutes))
+        return String.format("%02d:%02d", minutes, seconds)
     }
 
     private fun parseDuration(duration: String): Long {
-        val regex = Regex("(\\d+)M(\\d+)S")
+        var totalMillis = 0L
+        val regex = Regex("PT(\\d+M)?(\\d+S)?")
         val matchResult = regex.find(duration)
-        val (minutes, seconds) = matchResult!!.destructured
-        return (minutes.toLong() * 60 + seconds.toLong()) * 1000
+        if (matchResult != null) {
+            val (minutes, seconds) = matchResult.destructured
+            if (minutes.isNotEmpty()) {
+                totalMillis += minutes.dropLast(1).toLong() * 60 * 1000
+            }
+            if (seconds.isNotEmpty()) {
+                totalMillis += seconds.dropLast(1).toLong() * 1000
+            }
+        }
+        return totalMillis
     }
 }

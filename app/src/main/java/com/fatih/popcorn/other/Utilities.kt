@@ -10,6 +10,7 @@ import com.fatih.popcorn.entities.remote.detailresponse.ProductionCompany
 import com.fatih.popcorn.entities.remote.detailresponse.ProductionCountry
 import com.fatih.popcorn.entities.remote.discoverresponse.DiscoverResponse
 import com.fatih.popcorn.entities.remote.discoverresponse.DiscoverResult
+import com.squareup.picasso.Cache
 import com.squareup.picasso.Callback
 import com.squareup.picasso.Picasso
 import java.text.SimpleDateFormat
@@ -23,7 +24,7 @@ fun ImageView.setImageUrl(url: String?) {
     val fadeScaleAnimation = AnimationUtils.loadAnimation(context, R.anim.fade_scale_animation)
     try {
         url.let {
-            Picasso.get().load("https://www.themoviedb.org/t/p/w600_and_h900_bestv2$url").fit().centerCrop().placeholder(
+            Constants.picasso.load("https://www.themoviedb.org/t/p/w600_and_h900_bestv2$url").fit().centerCrop().placeholder(
                     R.drawable.popcorn
                 )
                 .into(this@setImageUrl, object : Callback {
@@ -48,7 +49,7 @@ fun ImageView.setViewPagerImage(url: String?) {
 
     try {
         url?.let {
-            Picasso.get().load("https://image.tmdb.org/t/p/original$url").fit().into(this)
+           Constants.picasso.load("https://image.tmdb.org/t/p/original$url").fit().into(this)
         }
     } catch (e: Exception) {
         e.printStackTrace()
@@ -58,9 +59,10 @@ fun ImageView.setViewPagerImage(url: String?) {
 @BindingAdapter("android:youtubeUrl")
 fun getYoutubeThumbnail(view: ImageView, url:String?){
     view.alpha=0.4f
+
     try {
         url?.let {
-            Picasso.get().load(url).fit().centerCrop().into(view,object : Callback {
+            Constants.picasso.load(url).fit().centerCrop().into(view,object : Callback {
                     override fun onSuccess() {
                         view.animate().alpha(1f).setDuration(600).start()
                     }
@@ -78,7 +80,7 @@ fun ImageView.setPlaceHolder(placeHolder: String?) {
 
     try {
         placeHolder?.let {
-            Picasso.get().load("https://image.tmdb.org/t/p/original$it").fit().centerCrop().placeholder(R.drawable.baseline_account_circle_24).into(this)
+            Constants.picasso.load("https://image.tmdb.org/t/p/original$it").fit().centerCrop().placeholder(R.drawable.baseline_account_circle_24).into(this)
         }
     } catch (e: Exception) {
         e.printStackTrace()
@@ -144,7 +146,6 @@ fun DiscoverResponse?.recommend(data:DiscoverResponse):DiscoverResponse{
             it.total_pages = data.total_pages
             it.total_results = data.total_results
             it.page = data.page
-            println("${it.recommendationId} ${it.page}")
         }else if (it.recommendationId != data.recommendationId){
             it.results = data.results
             it.total_pages = data.total_pages

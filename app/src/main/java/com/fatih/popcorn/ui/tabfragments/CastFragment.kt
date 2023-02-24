@@ -34,6 +34,7 @@ class CastFragment : Fragment(R.layout.fragment_cast) {
     private lateinit var castAdapter:CastRecyclerViewAdapter
     private lateinit var viewModel: DetailsFragmentViewModel
 
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         _binding= FragmentCastBinding.inflate(inflater,container,false)
         viewModel=ViewModelProvider(requireActivity())[DetailsFragmentViewModel::class.java]
@@ -52,7 +53,6 @@ class CastFragment : Fragment(R.layout.fragment_cast) {
         }
         recyclerView=binding.veilRecyclerView
         recyclerView!!.layoutManager = GridLayoutManager(requireContext(),Resources.getSystem().displayMetrics.widthPixels/200)
-        recyclerView!!.setHasFixedSize(true)
         castAdapter.vibrantColor=DetailsFragment.vibrantColor!!
         recyclerView!!.adapter = castAdapter
         observeLiveData()

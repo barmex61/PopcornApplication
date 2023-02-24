@@ -6,6 +6,9 @@ import android.widget.ImageView
 import androidx.core.content.ContextCompat
 import androidx.palette.graphics.Palette
 import com.fatih.popcorn.R
+import com.fatih.popcorn.ui.PopcornApplication
+import com.squareup.picasso.Cache
+import com.squareup.picasso.Picasso
 import java.util.Locale
 
 
@@ -51,6 +54,10 @@ object Constants {
             }
         }
         return pair
+    }
+
+    val picasso: Picasso by lazy{
+        Picasso.Builder(PopcornApplication.appContext).build()
     }
 
 

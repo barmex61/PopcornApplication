@@ -208,7 +208,6 @@ class PopcornRepository (
     override suspend fun getYoutubeVideoDetails(part:String,id:String): Resource<YoutubeResponse> {
         return try {
             val response=youtubeApi.getYoutubeVideoDetails(part,id)
-            println(response.errorBody()?.string())
             if(response.isSuccessful){
                 response.body()?.let {
                     Resource.success(it)

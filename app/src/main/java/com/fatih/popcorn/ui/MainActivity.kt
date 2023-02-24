@@ -17,7 +17,7 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var navController: NavController
     private lateinit var navHostFragment:NavHostFragment
-    private lateinit var viewModel:HomeFragmentViewModel
+    private var viewModel:HomeFragmentViewModel?=null
 
     override fun onCreate(savedInstanceState: Bundle?) {
 
@@ -26,7 +26,7 @@ class MainActivity : AppCompatActivity() {
         viewModel=ViewModelProvider(this)[HomeFragmentViewModel::class.java]
         val currentOrientation= resources.configuration.orientation
         if(isFirstRun && currentOrientation == orientation){
-            viewModel.getMovies( "popularity.desc","")
+            viewModel?.getMovies( "popularity.desc","")
             isFirstRun=false
         }
         orientation=currentOrientation
@@ -35,6 +35,7 @@ class MainActivity : AppCompatActivity() {
     }
     override fun onDestroy() {
         isFirstRun=true
+        viewModel=null
         super.onDestroy()
     }
     private fun setupNavController(){

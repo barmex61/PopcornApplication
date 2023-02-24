@@ -39,7 +39,7 @@ class AboutFragment:Fragment() {
                     binding.tR.visibility=View.VISIBLE
                     binding.flow.visibility=View.VISIBLE
                     for (text in list.map { it.name }){
-                        val textView=TextView(context?.applicationContext)
+                        val textView=TextView(requireContext())
                         val layoutParams=ConstraintLayout.LayoutParams(ConstraintLayout.LayoutParams.WRAP_CONTENT,ConstraintLayout.LayoutParams.WRAP_CONTENT)
                         textView.layoutParams=layoutParams
                         textView.text = text
@@ -56,6 +56,11 @@ class AboutFragment:Fragment() {
                 }
             }
         }
+    }
+
+    override fun onDestroyView() {
+        _binding=null
+        super.onDestroyView()
     }
 
 }

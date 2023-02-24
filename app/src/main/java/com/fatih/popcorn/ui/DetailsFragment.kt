@@ -66,6 +66,7 @@ class DetailsFragment : Fragment(R.layout.fragment_details) {
     private lateinit var viewModel: DetailsFragmentViewModel
     private var selectedUrl=""
     private var isSingleUrl=false
+    private var justOnce=true
 
     companion object{
        var vibrantColor : Int ?=null
@@ -81,9 +82,14 @@ class DetailsFragment : Fragment(R.layout.fragment_details) {
     private fun doInitialization() {
         viewModel = ViewModelProvider(requireActivity())[DetailsFragmentViewModel::class.java]
         setStatusBarPadding()
-        fragmentViewPager=binding.detailsViewPager
+
+        _myFragmentManager=childFragmentManager
+        fragmentViewPagerAdapter=DetailsFragmentViewPagerAdapter(listOf(),myFragmentManager,lifecycle)
+        fragmentViewPager=binding.detailsViewPager.apply {
+            this.offscreenPageLimit=1
+        }
         setupPosterViewPager(posterList,backgroundList)
-        //binding.watchList.setOnClickListener { watchList() }
+        binding.saveButton.setOnClickListener { watchList() }
         binding.watchListButton.setOnClickListener { findNavController().navigate(DetailsFragmentDirections.actionDetailsFragmentToWatchListFragment()) }
         binding.backButton.setOnClickListener { findNavController().navigateUp() }
         //binding.episodesImage.setOnClickListener {view-> goEpisodes(view) }
@@ -93,9 +99,15 @@ class DetailsFragment : Fragment(R.layout.fragment_details) {
             darkMutedColor = DetailsFragmentArgs.fromBundle(it).darkMutedColor
             vibrantColor = DetailsFragmentArgs.fromBundle(it).vibrantColor
         }
+        binding.trailerButton.setOnClickListener {
+            findNavController().navigate(DetailsFragmentDirections.actionDetailsFragmentToMoviePlayFragment(selectedId!!))
+        }
+
         if (checkIsItInMovieListOrNot()) {
+            binding.episodeButton.visibility=View.INVISIBLE
             viewModel.getDetails(movieSearch, selectedId!!, searchLanguage)
         } else {
+            binding.episodeButton.visibility=View.VISIBLE
             viewModel.getDetails(tvSearch, selectedId!!, searchLanguage)
         }
 
@@ -103,6 +115,8 @@ class DetailsFragment : Fragment(R.layout.fragment_details) {
     }
 
     private fun setupFragmentViewPager(){
+        fragmentViewPager?.adapter=null
+        println("setupviewpager")
         val bundle=Bundle()
         bundle.putSerializable("detailResponse",selectedResponse!!)
         val fragmentList= listOf(AboutFragment().apply {
@@ -120,14 +134,8 @@ class DetailsFragment : Fragment(R.layout.fragment_details) {
             val familiarBundle=Bundle()
             familiarBundle.putInt("id",selectedId!!)
             arguments=familiarBundle
-        },TrailerFragment().apply {
-            val trailerBundle=Bundle().apply {
-                putInt("id",selectedId!!)
-            }
-            arguments=trailerBundle
         })
-        _myFragmentManager=childFragmentManager
-        fragmentViewPagerAdapter=DetailsFragmentViewPagerAdapter(listOf(),myFragmentManager,lifecycle)
+
         fragmentViewPagerAdapter?.fragmentList=fragmentList
         fragmentViewPager!!.adapter=fragmentViewPagerAdapter
 
@@ -175,12 +183,13 @@ class DetailsFragment : Fragment(R.layout.fragment_details) {
         }
 
         viewModel.isItInDatabase.observe(viewLifecycleOwner){
+            println(it)
             if(it){
                 isItInDatabase=it
-                //binding.watchList.imageTintList = ColorStateList.valueOf(ContextCompat.getColor(requireContext(),R.color.white))
+                binding.saveButton.setImageDrawable(ContextCompat.getDrawable(requireContext(),R.drawable.baseline_restore_from_trash_24))
             }else{
                 isItInDatabase=it
-                //binding.watchList.imageTintList =ColorStateList.valueOf(ContextCompat.getColor(requireContext(),R.color.gray))
+                binding.saveButton.setImageDrawable(ContextCompat.getDrawable(requireContext(),R.drawable.baseline_add_24))
             }
         }
 
@@ -213,6 +222,7 @@ class DetailsFragment : Fragment(R.layout.fragment_details) {
     }
 
     private fun setupPosterViewPager(portraitList: List<String>,landscapeList:List<String>){
+
         if (portraitList.isEmpty() && landscapeList.isEmpty()) return
         var portraits=portraitList
         var landscapes=landscapeList
@@ -240,6 +250,9 @@ class DetailsFragment : Fragment(R.layout.fragment_details) {
             binding.circleIndicator.setViewPager(this)
         }
         viewPagerHandler= Handler(Looper.getMainLooper())
+        runnable?.let {
+            viewPagerHandler?.removeCallbacks(it)
+        }
         var started=false
         runnable= Runnable {
             try {
@@ -293,8 +306,8 @@ class DetailsFragment : Fragment(R.layout.fragment_details) {
         val darkMutedColor=ColorStateList.valueOf(darkMutedColor!!)
         binding.saveButton.backgroundTintList = vibrantColor
         binding.saveButton.imageTintList= darkMutedColor
-        binding.episodesButton.backgroundTintList=vibrantColor
-        binding.episodesButton.imageTintList=darkMutedColor
+        binding.episodeButton.backgroundTintList=vibrantColor
+        binding.episodeButton.imageTintList=darkMutedColor
         binding.ratingBar.progressTintList=vibrantColor
         binding.linearLayout.backgroundTintList=vibrantColor
         binding.tabLayout.setTabTextColors(ContextCompat.getColor(requireContext(),R.color.white),DetailsFragment.vibrantColor!!)
@@ -324,14 +337,6 @@ class DetailsFragment : Fragment(R.layout.fragment_details) {
             binding.ratingText.text = it.vote_average?.toBigDecimal()?.setScale(1, RoundingMode.UP)?.toString() + "/10"
             binding.nameText.text = it.original_title?:it.original_name
             binding.yearText.text = it.release_date?:it.last_air_date
-
-            if (checkIsItInMovieListOrNot()) {
-              //  binding.episodesImage.visibility = View.INVISIBLE
-                //binding.episodesText.visibility = View.INVISIBLE
-            } else {
-                //binding.episodesImage.visibility = View.VISIBLE
-                //binding.episodesText.visibility = View.VISIBLE
-            }
         }
     }
 
@@ -372,18 +377,14 @@ class DetailsFragment : Fragment(R.layout.fragment_details) {
         job?.cancel()
         job2?.cancel()
         isSingleUrl=false
-        _myFragmentManager=null
-        fragmentViewPager?.adapter=null
-        fragmentViewPagerAdapter=null
+        fragmentViewPagerAdapter = null
+        fragmentViewPager?.adapter=fragmentViewPagerAdapter
         viewPagerHandler?.removeCallbacks(runnable!!)
-        binding.detailsViewPager.adapter=null
-        fragmentViewPager=null
         viewPagerHandler=null
         runnable=null
         _binding=null
         super.onDestroyView()
     }
-
 
 
 }
