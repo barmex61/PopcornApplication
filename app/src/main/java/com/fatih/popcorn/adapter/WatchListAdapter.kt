@@ -22,6 +22,7 @@ class WatchListAdapter (val layout:Int): BaseAdapter<RoomEntity,WatchListRowBind
     override var asyncListDiffer=AsyncListDiffer(this,diffUtil)
 
     override fun onBindViewHolder(holder: MyViewHolder<WatchListRowBinding>, position: Int) {
+        holder.binding.recommendNameText.isSelected=true
         holder.binding.watchList=list[position]
         holder.binding.watchList=list[position]
         holder.itemView.setOnClickListener {

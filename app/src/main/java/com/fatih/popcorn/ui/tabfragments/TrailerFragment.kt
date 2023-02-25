@@ -144,6 +144,8 @@ class TrailerFragment @Inject constructor(): Fragment(R.layout.fragment_trailer)
                             resource.data?.let {
                                 it.results.map {it->
                                     if(it.site=="YouTube"){
+                                        binding.youtubePlayer.visibility=View.VISIBLE
+                                        binding.youtubeRecyclerView?.visibility=View.VISIBLE
                                         isThereAnyVideoUrl=true
                                         myVideoId = if(myVideoId.isEmpty()){
                                             it.key
@@ -151,6 +153,9 @@ class TrailerFragment @Inject constructor(): Fragment(R.layout.fragment_trailer)
                                             myVideoId+","+it.key
                                         }
                                     }
+                                }
+                                if (!isThereAnyVideoUrl){
+                                    binding.trailerLottie.playAnimation()
                                 }
                                 myVideoId.let {
                                     viewModel.getYoutubeResponse(part,it)

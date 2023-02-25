@@ -1,10 +1,12 @@
 package com.fatih.popcorn.ui
 
+import android.annotation.SuppressLint
 import android.content.res.Resources
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.updatePadding
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
@@ -33,6 +35,7 @@ class WatchListFragment:Fragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding= DataBindingUtil.inflate(inflater,R.layout.fragment_watch_list,container,false)
+        setStatusBarPadding()
         watchListAdapter= WatchListAdapter(R.layout.watch_list_row).apply {
             setMyOnClickLambda { url, id, pair ->
                 pair?.let {
@@ -53,6 +56,13 @@ class WatchListFragment:Fragment() {
         viewModel.entityList.observe(viewLifecycleOwner) { result->
             watchListAdapter?.list=result
         }
+    }
+
+    @SuppressLint("InternalInsetResource", "DiscouragedApi")
+    private fun setStatusBarPadding(){
+        val statusBarHeightId = resources.getIdentifier("status_bar_height", "dimen", "android")
+        val statusBarHeight = resources.getDimensionPixelSize(statusBarHeightId) +10
+        binding.layoutWatchList.updatePadding(top = statusBarHeight)
     }
 
     override fun onDestroyView() {
