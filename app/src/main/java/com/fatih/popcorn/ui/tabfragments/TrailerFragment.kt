@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.fatih.popcorn.R
 import com.fatih.popcorn.adapter.YoutubeVideoAdapter
 import com.fatih.popcorn.databinding.FragmentTrailerBinding
+import com.fatih.popcorn.entities.remote.youtuberesponse.İtem
 import com.fatih.popcorn.other.Constants
 import com.fatih.popcorn.other.Constants.movieSearch
 import com.fatih.popcorn.other.Constants.tvSearch
@@ -40,7 +41,6 @@ class TrailerFragment @Inject constructor(): Fragment(R.layout.fragment_trailer)
     private lateinit var viewModel: TrailerFragmentViewModel
     private var myVideoId:String=""
     private var selectedId=0
-    private var videoUrlArrayList=ArrayList<String>()
     private var part="snippet,contentDetails,statistics"
     private lateinit var youtubePlayerView: YouTubePlayerView
     private var listener: AbstractYouTubePlayerListener?=null
@@ -48,16 +48,16 @@ class TrailerFragment @Inject constructor(): Fragment(R.layout.fragment_trailer)
     private var myYoutubePlayer:YouTubePlayer?=null
     private var mCurrentTime=0f
     private var mCurrentVideoId=""
-    private var selectedPosition=0
     private val tracker=YouTubePlayerTracker()
+    private var isThereAnyVideoUrl=false
+    private var isRotated=false
 
         override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
             _binding= FragmentTrailerBinding.inflate(inflater,container,false)
             doInitialization()
             mCurrentVideoId=savedInstanceState?.getString("video_id")?:myVideoId
             mCurrentTime=savedInstanceState?.getFloat("current_time")?:mCurrentTime
-            selectedPosition=savedInstanceState?.getInt("selectedPosition")?:selectedPosition
-            println("$mCurrentVideoId $mCurrentTime")
+            isRotated=savedInstanceState?.getBoolean("isRotated")?:isRotated
             return binding.root
         }
 
@@ -88,10 +88,16 @@ class TrailerFragment @Inject constructor(): Fragment(R.layout.fragment_trailer)
                     super.onReady(youTubePlayer)
                     myYoutubePlayer=youTubePlayer
                     myYoutubePlayer!!.addListener(tracker)
+                    youtubePlayerView.setCustomPlayerUi(DefaultPlayerUiController(youtubePlayerView,myYoutubePlayer!!).apply {
+                        showUi(true)
+                    }.rootView)
+
                     if (mCurrentVideoId.isNotEmpty() && mCurrentTime != 0f){
                         myYoutubePlayer!!.loadVideo(mCurrentVideoId,mCurrentTime)
-                    }else if (videoUrlArrayList.isNotEmpty()){
-                        myYoutubePlayer!!.cueVideo(videoUrlArrayList[0],0f)
+                    }else {
+                        if(viewModel.itemList.value != null && viewModel.itemList.value!!.isNotEmpty())
+                        myYoutubePlayer!!.cueVideo(viewModel.itemList.value?.get(0)?.id?:"",0f)
+
                     }
                 }
 
@@ -104,13 +110,15 @@ class TrailerFragment @Inject constructor(): Fragment(R.layout.fragment_trailer)
                     super.onVideoId(youTubePlayer, videoId)
                 }
             }
-
-            val iFramePlayerOptions=IFramePlayerOptions.Builder().controls(1).build()
+            val iFramePlayerOptions=IFramePlayerOptions.Builder().controls(0).build()
             youtubePlayerView.initialize(listener as AbstractYouTubePlayerListener,iFramePlayerOptions)
             youtubeVideoAdapter= YoutubeVideoAdapter(R.layout.fragment_trailer_row)
-            youtubeVideoAdapter!!.setOnItemClickListener {
-                selectedPosition=it
-                myYoutubePlayer?.loadVideo(youtubeVideoAdapter!!.list[selectedPosition].id,0f)
+
+            youtubeVideoAdapter!!.setOnItemClickListener {position,item->
+                viewModel.updateList(position,item){
+                    youtubeVideoAdapter?.list=it
+                    myYoutubePlayer?.loadVideo(youtubeVideoAdapter!!.list[position].id,0f)
+                }
             }
             binding.youtubeRecyclerView?.layoutManager = LinearLayoutManager(requireContext())
             binding.youtubeRecyclerView?.adapter = youtubeVideoAdapter
@@ -136,7 +144,7 @@ class TrailerFragment @Inject constructor(): Fragment(R.layout.fragment_trailer)
                             resource.data?.let {
                                 it.results.map {it->
                                     if(it.site=="YouTube"){
-                                        videoUrlArrayList.add(it.key)
+                                        isThereAnyVideoUrl=true
                                         myVideoId = if(myVideoId.isEmpty()){
                                             it.key
                                         }else{
@@ -159,7 +167,8 @@ class TrailerFragment @Inject constructor(): Fragment(R.layout.fragment_trailer)
 
                         Status.SUCCESS->{
                             resources.data?.let { it->
-                                youtubeVideoAdapter?.list=it.items
+                               viewModel.itemList.value=it.items.toMutableList()
+                               youtubeVideoAdapter?.list=it.items
                             }
                         }
                         else->Unit
@@ -171,18 +180,22 @@ class TrailerFragment @Inject constructor(): Fragment(R.layout.fragment_trailer)
     override fun onSaveInstanceState(outState: Bundle) {
         outState.putString("video_id", tracker.videoId)
         outState.putFloat("current_time", tracker.currentSecond)
-        outState.putInt("selectedPosition",selectedPosition)
+        outState.putBoolean("isRotated",true)
         super.onSaveInstanceState(outState)
     }
 
-        override fun onDestroy() {
-            youtubeVideoAdapter=null
-            myYoutubePlayer?.removeListener(listener as AbstractYouTubePlayerListener)
-            _binding=null
-            youtubePlayerView.release()
-            super.onDestroy()
+    override fun onDestroy() {
+        if (!isRotated){
+            viewModel.resetData()
         }
+        youtubeVideoAdapter=null
+        isThereAnyVideoUrl=false
+        myYoutubePlayer?.removeListener(listener as AbstractYouTubePlayerListener)
+        _binding=null
+        youtubePlayerView.release()
+        super.onDestroy()
+    }
 
+    private fun controlOrientation() = resources.configuration.orientation == Configuration.ORIENTATION_PORTRAIT
 
-        private fun controlOrientation() = resources.configuration.orientation == Configuration.ORIENTATION_PORTRAIT
 }

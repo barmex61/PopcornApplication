@@ -14,7 +14,7 @@ interface RoomDao {
     @Query("SELECT * FROM RoomEntity")
     fun getAllRoomEntity(): LiveData<List<RoomEntity>>
 
-    @Query("SELECT * FROM RoomEntity WHERE field_id = :idInput")
-    fun getSelectedRoomEntity(idInput:Int):RoomEntity
+    @Query("SELECT field_id FROM RoomEntity WHERE field_id = :idInput")
+    fun getSelectedRoomEntity(idInput:Int):Long
 
 }

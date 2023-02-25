@@ -75,17 +75,6 @@
 
             android:id="@+id/saveButton"
             android:layout_height="wrap_content"
-            motion:layout_constraintBottom_toTopOf="@id/episodeButton"
-            android:layout_marginBottom="15dp"
-            motion:layout_constraintEnd_toEndOf="@id/episodeButton"
-            android:layout_width="wrap_content"
-            android:alpha="1"
-            />
-
-        <Constraint
-
-            android:id="@+id/episodeButton"
-            android:layout_height="wrap_content"
             motion:layout_constraintBottom_toTopOf="@id/trailerButton"
             android:layout_marginBottom="15dp"
             motion:layout_constraintEnd_toEndOf="@id/trailerButton"

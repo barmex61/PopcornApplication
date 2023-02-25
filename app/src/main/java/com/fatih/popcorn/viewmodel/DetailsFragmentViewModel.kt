@@ -1,6 +1,7 @@
 package com.fatih.popcorn.viewmodel
 
 import androidx.lifecycle.*
+import androidx.room.Room
 import com.fatih.popcorn.entities.local.RoomEntity
 import com.fatih.popcorn.entities.remote.creditsresponse.CreditsResponse
 import com.fatih.popcorn.entities.remote.detailresponse.DetailResponse
@@ -14,6 +15,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @HiltViewModel
@@ -27,7 +29,7 @@ class DetailsFragmentViewModel @Inject constructor(private val popcornRepo:Popco
     val imageResponse:LiveData<Resource<ImageResponse>>
     get() = _imageResponse
 
-    private var _isItInDatabase= MutableLiveData<Boolean>()
+    private var _isItInDatabase = MutableLiveData<Boolean>()
     val isItInDatabase:LiveData<Boolean>
     get() = _isItInDatabase
 
@@ -38,6 +40,9 @@ class DetailsFragmentViewModel @Inject constructor(private val popcornRepo:Popco
     private var _reviewResponse=MutableLiveData<Resource<ReviewResponse>>()
     val reviewResponse:LiveData<Resource<ReviewResponse>>
     get() = _reviewResponse
+
+    var entityList=popcornRepo.getAllRoomEntity()
+
     fun getDetails(searchName:String,id:Int,language:String) {
 
        _detailResponse= popcornRepo.getDetails(searchName,id, language).catch {
@@ -57,16 +62,18 @@ class DetailsFragmentViewModel @Inject constructor(private val popcornRepo:Popco
 
     fun insertRoomEntity(roomEntity: RoomEntity)=viewModelScope.launch(Dispatchers.Default) {
         popcornRepo.insertRoomEntity(roomEntity)
+        isItIntDatabase(roomEntity.field_id.toInt())
     }
     fun deleteRoomEntity(roomEntity: RoomEntity)=viewModelScope.launch(Dispatchers.Default) {
         popcornRepo.deleteRoomEntity(roomEntity)
+        isItIntDatabase(roomEntity.field_id.toInt())
     }
 
     fun isItIntDatabase(idInput:Int)  = viewModelScope.launch(Dispatchers.Default){
-        _isItInDatabase.postValue(popcornRepo.getSelectedRoomEntity(idInput)?.let {
-            true
-        }?:false
-        )
+        val response=popcornRepo.getSelectedRoomEntity(idInput)
+        withContext(Dispatchers.Main){
+            _isItInDatabase.value=response
+        }
     }
     fun getCredits(name:String,id:Int)=viewModelScope.launch {
         _creditsResponse.value= Resource.loading(null)

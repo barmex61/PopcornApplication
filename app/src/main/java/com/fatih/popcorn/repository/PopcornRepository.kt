@@ -122,12 +122,9 @@ class PopcornRepository (
         return roomDao.getAllRoomEntity()
     }
 
-    override suspend fun getSelectedRoomEntity(idInput: Int): RoomEntity? {
-       return try {
-           roomDao.getSelectedRoomEntity(idInput)
-       }catch (e:Exception){
-           null
-       }
+    override suspend fun getSelectedRoomEntity(idInput: Int): Boolean {
+        println(roomDao.getSelectedRoomEntity(idInput).toInt()==idInput)
+       return roomDao.getSelectedRoomEntity(idInput).toInt()==idInput
     }
 
     override suspend fun getReviews(name: String, id: Int, page: Int): Resource<ReviewResponse> {

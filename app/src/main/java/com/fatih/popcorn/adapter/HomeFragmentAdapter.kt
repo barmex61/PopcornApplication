@@ -21,7 +21,7 @@ class HomeFragmentAdapter(private val layout:Int) :BaseAdapter<DiscoverResult,Fr
 
     override var asyncListDiffer: AsyncListDiffer<DiscoverResult> = AsyncListDiffer(this,diffUtil)
 
-    override fun onBindViewHolder(holder: BaseAdapter.MyViewHolder<FragmentMainRvRowBinding>, position: Int) {
+    override fun onBindViewHolder(holder:MyViewHolder<FragmentMainRvRowBinding>, position: Int) {
         val selectedPosition=list[position]
         holder.binding.apply {
             imageUrl=selectedPosition.poster_path

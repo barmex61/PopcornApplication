@@ -50,5 +50,10 @@
     <string name="date">Tarih</string>
     <string name="rating">Derece</string>
     <string name="oops_nothing_found">Burası\u0020bayağı\u0020sessiz</string>
+    <string name="undo">Geri\u0020al</string>
+    <string name="added_history">İzleme\u0020geçmişine\u0020eklendi</string>
+    <string name="delete_history">İzleme\u0020geçmişinden\u0020silindi</string>
+    <string name="watch_list">İzleme\u0020geçmişi</string>
+
 
 </resources>

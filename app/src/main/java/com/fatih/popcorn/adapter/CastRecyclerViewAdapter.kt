@@ -7,21 +7,19 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.fatih.popcorn.R
 import com.fatih.popcorn.databinding.CastRviewRowBinding
+import com.fatih.popcorn.other.CastAdapterListener
 import com.fatih.popcorn.other.Constants
 import com.squareup.picasso.Callback
 import com.squareup.picasso.Picasso
 import javax.inject.Inject
 
 class CastRecyclerViewAdapter @Inject constructor(
-    val layout:Int
+    val layout:Int,
+    private val castAdapterListener: CastAdapterListener
 ):BaseAdapter<Triple<String,String,String>,CastRviewRowBinding>(layout) {
 
-    private var hideProgressBar:((Boolean)->Unit)? =null
     private var onlyOnce=false
 
-    fun setHideProgressBar(lambda:(Boolean)->Unit){
-        this.hideProgressBar=lambda
-    }
 
     override var vibrantColor: Int = 0
 
@@ -59,7 +57,7 @@ class CastRecyclerViewAdapter @Inject constructor(
                     layout.visibility = View.VISIBLE
                 }
                 if(!onlyOnce){
-                    hideProgressBar?.invoke(true)
+                    castAdapterListener.setImages(true)
                     onlyOnce=true
                 }
             }
@@ -69,7 +67,6 @@ class CastRecyclerViewAdapter @Inject constructor(
 
     override fun onDetachedFromRecyclerView(recyclerView: RecyclerView) {
         onlyOnce=false
-        hideProgressBar=null
         super.onDetachedFromRecyclerView(recyclerView)
     }
 }

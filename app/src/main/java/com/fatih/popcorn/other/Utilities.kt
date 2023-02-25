@@ -10,6 +10,7 @@ import com.fatih.popcorn.entities.remote.detailresponse.ProductionCompany
 import com.fatih.popcorn.entities.remote.detailresponse.ProductionCountry
 import com.fatih.popcorn.entities.remote.discoverresponse.DiscoverResponse
 import com.fatih.popcorn.entities.remote.discoverresponse.DiscoverResult
+import com.fatih.popcorn.entities.remote.youtuberesponse.YoutubeResponse
 import com.squareup.picasso.Cache
 import com.squareup.picasso.Callback
 import com.squareup.picasso.Picasso
@@ -157,6 +158,15 @@ fun DiscoverResponse?.recommend(data:DiscoverResponse):DiscoverResponse{
         it
     }?:data
 }
+
+fun YoutubeResponse.updateList(position:Int):YoutubeResponse{
+
+    return this.apply {
+            this.items=this.items.toMutableList().apply {
+                removeAt(position)
+            }
+        }
+    }
 
 @BindingAdapter("episode_runtime","runtime")
 fun TextView.setRuntime(episode_runtime: List<Int>?,runtime:Int?){

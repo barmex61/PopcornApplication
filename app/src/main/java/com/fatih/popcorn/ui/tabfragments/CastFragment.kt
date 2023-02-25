@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.fatih.popcorn.R
 import com.fatih.popcorn.adapter.CastRecyclerViewAdapter
 import com.fatih.popcorn.databinding.FragmentCastBinding
+import com.fatih.popcorn.other.CastAdapterListener
 import com.fatih.popcorn.other.Status
 import com.fatih.popcorn.ui.DetailsFragment
 import com.fatih.popcorn.viewmodel.DetailsFragmentViewModel
@@ -21,7 +22,7 @@ import kotlinx.coroutines.*
 
 
 @AndroidEntryPoint
-class CastFragment : Fragment(R.layout.fragment_cast) {
+class CastFragment : Fragment(R.layout.fragment_cast) ,CastAdapterListener{
 
     private var _binding:FragmentCastBinding?=null
     private val binding:FragmentCastBinding
@@ -43,19 +44,20 @@ class CastFragment : Fragment(R.layout.fragment_cast) {
     }
 
     private fun doInitialization(){
-        castAdapter=CastRecyclerViewAdapter(R.layout.cast_rview_row)
-        castAdapter.setHideProgressBar {result->
-            _binding?.let {
-                if ( result && it.castProgressBar.visibility==View.VISIBLE){
-                    it.castProgressBar.visibility=View.GONE
-                }
-            }
-        }
+        castAdapter=CastRecyclerViewAdapter(R.layout.cast_rview_row,this)
         recyclerView=binding.veilRecyclerView
         recyclerView!!.layoutManager = GridLayoutManager(requireContext(),Resources.getSystem().displayMetrics.widthPixels/200)
         castAdapter.vibrantColor=DetailsFragment.vibrantColor!!
         recyclerView!!.adapter = castAdapter
         observeLiveData()
+    }
+
+    override fun setImages(hideProgressBar: Boolean) {
+        _binding?.let {
+            if ( hideProgressBar && it.castProgressBar.visibility==View.VISIBLE){
+                it.castProgressBar.visibility=View.GONE
+            }
+        }
     }
 
     private fun observeLiveData(){

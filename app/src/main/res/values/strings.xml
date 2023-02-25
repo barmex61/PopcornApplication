@@ -50,5 +50,9 @@
     <string name="date">Date</string>
     <string name="rating">Rating</string>
     <string name="oops_nothing_found">Oops!\u0020Nothing\u0020found</string>
+    <string name="undo">Undo</string>
+    <string name="added_history">Added\u0020to\u0020history</string>
+    <string name="delete_history">Deleted\u0020from\u0020history</string>
+    <string name="watch_list">Watch\u0020list</string>
 
 </resources>

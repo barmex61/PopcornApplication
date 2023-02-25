@@ -18,14 +18,14 @@ class YoutubeVideoAdapter (val layout:Int):BaseAdapter<İtem,FragmentTrailerRowB
 
     @SuppressLint("SimpleDateFormat")
     val inputFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'")
-    var listener:((Int)->Unit)?=null
-    fun setOnItemClickListener(listener:(Int)->Unit){
+    var listener:((Int,İtem)->Unit)?=null
+    fun setOnItemClickListener(listener:(Int,İtem)->Unit){
         this.listener=listener
     }
 
     override var diffUtil: DiffUtil.ItemCallback<İtem> = object :DiffUtil.ItemCallback<İtem>(){
         override fun areContentsTheSame(oldItem: İtem, newItem: İtem): Boolean {
-            return oldItem.id==newItem.id
+            return oldItem.kind==newItem.kind && oldItem.snippet==newItem.snippet && oldItem.contentDetails==newItem.contentDetails
         }
 
         override fun areItemsTheSame(oldItem: İtem, newItem: İtem): Boolean {
@@ -34,13 +34,13 @@ class YoutubeVideoAdapter (val layout:Int):BaseAdapter<İtem,FragmentTrailerRowB
     }
     override var asyncListDiffer: AsyncListDiffer<İtem> = AsyncListDiffer(this,diffUtil)
 
+
     override fun onBindViewHolder(holder: MyViewHolder<FragmentTrailerRowBinding>, position: Int) {
         try {
             holder.itemView.setOnClickListener {
                 listener?.let {
-                    it(position)
+                    it(holder.bindingAdapterPosition,list[holder.bindingAdapterPosition])
                 }
-                println("$position ${list[position].contentDetails.duration}")
             }
             val dateStr = list[position].snippet.publishedAt
             val date= inputFormat.parse(dateStr)

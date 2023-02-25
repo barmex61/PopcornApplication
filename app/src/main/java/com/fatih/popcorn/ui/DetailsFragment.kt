@@ -32,6 +32,7 @@ import com.fatih.popcorn.other.Constants.tvSearch
 import com.fatih.popcorn.other.Status
 import com.fatih.popcorn.ui.tabfragments.*
 import com.fatih.popcorn.viewmodel.DetailsFragmentViewModel
+import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.tabs.TabLayoutMediator
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.*
@@ -66,11 +67,13 @@ class DetailsFragment : Fragment(R.layout.fragment_details) {
     private lateinit var viewModel: DetailsFragmentViewModel
     private var selectedUrl=""
     private var isSingleUrl=false
-    private var justOnce=true
 
     companion object{
        var vibrantColor : Int ?=null
        var darkMutedColor : Int ?=null
+       var seasonGenres: String?=null
+       var seasonRating :String?=null
+       var seasonRatingFloat:Float?=null
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
@@ -84,7 +87,7 @@ class DetailsFragment : Fragment(R.layout.fragment_details) {
         setStatusBarPadding()
 
         _myFragmentManager=childFragmentManager
-        fragmentViewPagerAdapter=DetailsFragmentViewPagerAdapter(listOf(),myFragmentManager,lifecycle)
+        fragmentViewPagerAdapter=DetailsFragmentViewPagerAdapter(listOf(),myFragmentManager,viewLifecycleOwner.lifecycle)
         fragmentViewPager=binding.detailsViewPager.apply {
             this.offscreenPageLimit=1
         }
@@ -92,7 +95,6 @@ class DetailsFragment : Fragment(R.layout.fragment_details) {
         binding.saveButton.setOnClickListener { watchList() }
         binding.watchListButton.setOnClickListener { findNavController().navigate(DetailsFragmentDirections.actionDetailsFragmentToWatchListFragment()) }
         binding.backButton.setOnClickListener { findNavController().navigateUp() }
-        //binding.episodesImage.setOnClickListener {view-> goEpisodes(view) }
         arguments?.let {
             selectedUrl=DetailsFragmentArgs.fromBundle(it).url?:""
             selectedId = DetailsFragmentArgs.fromBundle(it).id
@@ -104,10 +106,8 @@ class DetailsFragment : Fragment(R.layout.fragment_details) {
         }
 
         if (checkIsItInMovieListOrNot()) {
-            binding.episodeButton.visibility=View.INVISIBLE
             viewModel.getDetails(movieSearch, selectedId!!, searchLanguage)
         } else {
-            binding.episodeButton.visibility=View.VISIBLE
             viewModel.getDetails(tvSearch, selectedId!!, searchLanguage)
         }
 
@@ -115,11 +115,9 @@ class DetailsFragment : Fragment(R.layout.fragment_details) {
     }
 
     private fun setupFragmentViewPager(){
-        fragmentViewPager?.adapter=null
-        println("setupviewpager")
         val bundle=Bundle()
         bundle.putSerializable("detailResponse",selectedResponse!!)
-        val fragmentList= listOf(AboutFragment().apply {
+        val fragmentList= mutableListOf(AboutFragment().apply {
             arguments=bundle
         },CastFragment(),ReviewFragment().apply {
             val castBundle=Bundle()
@@ -135,6 +133,9 @@ class DetailsFragment : Fragment(R.layout.fragment_details) {
             familiarBundle.putInt("id",selectedId!!)
             arguments=familiarBundle
         })
+        if(!checkIsItInMovieListOrNot()){
+            fragmentList.add(SeasonsFragment())
+        }
 
         fragmentViewPagerAdapter?.fragmentList=fragmentList
         fragmentViewPager!!.adapter=fragmentViewPagerAdapter
@@ -146,7 +147,7 @@ class DetailsFragment : Fragment(R.layout.fragment_details) {
                 2->{tab.text=resources.getString(R.string.comment)}
                 3->{tab.text=resources.getString(R.string.recommendation)}
                 4->{tab.text=resources.getString(R.string.familiar)}
-                5->{tab.text=resources.getString(R.string.trailer)}
+                5->{tab.text=resources.getString(R.string.seasons)}
             }
 
         }.attach()
@@ -173,6 +174,7 @@ class DetailsFragment : Fragment(R.layout.fragment_details) {
                     Status.SUCCESS -> {
                         resource.data?.let {
                             selectedResponse = it
+
                             viewModel.isItIntDatabase(it.id!!)
                             setLayoutVisibility(show = true, showToast = false, null)
                             setupFragmentViewPager()
@@ -183,12 +185,11 @@ class DetailsFragment : Fragment(R.layout.fragment_details) {
         }
 
         viewModel.isItInDatabase.observe(viewLifecycleOwner){
-            println(it)
             if(it){
-                isItInDatabase=it
+                isItInDatabase=true
                 binding.saveButton.setImageDrawable(ContextCompat.getDrawable(requireContext(),R.drawable.baseline_restore_from_trash_24))
             }else{
-                isItInDatabase=it
+                isItInDatabase=false
                 binding.saveButton.setImageDrawable(ContextCompat.getDrawable(requireContext(),R.drawable.baseline_add_24))
             }
         }
@@ -306,15 +307,15 @@ class DetailsFragment : Fragment(R.layout.fragment_details) {
         val darkMutedColor=ColorStateList.valueOf(darkMutedColor!!)
         binding.saveButton.backgroundTintList = vibrantColor
         binding.saveButton.imageTintList= darkMutedColor
-        binding.episodeButton.backgroundTintList=vibrantColor
-        binding.episodeButton.imageTintList=darkMutedColor
         binding.ratingBar.progressTintList=vibrantColor
         binding.linearLayout.backgroundTintList=vibrantColor
         binding.tabLayout.setTabTextColors(ContextCompat.getColor(requireContext(),R.color.white),DetailsFragment.vibrantColor!!)
         binding.tabLayout.setSelectedTabIndicatorColor(DetailsFragment.vibrantColor!!)
         binding.trailerButton.backgroundTintList = vibrantColor
         binding.trailerButton.imageTintList = darkMutedColor
-        binding.ratingBar.rating = (selectedResponse?.vote_average?.toFloat()?.div(2f))?:0f
+        binding.ratingBar.rating =( (selectedResponse?.vote_average?.toFloat()?.div(2f))?:0f).also {
+            seasonRatingFloat=it
+        }
         selectedResponse?.let { it ->
 
             it.genres?.let {
@@ -327,6 +328,7 @@ class DetailsFragment : Fragment(R.layout.fragment_details) {
                     }
                     if(i == 5) break
                 }
+            seasonGenres=name
             binding.genreText.text=name
             }
             var text=""
@@ -334,7 +336,9 @@ class DetailsFragment : Fragment(R.layout.fragment_details) {
                 text= it.episode_run_time.last().toString()
             }
             binding.runtimeText.text = "${it.runtime?:text} min"
-            binding.ratingText.text = it.vote_average?.toBigDecimal()?.setScale(1, RoundingMode.UP)?.toString() + "/10"
+            binding.ratingText.text = ( it.vote_average?.toBigDecimal()?.setScale(1, RoundingMode.UP)?.toString() + "/10").also {
+                seasonRating=it
+            }
             binding.nameText.text = it.original_title?:it.original_name
             binding.yearText.text = it.release_date?:it.last_air_date
         }
@@ -345,32 +349,33 @@ class DetailsFragment : Fragment(R.layout.fragment_details) {
         val isTvShow=!checkIsItInMovieListOrNot()
         if(!isItInDatabase){
             selectedResponse?.let {detailResponse->
-                val roomEntity= RoomEntity(
+                val roomEntity= RoomEntity(detailResponse.name?:detailResponse.original_name?:detailResponse.original_title?:"",
                     detailResponse.last_air_date?:detailResponse.release_date!!,
                     detailResponse.poster_path!!,
-                    detailResponse.vote_average!!,isTvShow,
+                    detailResponse.vote_average!!,
+                    isTvShow,
                     detailResponse.id!!.toLong())
                 viewModel.insertRoomEntity(roomEntity)
-                viewModel.isItIntDatabase(detailResponse.id)
-            }
-            if(isTvShow){
-                Toast.makeText(context?.applicationContext,"Tv show added into Watchlist",Toast.LENGTH_SHORT).show()
-            }else{
-                Toast.makeText(context?.applicationContext,"Movie added into Watchlist",Toast.LENGTH_SHORT).show()
+                showSnackBar(resources.getString(R.string.added_history),roomEntity,"Save")
             }
 
         }else{
             selectedResponse?.let {
-                val roomEntity= RoomEntity(it.last_air_date?:it.release_date!!, it.poster_path!!, it.vote_average!!,isTvShow, it.id!!.toLong())
+                val roomEntity= RoomEntity(it.name?:it.original_name?:it.original_title?:"",it.last_air_date?:it.release_date!!, it.poster_path!!, it.vote_average!!,isTvShow, it.id!!.toLong())
                 viewModel.deleteRoomEntity(roomEntity)
-                viewModel.isItIntDatabase(it.id)
-            }
-            if(isTvShow){
-                Toast.makeText(context?.applicationContext,"Tv show deleted from Watchlist",Toast.LENGTH_SHORT).show()
-            }else{
-                Toast.makeText(context?.applicationContext,"Movie deleted from Watchlist",Toast.LENGTH_SHORT).show()
+                showSnackBar(resources.getString(R.string.delete_history),roomEntity,"Delete")
             }
         }
+    }
+
+    private fun showSnackBar(message:String,entity: RoomEntity,action:String){
+        Snackbar.make(requireView(),message,Snackbar.LENGTH_SHORT).setAction(resources.getString(R.string.undo)){
+            if (action=="Save"){
+                viewModel.deleteRoomEntity(entity)
+            }else{
+                viewModel.insertRoomEntity(entity)
+            }
+        }.show()
     }
 
     override fun onDestroyView() {

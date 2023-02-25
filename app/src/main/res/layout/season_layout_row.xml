@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+        <variable
+            name="tvShowSeason"
+            type="com.fatih.popcorn.entities.remote.detailresponse.Season" />
+        <variable
+            name="genre"
+            type="String" />
+        <variable
+            name="rating"
+            type="String" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:background="@drawable/review_bg"
+        android:layoutAnimation="@anim/layout_animation"
+        android:id="@+id/backgroundLayout"
+        >
+        <View
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:id="@+id/circleBg"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:background="@drawable/circle_background"
+            />
+
+        <View
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:id="@+id/circleBg2"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            android:background="@drawable/circle_background2"
+            />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        android:id="@+id/layoutLinear"
+        android:orientation="horizontal">
+
+        <com.makeramen.roundedimageview.RoundedImageView
+            android:layout_width="125dp"
+            android:layout_height="150dp"
+            app:riv_corner_radius="20dp"
+            android:id="@+id/seasonImage"
+            android:layout_margin="7dp"
+            android:downloadUrl="@{tvShowSeason.poster_path}"
+             />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="13sp"
+                android:text='@{tvShowSeason.name}'
+                android:fontFamily="@font/adamina"
+                android:layout_marginStart="16dp"
+                android:textColor="@color/white"
+                android:layout_marginTop="10dp"
+                android:includeFontPadding="false"
+                android:ellipsize="end"
+                android:maxLines="1" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="13sp"
+                android:text='@{"Air Date : "+tvShowSeason.air_date}'
+                android:fontFamily="@font/adamina"
+                android:layout_marginStart="15dp"
+                android:textColor="@color/white"
+                android:layout_marginTop="15dp"
+                android:includeFontPadding="false"
+                android:ellipsize="end"
+                android:maxLines="1" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="13sp"
+                android:text='@{"Genre : "+genre}'
+                android:fontFamily="@font/adamina"
+                android:layout_marginStart="15dp"
+                android:textColor="@color/white"
+                android:layout_marginTop="15dp"
+                android:includeFontPadding="false"
+                android:ellipsize="end"
+                android:maxLines="1" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="13sp"
+                android:text='@{"Episodes : "+tvShowSeason.episode_count}'
+                android:fontFamily="@font/adamina"
+                android:layout_marginStart="15dp"
+                android:textColor="@color/white"
+                android:layout_marginTop="15dp"
+                android:includeFontPadding="false"
+                android:ellipsize="end"
+                android:maxLines="1" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginStart="15dp"
+                android:layout_marginTop="15dp"
+                android:gravity="center_vertical">
+
+                <RatingBar
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    style="@style/ratingBarStyle"
+                    android:backgroundTint="@color/white"
+                    android:isIndicator="true"
+                    android:max="10"
+                    android:numStars="5"
+                    android:stepSize="1"
+                    android:id="@+id/ratingBar"
+                     />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="14sp"
+                    android:id="@+id/ratingText2"
+                    android:text='@{ rating}'
+                    android:layout_marginStart="7dp"
+                    android:textColor="@color/white"
+                    android:includeFontPadding="false" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </LinearLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</layout>
