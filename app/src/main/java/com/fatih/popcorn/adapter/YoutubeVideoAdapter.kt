@@ -25,7 +25,7 @@ class YoutubeVideoAdapter (val layout:Int):BaseAdapter<İtem,FragmentTrailerRowB
 
     override var diffUtil: DiffUtil.ItemCallback<İtem> = object :DiffUtil.ItemCallback<İtem>(){
         override fun areContentsTheSame(oldItem: İtem, newItem: İtem): Boolean {
-            return oldItem.kind==newItem.kind && oldItem.snippet==newItem.snippet && oldItem.contentDetails==newItem.contentDetails
+            return oldItem.id==newItem.id
         }
 
         override fun areItemsTheSame(oldItem: İtem, newItem: İtem): Boolean {
@@ -47,13 +47,12 @@ class YoutubeVideoAdapter (val layout:Int):BaseAdapter<İtem,FragmentTrailerRowB
             val niceDateStr = DateUtils.getRelativeTimeSpanString(date?.time?:0L, Calendar.getInstance().timeInMillis, DateUtils.DAY_IN_MILLIS)
             holder.binding.channelTittle=list[position].snippet.channelTitle
             holder.binding.description=list[position].snippet.description
-            holder.binding.imageUrl=list[position].snippet.thumbnails.high.url
+            holder.binding.imageUrl=list[position].snippet.thumbnails.maxres.url
             holder.binding.viewText=coolNumberFormat(list[position].statistics.viewCount.toLong())
             holder.binding.titleText=list[position].snippet.title
             holder.binding.dateText=niceDateStr.toString()
             holder.binding.runTime=formatDuration(list[position].contentDetails.duration)
-            holder.binding.channelImage
-        }catch (e:Exception){
+        }catch (_:Exception){
 
         }
     }
@@ -65,7 +64,7 @@ class YoutubeVideoAdapter (val layout:Int):BaseAdapter<İtem,FragmentTrailerRowB
         val value: String = format.format(count / 1000.0.pow(exp.toDouble()))
         return String.format("%s%c", value, "kMBTPE"[exp - 1])
     }
-    fun formatDuration(duration: String): String {
+    private fun formatDuration(duration: String): String {
         val millis = parseDuration(duration)
         val minutes = TimeUnit.MILLISECONDS.toMinutes(millis)
         val seconds = TimeUnit.MILLISECONDS.toSeconds(millis - TimeUnit.MINUTES.toMillis(minutes))

@@ -142,15 +142,15 @@ class TrailerFragment @Inject constructor(): Fragment(R.layout.fragment_trailer)
                     when(resource.status){
                         Status.SUCCESS->{
                             resource.data?.let {
-                                it.results.map {it->
-                                    if(it.site=="YouTube"){
+                                it.results.forEach {result->
+                                    if(result.site=="YouTube"){
                                         binding.youtubePlayer.visibility=View.VISIBLE
                                         binding.youtubeRecyclerView?.visibility=View.VISIBLE
                                         isThereAnyVideoUrl=true
                                         myVideoId = if(myVideoId.isEmpty()){
-                                            it.key
+                                            result.key
                                         }else{
-                                            myVideoId+","+it.key
+                                            myVideoId+","+result.key
                                         }
                                     }
                                 }

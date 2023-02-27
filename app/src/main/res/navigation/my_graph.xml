@@ -59,7 +59,11 @@
             app:argType="integer" />
         <action
             android:id="@+id/action_detailsFragment_self"
-            app:destination="@id/detailsFragment" />
+            app:destination="@id/detailsFragment"
+            app:enterAnim="@anim/layout_enter_anim"
+            app:exitAnim="@anim/layout_exit_anim"
+            app:popEnterAnim="@anim/layout_enter_anim"
+            app:popExitAnim="@anim/layout_exit_anim"/>
         <argument
             android:name="url"
             app:argType="string"
