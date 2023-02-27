@@ -64,6 +64,10 @@
             android:name="url"
             app:argType="string"
             app:nullable="true" />
+        <argument
+            android:name="isTvShow"
+            app:argType="string"
+            app:nullable="true" />
     </fragment>
     <fragment
         android:id="@+id/watchListFragment"

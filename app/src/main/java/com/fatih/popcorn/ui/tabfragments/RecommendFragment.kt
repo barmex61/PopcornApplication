@@ -19,6 +19,7 @@ import com.fatih.popcorn.other.Constants
 import com.fatih.popcorn.other.Constants.movieSearch
 import com.fatih.popcorn.other.Constants.tvSearch
 import com.fatih.popcorn.other.Status
+import com.fatih.popcorn.ui.DetailsFragment
 import com.fatih.popcorn.viewmodel.RecommendationFragmentViewModel
 
 class RecommendFragment:Fragment(R.layout.fragment_recommend) {
@@ -41,11 +42,11 @@ class RecommendFragment:Fragment(R.layout.fragment_recommend) {
         if (savedInstanceState?.getBoolean("isRotated") != true){
             viewModel.resetData()
         }
-        recommendAdapter.setMyOnClickLambda {url, id, pair ->
+        recommendAdapter.setMyOnClickLambda {url, id, pair ,isTvShow->
             pair?.let {
-                findNavController().navigate(R.id.action_detailsFragment_self, bundleOf("id" to id,"vibrantColor" to it.first,"darkMutedColor" to it.second,"url" to url)
+                findNavController().navigate(R.id.action_detailsFragment_self, bundleOf("id" to id,"vibrantColor" to it.first,"darkMutedColor" to it.second,"url" to url,"isTvShow" to if (DetailsFragment.isItInMovieList) movieSearch else tvSearch)
                 ,NavOptions.Builder().setPopUpTo(R.id.detailsFragment,true).build())
-            }?: findNavController().navigate(R.id.action_detailsFragment_self, bundleOf("id" to id,"vibrantColor" to R.color.white,"darkMutedColor" to R.color.black2,"url" to url),
+            }?: findNavController().navigate(R.id.action_detailsFragment_self, bundleOf("id" to id,"vibrantColor" to R.color.white,"darkMutedColor" to R.color.black2,"url" to url,"isTvShow" to null,"isTvShow" to if (DetailsFragment.isItInMovieList) movieSearch else tvSearch),
                 NavOptions.Builder().setPopUpTo(R.id.detailsFragment,true).build())
         }
         doInitialization()
@@ -86,17 +87,23 @@ class RecommendFragment:Fragment(R.layout.fragment_recommend) {
                         totalAvailablePages=it.total_pages
                         recommendAdapter.list=it.results
                     }?:{
-                        binding.recommendationLottie.visibility=View.VISIBLE
-                        binding.recommendationLottie.playAnimation()
+                        showLottie()
                     }
                     if (it.data?.total_results == 0){
-                        binding.recommendationLottie.visibility=View.VISIBLE
-                        binding.recommendationLottie.playAnimation()
+                       showLottie()
                     }
+                }
+                Status.ERROR->{
+                    showLottie()
                 }
                 else->Unit
             }
         }
+    }
+
+    private fun showLottie(){
+        binding.recommendationLottie.visibility=View.VISIBLE
+        binding.recommendationLottie.playAnimation()
     }
 
     override fun onSaveInstanceState(outState: Bundle) {

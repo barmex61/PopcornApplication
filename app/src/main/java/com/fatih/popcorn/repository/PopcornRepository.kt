@@ -110,9 +110,9 @@ class PopcornRepository (
         }
     }
 
-    override suspend fun deleteRoomEntity(roomEntity: RoomEntity) {
+    override suspend fun deleteRoomEntity(idInput: Int) {
         try {
-            roomDao.deleteRoomEntity(roomEntity)
+            roomDao.deleteRoomEntity(idInput)
         }catch (e:Exception){
             e.printStackTrace()
         }
@@ -122,9 +122,12 @@ class PopcornRepository (
         return roomDao.getAllRoomEntity()
     }
 
-    override suspend fun getSelectedRoomEntity(idInput: Int): Boolean {
-        println(roomDao.getSelectedRoomEntity(idInput).toInt()==idInput)
-       return roomDao.getSelectedRoomEntity(idInput).toInt()==idInput
+    override suspend fun getSelectedRoomEntity(idInput: Int): Pair<Boolean,Boolean>?{
+        val response=roomDao.getSelectedRoomEntity(idInput)
+        println(response)
+        return response?.let {
+            Pair(response.field_id.toInt()==idInput,response.favorite)
+        }
     }
 
     override suspend fun getReviews(name: String, id: Int, page: Int): Resource<ReviewResponse> {
@@ -215,5 +218,9 @@ class PopcornRepository (
         }catch (e:Exception){
             Resource.error(e.message)
         }
+    }
+
+    override suspend fun updateFavorite(idInput: Int,isFavorite: Boolean) {
+        roomDao.updateRoomEntityFavorite(idInput,isFavorite)
     }
 }

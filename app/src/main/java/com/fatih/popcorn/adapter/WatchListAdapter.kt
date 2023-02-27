@@ -24,10 +24,9 @@ class WatchListAdapter (val layout:Int): BaseAdapter<RoomEntity,WatchListRowBind
     override fun onBindViewHolder(holder: MyViewHolder<WatchListRowBinding>, position: Int) {
         holder.binding.recommendNameText.isSelected=true
         holder.binding.watchList=list[position]
-        holder.binding.watchList=list[position]
         holder.itemView.setOnClickListener {
             val pair= getVibrantColor(holder.binding.recommendImageView)
-            myItemClickLambda?.invoke(list[position].posterPath,list[position].field_id.toInt(),pair)
+            myItemClickLambda?.invoke(list[position].posterPath,list[position].field_id.toInt(),pair,list[position].isTvShow)
         }
     }
 

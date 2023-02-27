@@ -104,10 +104,10 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
         setupRecyclerView()
         setIndicatorColor(checkIsItInMovieListOrNot())
         binding.watchImage.setOnClickListener { findNavController().navigate(HomeFragmentDirections.actionHomeFragmentToWatchListFragment()) }
-        adapter.setMyOnClickLambda { url,id, pair ->
+        adapter.setMyOnClickLambda { url,id, pair ,isTvShow->
             pair?.let {
-                findNavController().navigate(HomeFragmentDirections.actionHomeFragmentToDetailsFragment(id,pair.first,pair.second,url))
-            }?: findNavController().navigate(HomeFragmentDirections.actionHomeFragmentToDetailsFragment(id,R.color.white,R.color.black2,url))
+                findNavController().navigate(HomeFragmentDirections.actionHomeFragmentToDetailsFragment(id,pair.first,pair.second,url,null))
+            }?: findNavController().navigate(HomeFragmentDirections.actionHomeFragmentToDetailsFragment(id,R.color.white,R.color.black2,url,null))
         }
         binding.navigationView.setNavigationItemSelectedListener {
             setNavigation(it)

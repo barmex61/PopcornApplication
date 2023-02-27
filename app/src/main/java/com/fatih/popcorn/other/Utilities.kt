@@ -1,6 +1,7 @@
 package com.fatih.popcorn.other
 
 import android.annotation.SuppressLint
+import android.content.res.ColorStateList
 import android.view.animation.AnimationUtils
 import android.widget.ImageView
 import android.widget.TextView
@@ -45,6 +46,13 @@ fun ImageView.setImageUrl(url: String?) {
     }
 
 }
+
+@BindingAdapter("color")
+fun ImageView.setTint(isFavorite:Boolean){
+    val color=if (isFavorite) ColorStateList.valueOf(resources.getColor(R.color.scaletRed)) else ColorStateList.valueOf(resources.getColor(R.color.white))
+    this.imageTintList= color
+}
+
 @BindingAdapter("android:imageUrl")
 fun ImageView.setViewPagerImage(url: String?) {
 

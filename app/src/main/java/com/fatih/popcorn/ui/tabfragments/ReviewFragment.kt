@@ -85,22 +85,11 @@ class ReviewFragment:Fragment(R.layout.fragment_review) {
         viewModel?.reviewResponse?.observe(viewLifecycleOwner){
             when(it.status){
                 Status.LOADING->{}
-                Status.ERROR->{}
+                Status.ERROR->{showLottie()}
                 Status.SUCCESS->{
 
                     if(it.data?.results?.isEmpty() == true){
-                        binding.sortText.visibility=View.GONE
-                        binding.reviewCountText.visibility=View.GONE
-                        binding.oopsText.apply {
-                            setTextColor(vibrantColor)
-                            visibility=View.VISIBLE
-                            startAnimation(AnimationUtils.loadAnimation(this.context,R.anim.oops_anim))
-                        }
-                        binding.lottieView.apply {
-                            visibility=View.VISIBLE
-                            playAnimation()
-                        }
-                        return@observe
+                      showLottie()
                     }
                     it.data?.let {
                         resultList=it.results
@@ -109,6 +98,15 @@ class ReviewFragment:Fragment(R.layout.fragment_review) {
                     binding.count=it.data?.total_results
                 }
             }
+        }
+    }
+
+    private fun showLottie(){
+        binding.sortText.visibility=View.GONE
+        binding.reviewCountText.visibility=View.GONE
+        binding.lottieView.apply {
+            visibility=View.VISIBLE
+            playAnimation()
         }
     }
 

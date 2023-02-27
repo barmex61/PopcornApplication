@@ -29,9 +29,13 @@ class DetailsFragmentViewModel @Inject constructor(private val popcornRepo:Popco
     val imageResponse:LiveData<Resource<ImageResponse>>
     get() = _imageResponse
 
-    private var _isItInDatabase = MutableLiveData<Boolean>()
-    val isItInDatabase:LiveData<Boolean>
+    private var _isItInDatabase = MutableLiveData<Boolean?>()
+    val isItInDatabase:LiveData<Boolean?>
     get() = _isItInDatabase
+
+    private var _isItInFavorite = MutableLiveData<Boolean?>()
+    val isItInFavorite:LiveData<Boolean?>
+        get() = _isItInFavorite
 
     private var _creditsResponse=MutableLiveData<Resource<CreditsResponse>>()
     val creditsResponse:LiveData<Resource<CreditsResponse>>
@@ -64,15 +68,21 @@ class DetailsFragmentViewModel @Inject constructor(private val popcornRepo:Popco
         popcornRepo.insertRoomEntity(roomEntity)
         isItIntDatabase(roomEntity.field_id.toInt())
     }
-    fun deleteRoomEntity(roomEntity: RoomEntity)=viewModelScope.launch(Dispatchers.Default) {
-        popcornRepo.deleteRoomEntity(roomEntity)
-        isItIntDatabase(roomEntity.field_id.toInt())
+    fun deleteRoomEntity(idInput: Int)=viewModelScope.launch(Dispatchers.Default) {
+        popcornRepo.deleteRoomEntity(idInput)
+        isItIntDatabase(idInput)
+    }
+
+    fun updateFavorite(idInput: Int,isFavorite:Boolean)=viewModelScope.launch {
+        popcornRepo.updateFavorite(idInput, isFavorite)
+        isItIntDatabase(idInput)
     }
 
     fun isItIntDatabase(idInput:Int)  = viewModelScope.launch(Dispatchers.Default){
         val response=popcornRepo.getSelectedRoomEntity(idInput)
         withContext(Dispatchers.Main){
-            _isItInDatabase.value=response
+            _isItInDatabase.value=response?.first
+            _isItInFavorite.value=response?.second
         }
     }
     fun getCredits(name:String,id:Int)=viewModelScope.launch {
@@ -83,7 +93,8 @@ class DetailsFragmentViewModel @Inject constructor(private val popcornRepo:Popco
     fun resetData()=viewModelScope.launch {
         _detailResponse=MutableLiveData<Resource<DetailResponse>>()
         _imageResponse=MutableLiveData<Resource<ImageResponse>>()
-        _isItInDatabase= MutableLiveData<Boolean>()
+        _isItInDatabase= MutableLiveData<Boolean?>()
+        _isItInFavorite=MutableLiveData<Boolean?>()
         _creditsResponse=MutableLiveData<Resource<CreditsResponse>>()
         _reviewResponse=MutableLiveData<Resource<ReviewResponse>>()
     }

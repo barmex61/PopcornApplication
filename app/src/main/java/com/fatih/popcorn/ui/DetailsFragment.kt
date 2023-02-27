@@ -1,5 +1,6 @@
 package com.fatih.popcorn.ui
 
+import android.animation.Animator
 import android.annotation.SuppressLint
 import android.content.res.ColorStateList
 import android.content.res.Configuration
@@ -57,6 +58,7 @@ class DetailsFragment : Fragment(R.layout.fragment_details) {
     private var selectedResponse: DetailResponse? = null
     private var selectedImageResponse:ImageResponse?=null
     private var isItInDatabase = false
+    private var isItInFavorite = false
     private var job:Job?=null
     private var fragmentViewPagerAdapter:DetailsFragmentViewPagerAdapter?=null
     private var job2:Job?=null
@@ -67,6 +69,7 @@ class DetailsFragment : Fragment(R.layout.fragment_details) {
     private lateinit var viewModel: DetailsFragmentViewModel
     private var selectedUrl=""
     private var isSingleUrl=false
+    private var animatorListener:Animator.AnimatorListener?=null
 
     companion object{
        var vibrantColor : Int ?=null
@@ -74,10 +77,28 @@ class DetailsFragment : Fragment(R.layout.fragment_details) {
        var seasonGenres: String?=null
        var seasonRating :String?=null
        var seasonRatingFloat:Float?=null
+       var isItInMovieList=false
+
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentDetailsBinding.inflate(inflater, container, false)
+        animatorListener= object :Animator.AnimatorListener{
+            override fun onAnimationStart(animation: Animator) {
+                binding.favoriteLottie.visibility=View.VISIBLE
+            }
+            override fun onAnimationEnd(animation: Animator) {
+                println("end")
+                binding.favoriteLottie.visibility=View.GONE
+            }
+            override fun onAnimationCancel(animation: Animator) {
+                _binding?.let {
+                    it.favoriteLottie.visibility=View.GONE
+                }
+            }
+            override fun onAnimationRepeat(animation: Animator) = Unit
+        }
+        binding.favoriteLottie.addAnimatorListener(animatorListener)
         doInitialization()
         return binding.root
     }
@@ -85,6 +106,22 @@ class DetailsFragment : Fragment(R.layout.fragment_details) {
     private fun doInitialization() {
         viewModel = ViewModelProvider(requireActivity())[DetailsFragmentViewModel::class.java]
         setStatusBarPadding()
+        arguments?.let {
+            selectedUrl=DetailsFragmentArgs.fromBundle(it).url?:""
+            selectedId = DetailsFragmentArgs.fromBundle(it).id
+            darkMutedColor = DetailsFragmentArgs.fromBundle(it).darkMutedColor
+            vibrantColor = DetailsFragmentArgs.fromBundle(it).vibrantColor
+            isItInMovieList=if (DetailsFragmentArgs.fromBundle(it).isTvShow != null){
+                DetailsFragmentArgs.fromBundle(it).isTvShow == movieSearch
+            }else{
+                checkIsItInMovieListOrNot()
+            }
+        }
+        if (isItInMovieList) {
+            viewModel.getDetails(movieSearch, selectedId!!, searchLanguage)
+        } else {
+            viewModel.getDetails(tvSearch, selectedId!!, searchLanguage)
+        }
 
         _myFragmentManager=childFragmentManager
         fragmentViewPagerAdapter=DetailsFragmentViewPagerAdapter(listOf(),myFragmentManager,viewLifecycleOwner.lifecycle)
@@ -92,25 +129,14 @@ class DetailsFragment : Fragment(R.layout.fragment_details) {
             this.offscreenPageLimit=1
         }
         setupPosterViewPager(posterList,backgroundList)
-        binding.saveButton.setOnClickListener { watchList() }
+        binding.likeButton.setOnClickListener { favorite() }
+        binding.saveButton.setOnClickListener { watchList(isItInFavorite) }
         binding.watchListButton.setOnClickListener { findNavController().navigate(DetailsFragmentDirections.actionDetailsFragmentToWatchListFragment()) }
         binding.backButton.setOnClickListener { findNavController().navigateUp() }
-        arguments?.let {
-            selectedUrl=DetailsFragmentArgs.fromBundle(it).url?:""
-            selectedId = DetailsFragmentArgs.fromBundle(it).id
-            darkMutedColor = DetailsFragmentArgs.fromBundle(it).darkMutedColor
-            vibrantColor = DetailsFragmentArgs.fromBundle(it).vibrantColor
-        }
+
         binding.trailerButton.setOnClickListener {
             findNavController().navigate(DetailsFragmentDirections.actionDetailsFragmentToMoviePlayFragment(selectedId!!))
         }
-
-        if (checkIsItInMovieListOrNot()) {
-            viewModel.getDetails(movieSearch, selectedId!!, searchLanguage)
-        } else {
-            viewModel.getDetails(tvSearch, selectedId!!, searchLanguage)
-        }
-
         observeLiveData()
     }
 
@@ -133,7 +159,7 @@ class DetailsFragment : Fragment(R.layout.fragment_details) {
             familiarBundle.putInt("id",selectedId!!)
             arguments=familiarBundle
         })
-        if(!checkIsItInMovieListOrNot()){
+        if(!isItInMovieList){
             fragmentList.add(SeasonsFragment())
         }
 
@@ -184,14 +210,29 @@ class DetailsFragment : Fragment(R.layout.fragment_details) {
             }
         }
 
-        viewModel.isItInDatabase.observe(viewLifecycleOwner){
-            if(it){
-                isItInDatabase=true
-                binding.saveButton.setImageDrawable(ContextCompat.getDrawable(requireContext(),R.drawable.baseline_restore_from_trash_24))
-            }else{
-                isItInDatabase=false
-                binding.saveButton.setImageDrawable(ContextCompat.getDrawable(requireContext(),R.drawable.baseline_add_24))
-            }
+        viewModel.isItInDatabase.observe(viewLifecycleOwner){response->
+            println("normal $response")
+            response?.let {
+                if(it){
+                    isItInDatabase=true
+                    binding.saveButton.setImageDrawable(ContextCompat.getDrawable(requireContext(),R.drawable.baseline_restore_from_trash_24))
+                }else{
+                    resetSaveImage()
+                }
+            }?:resetSaveImage()
+        }
+
+        viewModel.isItInFavorite.observe(viewLifecycleOwner){response->
+            println("favorite $response")
+            response?.let {
+                if(it){
+                    isItInFavorite=true
+                    binding.likeButton.imageTintList= ColorStateList.valueOf(resources.getColor(R.color.scaletRed))
+                }else{
+                    resetFavorite()
+                }
+            }?:resetFavorite()
+
         }
 
         viewModel.imageResponse.observe(viewLifecycleOwner){ resource->
@@ -220,6 +261,16 @@ class DetailsFragment : Fragment(R.layout.fragment_details) {
                 }
             }
         }
+    }
+
+    private fun resetSaveImage(){
+        isItInDatabase=false
+        binding.saveButton.setImageDrawable(ContextCompat.getDrawable(requireContext(),R.drawable.baseline_add_24))
+    }
+
+    private fun resetFavorite(){
+        isItInFavorite=false
+        binding.likeButton.imageTintList= ColorStateList.valueOf(resources.getColor(R.color.white))
     }
 
     private fun setupPosterViewPager(portraitList: List<String>,landscapeList:List<String>){
@@ -294,7 +345,7 @@ class DetailsFragment : Fragment(R.layout.fragment_details) {
     private fun setTints() {
         if((searchLanguage == "tr") && ((selectedResponse?.overview == null) || (selectedResponse?.overview?.isEmpty() == true))){
             searchLanguage = "en"
-            if (checkIsItInMovieListOrNot()) {
+            if (isItInMovieList) {
                 viewModel.resetData()
                 viewModel.getDetails(movieSearch, selectedId!!, searchLanguage)
             } else {
@@ -345,42 +396,56 @@ class DetailsFragment : Fragment(R.layout.fragment_details) {
     }
 
 
-    private fun watchList(){
-        val isTvShow=!checkIsItInMovieListOrNot()
-        if(!isItInDatabase){
-            selectedResponse?.let {detailResponse->
-                val roomEntity= RoomEntity(detailResponse.name?:detailResponse.original_name?:detailResponse.original_title?:"",
-                    detailResponse.last_air_date?:detailResponse.release_date!!,
-                    detailResponse.poster_path!!,
-                    detailResponse.vote_average!!,
-                    isTvShow,
-                    detailResponse.id!!.toLong())
+    private fun watchList(isFavorite:Boolean){
+        val isTvShow=!isItInMovieList
+        selectedResponse?.let { detailResponse ->
+            val roomEntity= RoomEntity(isFavorite,detailResponse.name?:detailResponse.original_name?:detailResponse.original_title?:"",
+                detailResponse.last_air_date?:detailResponse.release_date!!,
+                detailResponse.poster_path!!,
+                detailResponse.vote_average!!,
+                isTvShow,
+                detailResponse.id!!.toLong())
+            if(!isItInDatabase){
                 viewModel.insertRoomEntity(roomEntity)
                 showSnackBar(resources.getString(R.string.added_history),roomEntity,"Save")
-            }
 
-        }else{
-            selectedResponse?.let {
-                val roomEntity= RoomEntity(it.name?:it.original_name?:it.original_title?:"",it.last_air_date?:it.release_date!!, it.poster_path!!, it.vote_average!!,isTvShow, it.id!!.toLong())
-                viewModel.deleteRoomEntity(roomEntity)
+            }else{
+                viewModel.deleteRoomEntity(detailResponse.id)
                 showSnackBar(resources.getString(R.string.delete_history),roomEntity,"Delete")
+
             }
         }
+
     }
 
     private fun showSnackBar(message:String,entity: RoomEntity,action:String){
         Snackbar.make(requireView(),message,Snackbar.LENGTH_SHORT).setAction(resources.getString(R.string.undo)){
             if (action=="Save"){
-                viewModel.deleteRoomEntity(entity)
+                viewModel.deleteRoomEntity(entity.field_id.toInt())
             }else{
                 viewModel.insertRoomEntity(entity)
             }
         }.show()
     }
 
+    private fun favorite(){
+         if (isItInFavorite){
+            viewModel.updateFavorite(selectedResponse!!.id!!,false)
+         }else{
+            if (!isItInDatabase){
+                watchList(true)
+            }else{
+                viewModel.updateFavorite(selectedResponse!!.id!!,true)
+            }
+            binding.favoriteLottie.visibility=View.VISIBLE
+            binding.favoriteLottie.playAnimation()
+         }
+    }
+
     override fun onDestroyView() {
         job?.cancel()
         job2?.cancel()
+        binding.favoriteLottie.removeAnimatorListener(animatorListener)
         isSingleUrl=false
         fragmentViewPagerAdapter = null
         fragmentViewPager?.adapter=fragmentViewPagerAdapter

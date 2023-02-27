@@ -19,23 +19,27 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="?actionBarSize"
+            android:layout_height="wrap_content"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             android:id="@+id/layoutHeaderWatchList"
             android:orientation="horizontal"
-            android:gravity="bottom">
+            android:gravity="center_vertical">
 
             <ImageView
-                android:layout_width="30dp"
-                android:layout_height="30dp"
-                android:src="@drawable/ic_back"
-                android:layout_marginStart="15dp"
-                android:id="@+id/backImage"
+                android:id="@+id/back_button"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_marginStart="20dp"
                 android:contentDescription="@string/app_name"
-                app:tint="@color/white"
-                android:layout_marginBottom="15dp"/>
+                android:src="@drawable/ic_back"
+                android:layout_marginBottom="10dp"
+                android:layout_marginTop="10dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:tint="@color/white"/>
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -43,7 +47,6 @@
                 android:textColor="@color/white"
                 android:textSize="19sp"
                 android:layout_marginStart="20dp"
-                android:layout_marginBottom="9dp"
                 android:fontFamily="@font/adamina"
                 android:includeFontPadding="false"
                 android:maxLines="1"
@@ -61,6 +64,7 @@
             app:layout_constraintEnd_toEndOf="parent"
 
             />
+
     <ProgressBar
         android:layout_width="30dp"
         android:layout_height="30dp"

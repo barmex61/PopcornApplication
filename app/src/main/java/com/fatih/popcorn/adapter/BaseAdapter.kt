@@ -24,9 +24,9 @@ abstract class BaseAdapter <T,K:ViewDataBinding> (val layoutId:Int):RecyclerView
     get() = asyncListDiffer.currentList
     set(value) = asyncListDiffer.submitList(value)
 
-    open var myItemClickLambda:((String?,Int,Pair<Int,Int>?)->Unit)?=null
+    open var myItemClickLambda:((String?,Int,Pair<Int,Int>?,Boolean?)->Unit)?=null
 
-    open fun setMyOnClickLambda(lambda:(String?,Int,Pair<Int,Int>?) ->Unit){
+    open fun setMyOnClickLambda(lambda:(String?,Int,Pair<Int,Int>?,Boolean?) ->Unit){
         this.myItemClickLambda=lambda
     }
 

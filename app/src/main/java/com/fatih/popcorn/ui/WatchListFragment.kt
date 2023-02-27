@@ -19,6 +19,8 @@ import com.fatih.popcorn.adapter.SeasonAdapter
 import com.fatih.popcorn.adapter.WatchListAdapter
 import com.fatih.popcorn.databinding.FragmentSeasonsBinding
 import com.fatih.popcorn.databinding.FragmentWatchListBinding
+import com.fatih.popcorn.other.Constants.movieSearch
+import com.fatih.popcorn.other.Constants.tvSearch
 import com.fatih.popcorn.other.Status
 import com.fatih.popcorn.viewmodel.DetailsFragmentViewModel
 
@@ -37,10 +39,11 @@ class WatchListFragment:Fragment() {
         _binding= DataBindingUtil.inflate(inflater,R.layout.fragment_watch_list,container,false)
         setStatusBarPadding()
         watchListAdapter= WatchListAdapter(R.layout.watch_list_row).apply {
-            setMyOnClickLambda { url, id, pair ->
+            setMyOnClickLambda { url, id, pair ,isTvShow->
+                val search= if (isTvShow == true) tvSearch else movieSearch
                 pair?.let {
-                    findNavController().navigate(WatchListFragmentDirections.actionWatchListFragmentToDetailsFragment(id,pair.first,pair.second,url))
-                }?: findNavController().navigate(WatchListFragmentDirections.actionWatchListFragmentToDetailsFragment(id,R.color.white,R.color.black2,url))
+                    findNavController().navigate(WatchListFragmentDirections.actionWatchListFragmentToDetailsFragment(id,pair.first,pair.second,url,search))
+                }?: findNavController().navigate(WatchListFragmentDirections.actionWatchListFragmentToDetailsFragment(id,R.color.white,R.color.black2,url,search))
             }
         }
         binding.watchListRecyclerView.apply {

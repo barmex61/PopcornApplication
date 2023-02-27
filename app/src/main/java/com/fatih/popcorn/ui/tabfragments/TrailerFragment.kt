@@ -19,6 +19,7 @@ import com.fatih.popcorn.other.Constants
 import com.fatih.popcorn.other.Constants.movieSearch
 import com.fatih.popcorn.other.Constants.tvSearch
 import com.fatih.popcorn.other.Status
+import com.fatih.popcorn.ui.DetailsFragment
 import com.fatih.popcorn.viewmodel.TrailerFragmentViewModel
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.PlayerConstants
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.YouTubePlayer
@@ -95,15 +96,14 @@ class TrailerFragment @Inject constructor(): Fragment(R.layout.fragment_trailer)
                     if (mCurrentVideoId.isNotEmpty() && mCurrentTime != 0f){
                         myYoutubePlayer!!.loadVideo(mCurrentVideoId,mCurrentTime)
                     }else {
-                        if(viewModel.itemList.value != null && viewModel.itemList.value!!.isNotEmpty())
-                        myYoutubePlayer!!.cueVideo(viewModel.itemList.value?.get(0)?.id?:"",0f)
-
+                        if(viewModel.itemList.value != null && viewModel.itemList.value!!.isNotEmpty()){
+                            myYoutubePlayer!!.cueVideo(viewModel.itemList.value?.get(0)?.id?:"",0f)
+                        }
                     }
                 }
 
                 override fun onStateChange(youTubePlayer: YouTubePlayer, state: PlayerConstants.PlayerState) {
                     super.onStateChange(youTubePlayer, state)
-                    println(state.name)
                 }
 
                 override fun onVideoId(youTubePlayer: YouTubePlayer, videoId: String) {
@@ -127,7 +127,7 @@ class TrailerFragment @Inject constructor(): Fragment(R.layout.fragment_trailer)
                 selectedId=TrailerFragmentArgs.fromBundle(it).id
             }
 
-            if (Constants.checkIsItInMovieListOrNot()){
+            if (DetailsFragment.isItInMovieList){
                 viewModel.getVideos(movieSearch,selectedId)
             }else{
                 viewModel.getVideos(tvSearch,selectedId)
@@ -155,13 +155,18 @@ class TrailerFragment @Inject constructor(): Fragment(R.layout.fragment_trailer)
                                     }
                                 }
                                 if (!isThereAnyVideoUrl){
+                                    binding.trailerLottie.visibility=View.VISIBLE
                                     binding.trailerLottie.playAnimation()
                                 }
                                 myVideoId.let {
                                     viewModel.getYoutubeResponse(part,it)
                                 }
                             }
-                        }else->Unit
+                        }
+                        Status.ERROR->{
+                            binding.trailerLottie.visibility=View.VISIBLE
+                            binding.trailerLottie.playAnimation()}
+                        else->Unit
                     }
                 }
             }

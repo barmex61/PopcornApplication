@@ -32,7 +32,7 @@ class RecommendFragmentAdapter(val layout:Int) :BaseAdapter<DiscoverResult,Fragm
             val pair= Constants.getVibrantColor(holder.binding.recommendImageView)
             if(position<list.size){
                 list[position].id?.let { id->
-                    myItemClickLambda?.invoke(list[position].poster_path,id,pair)
+                    myItemClickLambda?.invoke(list[position].poster_path,id,pair,null)
                 }
             }
         }

@@ -83,19 +83,6 @@
                 app:layout_constraintTop_toBottomOf="@id/reviewCountText"
                 />
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/oops_nothing_found"
-        android:id="@+id/oopsText"
-        android:visibility="gone"
-        android:textColor="@color/white"
-        android:textSize="20sp"
-        app:layout_constraintEnd_toEndOf="@id/lottieView"
-        app:layout_constraintBottom_toTopOf="@id/lottieView"
-        app:layout_constraintStart_toStartOf="@id/lottieView"/>
-
-        
         <com.airbnb.lottie.LottieAnimationView
             android:layout_width="0dp"
             android:layout_height="0dp"

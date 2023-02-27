@@ -48,6 +48,17 @@ class SeasonsFragment @Inject constructor() : Fragment() {
                     Status.SUCCESS -> {
                         resource.data?.let {
                             seasonAdapter!!.list=it.seasons?: listOf()
+                        }?:{
+                            binding.seasonLottie.apply {
+                                visibility=View.VISIBLE
+                                playAnimation()
+                            }
+                        }
+                    }
+                    Status.ERROR->{
+                        binding.seasonLottie.apply {
+                            visibility=View.VISIBLE
+                            playAnimation()
                         }
                     }
                     else->Unit

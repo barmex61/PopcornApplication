@@ -20,14 +20,15 @@ interface PopcornRepositoryInterface {
     fun getDetails(name:String,id:Int,language:String): Flow<Resource<DetailResponse>>
     suspend fun getImages( name:String, id:Int ): Flow<Resource<ImageResponse>>
     suspend fun insertRoomEntity(roomEntity: RoomEntity)
-    suspend fun deleteRoomEntity(roomEntity: RoomEntity)
+    suspend fun deleteRoomEntity(idInput: Int)
     fun getAllRoomEntity():LiveData<List<RoomEntity>>
     suspend fun getCredits(name: String, id: Int):Resource<CreditsResponse>
-    suspend fun getSelectedRoomEntity(idInput:Int):Boolean
+    suspend fun getSelectedRoomEntity(idInput:Int):Pair<Boolean,Boolean>?
     suspend fun getReviews(name:String, id:Int, page:Int):Resource<ReviewResponse>
     suspend fun getRecommendations(name:String,id:Int,page:Int):Resource<DiscoverResponse>
     suspend fun getFamiliars(name:String,id:Int,page:Int):Resource<DiscoverResponse>
     suspend fun getVideos(name:String, id:Int):Resource<VideoResponse>
     suspend fun getYoutubeVideoDetails(part:String,id:String):Resource<YoutubeResponse>
+    suspend fun updateFavorite(idInput: Int,isFavorite:Boolean)
 
 }

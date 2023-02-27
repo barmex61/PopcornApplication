@@ -5,6 +5,7 @@ import androidx.room.PrimaryKey
 
 @Entity
 data class RoomEntity(
+    val favorite:Boolean,
     val name:String,
     val lastAirDate: String,
     val posterPath: String,

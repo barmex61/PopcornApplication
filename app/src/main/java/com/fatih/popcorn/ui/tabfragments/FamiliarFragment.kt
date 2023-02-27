@@ -15,11 +15,11 @@ import androidx.recyclerview.widget.RecyclerView
 import com.fatih.popcorn.R
 import com.fatih.popcorn.adapter.RecommendFragmentAdapter
 import com.fatih.popcorn.databinding.FragmentFamiliarBinding
-import com.fatih.popcorn.other.Constants
 import com.fatih.popcorn.other.Constants.checkIsItInMovieListOrNot
 import com.fatih.popcorn.other.Constants.movieSearch
 import com.fatih.popcorn.other.Constants.tvSearch
 import com.fatih.popcorn.other.Status
+import com.fatih.popcorn.ui.DetailsFragment
 import com.fatih.popcorn.viewmodel.FamiliarFragmentViewModel
 
 class FamiliarFragment:Fragment(R.layout.fragment_familiar) {
@@ -34,7 +34,7 @@ class FamiliarFragment:Fragment(R.layout.fragment_familiar) {
     private lateinit var recommendAdapter: RecommendFragmentAdapter
     private lateinit var viewModel: FamiliarFragmentViewModel
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding= FragmentFamiliarBinding.inflate(inflater,container,false)
         viewModel= ViewModelProvider(requireActivity())[FamiliarFragmentViewModel::class.java]
         recommendAdapter= RecommendFragmentAdapter(R.layout.fragment_recommend_row)
@@ -42,11 +42,11 @@ class FamiliarFragment:Fragment(R.layout.fragment_familiar) {
         if (savedInstanceState?.getBoolean("isRotated") != true){
             viewModel.resetData()
         }
-        recommendAdapter.setMyOnClickLambda {url, id, pair ->
+        recommendAdapter.setMyOnClickLambda {url, id, pair,_ ->
             pair?.let {
-                findNavController().navigate(R.id.action_detailsFragment_self, bundleOf("id" to id,"vibrantColor" to it.first,"darkMutedColor" to it.second,"url" to url),
+                findNavController().navigate(R.id.action_detailsFragment_self, bundleOf("id" to id,"vibrantColor" to it.first,"darkMutedColor" to it.second,"url" to url,"isTvShow" to if (DetailsFragment.isItInMovieList) movieSearch else tvSearch),
                     NavOptions.Builder().setPopUpTo(R.id.detailsFragment,true).build())
-            }?: findNavController().navigate(R.id.action_detailsFragment_self, bundleOf("id" to id,"vibrantColor" to R.color.white,"darkMutedColor" to R.color.black2, "url" to url),
+            }?: findNavController().navigate(R.id.action_detailsFragment_self, bundleOf("id" to id,"vibrantColor" to R.color.white,"darkMutedColor" to R.color.black2, "url" to url,"isTvShow" to if (DetailsFragment.isItInMovieList) movieSearch else tvSearch),
                 NavOptions.Builder().setPopUpTo(R.id.detailsFragment,true).build())
         }
         doInitialization()
@@ -83,21 +83,24 @@ class FamiliarFragment:Fragment(R.layout.fragment_familiar) {
         viewModel.discoverResponse.observe(viewLifecycleOwner){
             when(it.status){
                 Status.SUCCESS->{
-                    it.data?.let {
-                        totalAvailablePages=it.total_pages
-                        recommendAdapter.list=it.results
+                    it.data?.let {response->
+                        totalAvailablePages=response.total_pages
+                        recommendAdapter.list=response.results
                     }?:{
-                        binding.familiarLottie.visibility=View.VISIBLE
-                        binding.familiarLottie.playAnimation()
+                        showLottie()
                     }
                     if (it.data?.total_results == 0){
-                        binding.familiarLottie.visibility=View.VISIBLE
-                        binding.familiarLottie.playAnimation()
+                        showLottie()
                     }
                 }
                 else->Unit
             }
         }
+    }
+
+    private fun showLottie(){
+        binding.familiarLottie.visibility=View.VISIBLE
+        binding.familiarLottie.playAnimation()
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
