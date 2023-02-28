@@ -2,6 +2,7 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:id="@+id/header"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="#000000">
     <ImageView
@@ -14,6 +15,8 @@
         app:layout_constraintStart_toStartOf="parent"
         android:layout_marginStart="15dp"
         android:layout_marginTop="50dp"
+        app:layout_constraintBottom_toBottomOf="@id/header"
+        android:layout_marginBottom="40dp"
         android:background="@drawable/img_bg"
         android:id="@+id/imageView"
         />
@@ -38,7 +41,7 @@
         android:layout_height="wrap_content"
         app:layout_constraintEnd_toEndOf="@id/textView"
         app:layout_constraintTop_toBottomOf="@id/textView"
-        android:text="Time"
+        android:text="Box"
         android:fontFamily="@font/arizonia"
         android:ellipsize="none"
         android:includeFontPadding="false"
@@ -57,40 +60,7 @@
         android:ellipsize="none"
         android:maxLines="1"
         android:id="@+id/versionText"/>
-    <com.makeramen.roundedimageview.RoundedImageView
-        android:layout_width="25dp"
-        android:layout_height="25dp"
-        android:src="@drawable/ic_facebook"
-        app:layout_constraintTop_toBottomOf="@id/versionText"
-        app:layout_constraintStart_toStartOf="@id/versionText"
-        android:layout_marginTop="30dp"
-        android:layout_marginBottom="25dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:riv_corner_radius="10dp"
-        android:id="@+id/facebook"/>
 
-    <com.makeramen.roundedimageview.RoundedImageView
-        android:layout_width="25dp"
-        android:layout_height="25dp"
-        android:src="@drawable/ic_twitter"
-        app:layout_constraintStart_toEndOf="@id/facebook"
-        app:layout_constraintTop_toTopOf="@id/facebook"
-        android:layout_marginStart="20dp"
-        android:background="@drawable/img_bg"
-        android:backgroundTint="@color/white"
-        app:riv_corner_radius="10dp"
-        android:id="@+id/twitter"/>
-
-    <com.makeramen.roundedimageview.RoundedImageView
-        android:layout_width="25dp"
-        android:layout_height="25dp"
-        android:src="@drawable/youtube"
-        app:layout_constraintStart_toEndOf="@id/twitter"
-        android:background="@drawable/img_bg"
-        android:backgroundTint="@color/white"
-        app:layout_constraintTop_toTopOf="@id/twitter"
-        android:layout_marginStart="20dp"
-        app:riv_corner_radius="10dp"/>
 
 
 

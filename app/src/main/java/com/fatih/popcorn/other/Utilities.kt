@@ -2,98 +2,76 @@ package com.fatih.popcorn.other
 
 import android.annotation.SuppressLint
 import android.content.res.ColorStateList
+import android.graphics.drawable.Drawable
 import android.view.animation.AnimationUtils
 import android.widget.ImageView
+import android.widget.ImageView.ScaleType
 import android.widget.TextView
+import androidx.annotation.DrawableRes
 import androidx.databinding.BindingAdapter
+import com.bumptech.glide.Glide
+import com.bumptech.glide.load.DataSource
+import com.bumptech.glide.load.engine.DiskCacheStrategy
+import com.bumptech.glide.load.engine.GlideException
+import com.bumptech.glide.request.RequestListener
+import com.bumptech.glide.request.RequestOptions
+import com.bumptech.glide.request.target.Target
 import com.fatih.popcorn.R
 import com.fatih.popcorn.entities.remote.detailresponse.ProductionCompany
 import com.fatih.popcorn.entities.remote.detailresponse.ProductionCountry
 import com.fatih.popcorn.entities.remote.discoverresponse.DiscoverResponse
-import com.fatih.popcorn.entities.remote.discoverresponse.DiscoverResult
 import com.fatih.popcorn.entities.remote.youtuberesponse.YoutubeResponse
-import com.squareup.picasso.Cache
-import com.squareup.picasso.Callback
-import com.squareup.picasso.Picasso
+import com.fatih.popcorn.other.Constants.base_img_url
 import java.text.SimpleDateFormat
 import java.util.*
 
+@BindingAdapter("url","fitXY","isYoutube")
+fun ImageView.setImageUrl(url:String?,fitXY: Boolean,isYoutube:Boolean){
 
-@BindingAdapter("android:downloadUrl")
-fun ImageView.setImageUrl(url: String?) {
-    this.alpha = 0.1f
-
+    this.alpha=0.2f
     val fadeScaleAnimation = AnimationUtils.loadAnimation(context, R.anim.fade_scale_animation)
+    this.scaleType=if (fitXY){ ScaleType.FIT_XY }else{ ScaleType.CENTER_CROP }
+    val requestOptions= RequestOptions().diskCacheStrategy(DiskCacheStrategy.AUTOMATIC).placeholder(R.drawable.popcorn)
+            .centerCrop()
+
+    val baseUrl= if (isYoutube) "" else base_img_url
     try {
-        url.let {
-            Constants.picasso.load("https://www.themoviedb.org/t/p/w600_and_h900_bestv2$url").fit().centerCrop().placeholder(
-                    R.drawable.popcorn
-                )
-                .into(this@setImageUrl, object : Callback {
-                    override fun onSuccess() {
-                        this@setImageUrl.apply {
-                            alpha = 1f
-                            startAnimation(fadeScaleAnimation)
-                        }
-                    }
+        Glide.with(this.context).applyDefaultRequestOptions(requestOptions).load(baseUrl+url).listener(object :RequestListener<Drawable>{
+            override fun onLoadFailed(e: GlideException?, model: Any?, target: Target<Drawable>?, isFirstResource: Boolean): Boolean {
+                return false
+            }
 
-                    override fun onError(e: java.lang.Exception?) = Unit
-                })
+            override fun onResourceReady(resource: Drawable?, model: Any?, target: Target<Drawable>?, dataSource: DataSource?, isFirstResource: Boolean): Boolean {
+                this.apply {
+                    alpha=1f
+                    startAnimation(fadeScaleAnimation)
+                }
+                return false
+            }
+        }).into(this)
+       /* Picasso.get().load(baseUrl+url).apply(requestOptions).listener(object :RequestListener<Drawable>{
+            override fun onLoadFailed(e: GlideException?, model: Any?, target: Target<Drawable>?, isFirstResource: Boolean): Boolean {
+                return false
+            }
 
-        }
-    } catch (e: Exception) {
+            override fun onResourceReady(resource: Drawable?, model: Any?, target: Target<Drawable>?, dataSource: DataSource?, isFirstResource: Boolean): Boolean {
+                this@setImageUrl.apply {
+                    alpha=1f
+                    startAnimation(fadeScaleAnimation)
+                }
+                return false
+            }
+        }).into(this)   */
+    }catch (e:Exception){
         e.printStackTrace()
     }
-
 }
+
 
 @BindingAdapter("color")
 fun ImageView.setTint(isFavorite:Boolean){
     val color=if (isFavorite) ColorStateList.valueOf(resources.getColor(R.color.scaletRed)) else ColorStateList.valueOf(resources.getColor(R.color.white))
     this.imageTintList= color
-}
-
-@BindingAdapter("android:imageUrl")
-fun ImageView.setViewPagerImage(url: String?) {
-
-    try {
-        url?.let {
-           Constants.picasso.load("https://image.tmdb.org/t/p/original$url").fit().into(this)
-        }
-    } catch (e: Exception) {
-        e.printStackTrace()
-    }
-}
-
-@BindingAdapter("android:youtubeUrl")
-fun getYoutubeThumbnail(view: ImageView, url:String?){
-    view.alpha=0.4f
-
-    try {
-        url?.let {
-            Constants.picasso.load(url).fit().centerCrop().into(view,object : Callback {
-                    override fun onSuccess() {
-                        view.animate().alpha(1f).setDuration(600).start()
-                    }
-
-                    override fun onError(e: java.lang.Exception?)=Unit
-                })
-        }
-    }catch (_:Exception){
-
-    }
-}
-
-@BindingAdapter("placeHolder")
-fun ImageView.setPlaceHolder(placeHolder: String?) {
-
-    try {
-        placeHolder?.let {
-            Constants.picasso.load("https://image.tmdb.org/t/p/original$it").fit().centerCrop().placeholder(R.drawable.baseline_account_circle_24).into(this)
-        }
-    } catch (e: Exception) {
-        e.printStackTrace()
-    }
 }
 
 @BindingAdapter("android:setVoteAverage")

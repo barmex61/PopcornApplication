@@ -333,7 +333,7 @@ class DetailsFragment : Fragment(R.layout.fragment_details) {
     private fun setLayoutVisibility(show: Boolean, showToast: Boolean, message: String?) {
         if (showToast) {
             binding.mainLayout.visibility = View.GONE
-            Toast.makeText(context?.applicationContext, message, Toast.LENGTH_SHORT).show()
+            Snackbar.make(requireView(),message.toString(),Snackbar.LENGTH_INDEFINITE).show()
             return
         }
         if (show) {

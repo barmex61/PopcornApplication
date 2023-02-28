@@ -1,7 +1,8 @@
 package com.fatih.popcorn.ui
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.os.PersistableBundle
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.WindowCompat
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavController
@@ -15,9 +16,10 @@ import dagger.hilt.android.AndroidEntryPoint
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
 
-    private lateinit var navController: NavController
-    private lateinit var navHostFragment:NavHostFragment
+    private var navController: NavController?=null
+    private var navHostFragment:NavHostFragment?=null
     private var viewModel:HomeFragmentViewModel?=null
+    private var navControllerState: Bundle? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
 
@@ -32,15 +34,30 @@ class MainActivity : AppCompatActivity() {
         orientation=currentOrientation
         setContentView(R.layout.activity_main)
         setupNavController()
+        if (savedInstanceState != null) {
+            navControllerState = savedInstanceState.getBundle("navControllerState");
+            navController!!.restoreState(navControllerState);
+        }
     }
+
+    override fun onSaveInstanceState(outState: Bundle, outPersistentState: PersistableBundle) {
+
+        super.onSaveInstanceState(outState, outPersistentState)
+        navControllerState = navController!!.saveState()
+        outState.putBundle("navControllerState", navControllerState)
+    }
+
+    private fun setupNavController(){
+        navHostFragment=supportFragmentManager.findFragmentById(R.id.fragmentContainerView) as NavHostFragment
+        navController=navHostFragment?.navController
+    }
+
     override fun onDestroy() {
         isFirstRun=true
         viewModel=null
+        navHostFragment=null
+        navController=null
         super.onDestroy()
-    }
-    private fun setupNavController(){
-        navHostFragment=supportFragmentManager.findFragmentById(R.id.fragmentContainerView) as NavHostFragment
-        navController=navHostFragment.navController
     }
 
 }

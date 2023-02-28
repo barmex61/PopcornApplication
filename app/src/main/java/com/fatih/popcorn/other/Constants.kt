@@ -1,19 +1,17 @@
 package com.fatih.popcorn.other
 
-import android.content.res.Resources
 import android.graphics.drawable.BitmapDrawable
 import android.widget.ImageView
 import androidx.core.content.ContextCompat
 import androidx.palette.graphics.Palette
 import com.fatih.popcorn.R
 import com.fatih.popcorn.ui.PopcornApplication
-import com.squareup.picasso.Cache
-import com.squareup.picasso.Picasso
 import java.util.Locale
 
 
 object Constants {
 
+    const val base_img_url="https://image.tmdb.org/t/p/original"
     const val YOUTUBE_BASE_URL="https://youtube.googleapis.com/youtube/v3/"
     var language=Locale.getDefault().language ?: ""
     const val BASE_URL="https://api.themoviedb.org/3/"
@@ -21,16 +19,14 @@ object Constants {
     const val tvSearch="tv"
     const val movieSearch="movie"
     var stateList= mutableListOf(State.MOVIE)
-    val sortArray= arrayOf("Popularity","First Air Date","Vote Average")
-    val movie_genre_list= arrayOf("Action","Adventure","Animation","Comedy","Crime","Documentary","Drama","Family","Fantasy","History","Horror","Music","Mystery","Romance","Science Fiction","TV Movie","Thriller","War","Western")
+    val sortArray: Array<String> = PopcornApplication.appContext.resources.getStringArray(R.array.sort_array)
+    val movie_genre_list: Array<String> =  PopcornApplication.appContext.resources.getStringArray(R.array.movie_genre_list)
     val movie_booleanArray=BooleanArray(movie_genre_list.size)
-    val movieGenreMap: HashMap<String,Int> = hashMapOf("Action" to 28,"Adventure" to 12,"Animation" to 16,"Comedy" to 35,"Crime" to 80,"Documentary" to 99,"Drama" to 18 ,"Family" to 10751,"Fantasy" to 14,"History" to 36,"Horror" to 27,"Music" to 10402 ,"Mystery" to 9648 ,"Romance" to 10749,"Science Fiction" to 878,"TV Movie" to 10770,"Thriller" to 53 ,"War" to 10752,"Western" to 37 )
-    val tv_show_genre_list= arrayOf("Action","Animation","Comedy","Crime","Documentary","Drama","Family","Kids","Mystery","News","Reality","Science Fiction","Soap","Talk","War","Western")
+    val movieGenreMap: HashMap<String,Int> = hashMapOf(movie_genre_list[0] to 28,movie_genre_list[1] to 12,movie_genre_list[2] to 16,movie_genre_list[3] to 35,movie_genre_list[4] to 80,movie_genre_list[5] to 99,movie_genre_list[6] to 18 ,movie_genre_list[7] to 10751,movie_genre_list[8] to 14,movie_genre_list[9] to 36,movie_genre_list[10] to 27,movie_genre_list[11] to 10402 ,movie_genre_list[12] to 9648 ,movie_genre_list[13] to 10749,movie_genre_list[14] to 878,movie_genre_list[15] to 10770,movie_genre_list[16] to 53 ,movie_genre_list[17] to 10752,movie_genre_list[18] to 37 )
+    val tv_show_genre_list:Array<String> =  PopcornApplication.appContext.resources.getStringArray(R.array.tv_show_genre_list)
     val tv_show_booleanArray=BooleanArray(tv_show_genre_list.size)
-    val tvShowGenreMap:HashMap<String,Int> = hashMapOf("Action" to 10759,"Animation" to 16,"Comedy" to 35,"Crime" to 80,"Documentary" to 99,"Drame" to 18,"Family" to 10751,"Kids" to 10762,"Mystery" to 9648,"News" to 10763,"Reality" to 10764,"Science Fiction" to 10765,"Soap" to 10766,"Talk" to 10767,"War" to 10768,"Western" to 37)
-    val qualityArray= arrayOf("360p","480p","720p","1080p")
-    val qualityBooleanArray=BooleanArray(qualityArray.size)
-    var orientation=Resources.getSystem().configuration.orientation
+    val tvShowGenreMap:HashMap<String,Int> = hashMapOf(tv_show_genre_list[0] to 10759,tv_show_genre_list[1] to 16,tv_show_genre_list[2] to 35,tv_show_genre_list[3] to 80,tv_show_genre_list[4] to 99,tv_show_genre_list[5] to 18,tv_show_genre_list[6] to 10751,tv_show_genre_list[7] to 10762,tv_show_genre_list[8] to 9648,tv_show_genre_list[9] to 10763,tv_show_genre_list[10] to 10764,tv_show_genre_list[11] to 10765,tv_show_genre_list[12] to 10766,tv_show_genre_list[13] to 10767,tv_show_genre_list[14] to 10768,tv_show_genre_list[15] to 37)
+    var orientation= PopcornApplication.appContext.resources.configuration.orientation
     var isFirstRun=true
     fun checkIsItInMovieListOrNot():Boolean{
         if(stateList.last()==State.MOVIE || ( stateList.last()==State.SEARCH && stateList[stateList.size-2]==State.MOVIE)){
@@ -54,10 +50,6 @@ object Constants {
             }
         }
         return pair
-    }
-
-    val picasso: Picasso by lazy{
-        Picasso.Builder(PopcornApplication.appContext).build()
     }
 
 

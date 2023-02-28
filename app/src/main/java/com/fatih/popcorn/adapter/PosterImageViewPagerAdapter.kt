@@ -6,7 +6,7 @@ import android.widget.LinearLayout
 import androidx.recyclerview.widget.AsyncListDiffer
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
-import com.fatih.popcorn.other.setViewPagerImage
+import com.fatih.popcorn.other.setImageUrl
 
 class PosterImageViewPagerAdapter (private val shouldFitXY:Boolean) :RecyclerView.Adapter<PosterImageViewPagerAdapter.PosterImageViewHolder>() {
 
@@ -35,12 +35,10 @@ class PosterImageViewPagerAdapter (private val shouldFitXY:Boolean) :RecyclerVie
 
     override fun onBindViewHolder(holder:PosterImageViewHolder, position: Int) {
         if (singleUrl){
-            holder.imageView.setViewPagerImage(urlList[position])
+            holder.imageView.setImageUrl(urlList[position], false, isYoutube = false)
         }else{
-            holder.imageView.apply {
-                scaleType = if(shouldFitXY) ImageView.ScaleType.FIT_XY else ImageView.ScaleType.CENTER_CROP
-                setViewPagerImage(urlList[position])
-            }
+            holder.imageView.setImageUrl(urlList[position],shouldFitXY,false)
+
         }
 
     }

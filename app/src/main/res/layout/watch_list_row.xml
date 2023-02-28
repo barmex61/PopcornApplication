@@ -19,7 +19,9 @@
             android:scaleType="centerCrop"
             android:id="@+id/recommendImageView"
             app:layout_constraintStart_toStartOf="parent"
-            android:downloadUrl="@{watchList.posterPath}"
+            url="@{watchList.posterPath}"
+            fitXY="@{false}"
+            isYoutube="@{false}"
             app:layout_constraintTop_toTopOf="parent"
             />
 

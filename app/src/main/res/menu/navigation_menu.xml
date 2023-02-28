@@ -6,14 +6,11 @@
         <item android:id="@+id/movies" android:title="@string/index" android:icon="@drawable/ic_movies"/>
         <item android:id="@+id/movie_filter" android:title="@string/genres" android:icon="@drawable/ic_movie_filter"/>
         <item android:id="@+id/sort" android:title="@string/sort_by" android:icon="@drawable/ic_sort"/>
-        <item android:id="@+id/quality" android:title="@string/quality" android:icon="@drawable/ic_quality"/>
     </group>
     <item android:title="@string/communications" >
         <menu>
             <item android:id="@+id/like" android:title="@string/favorites" android:icon="@drawable/ic_heart"/>
             <item android:id="@+id/notifications" android:title="@string/notifications" android:icon="@drawable/ic_notifications"/>
-            <item android:id="@+id/downloads" android:title="@string/downloads" android:icon="@drawable/ic_baseline_save_alt_24"/>
-            <item android:id="@+id/settings" android:title="@string/settings" android:icon="@drawable/ic_settings"/>
 
         </menu>
     </item>

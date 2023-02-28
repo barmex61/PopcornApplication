@@ -31,8 +31,6 @@ import com.fatih.popcorn.other.Constants.movieGenreMap
 import com.fatih.popcorn.other.Constants.movieSearch
 import com.fatih.popcorn.other.Constants.movie_booleanArray
 import com.fatih.popcorn.other.Constants.movie_genre_list
-import com.fatih.popcorn.other.Constants.qualityArray
-import com.fatih.popcorn.other.Constants.qualityBooleanArray
 import com.fatih.popcorn.other.Constants.sortArray
 import com.fatih.popcorn.other.Constants.sortList
 import com.fatih.popcorn.other.Constants.stateList
@@ -43,6 +41,7 @@ import com.fatih.popcorn.other.Constants.tv_show_genre_list
 import com.fatih.popcorn.other.State
 import com.fatih.popcorn.other.Status
 import com.fatih.popcorn.viewmodel.HomeFragmentViewModel
+import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -417,24 +416,12 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
                 }
 
             }
-            R.id.quality->{
-                val alertDialog=AlertDialog.Builder(requireContext())
-                alertDialog.setTitle("Quality").setMultiChoiceItems(qualityArray, qualityBooleanArray
-                ) { _, p1, p2 -> qualityBooleanArray[p1] = p2 }.setNegativeButton("CANCEL"
-                ) { _, _ ->
-                    qualityBooleanArray.forEachIndexed { index, _->
-                        qualityBooleanArray[index] = false
-                    }
-                }.setPositiveButton("OK") { _, _ ->
-                    //search for quality
-                }.show()
-            }
             R.id.like->{
                 binding.drawableLayout.closeDrawer(GravityCompat.START)
                 findNavController().navigate(HomeFragmentDirections.actionHomeFragmentToWatchListFragment())
             }
             else ->{
-                Toast.makeText(context?.applicationContext,"Coming Soon Ins",Toast.LENGTH_SHORT).show()
+                Snackbar.make(requireView(),"Coming soon",Snackbar.LENGTH_INDEFINITE).show()
             }
         }
     }

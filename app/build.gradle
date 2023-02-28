@@ -7,6 +7,15 @@ plugins {
 }
 
 android {
+    signingConfigs {
+
+        release {
+            storeFile file('C:\\Users\\90507\\keystore1.jks')
+            storePassword '146865686161'
+            keyAlias 'fatih'
+            keyPassword '146865686161'
+        }
+    }
     compileSdk 33
     namespace 'com.fatih.popcorn'
     defaultConfig {
@@ -19,14 +28,16 @@ android {
         testInstrumentationRunner "com.fatih.popcorn.HiltTestRunner"
 
         Properties properties=new Properties()
-        properties.load(project.rootProject.file("local.properties").newDataInputStream())
+        properties.load(project.rootProject.file("gradle.properties").newDataInputStream())
         buildConfigField "String","YOUTUBE_API_KEY","\"${properties.getProperty("YOUTUBE_API_KEY")}\""
         buildConfigField "String","API_KEY","\"${properties.getProperty("API_KEY")}\""
     }
 
     buildTypes {
         release {
-            minifyEnabled false
+
+            minifyEnabled true
+            shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
@@ -117,5 +128,8 @@ dependencies {
 
     debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.8.1'
     implementation "com.airbnb.android:lottie:3.4.0"
+
+    implementation 'com.github.bumptech.glide:glide:4.13.2'
+
 
 }

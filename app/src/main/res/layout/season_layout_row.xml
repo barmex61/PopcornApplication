@@ -54,7 +54,9 @@
             app:riv_corner_radius="20dp"
             android:id="@+id/seasonImage"
             android:layout_margin="7dp"
-            android:downloadUrl="@{tvShowSeason.poster_path}"
+            url="@{tvShowSeason.poster_path}"
+            fitXY="@{false}"
+            isYoutube="@{false}"
              />
 
         <LinearLayout

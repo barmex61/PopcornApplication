@@ -1,14 +1,24 @@
 package com.fatih.popcorn.adapter
 
+import android.graphics.drawable.Drawable
 import android.view.View
 import android.widget.ImageView
 import androidx.recyclerview.widget.AsyncListDiffer
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
+import com.bumptech.glide.load.DataSource
+import com.bumptech.glide.load.engine.DiskCacheStrategy
+import com.bumptech.glide.load.engine.GlideException
+import com.bumptech.glide.request.RequestListener
+import com.bumptech.glide.request.RequestOptions
+import com.bumptech.glide.request.target.Target
 import com.fatih.popcorn.R
 import com.fatih.popcorn.databinding.CastRviewRowBinding
 import com.fatih.popcorn.other.CastAdapterListener
 import com.fatih.popcorn.other.Constants
+import com.fatih.popcorn.other.Constants.base_img_url
+import com.fatih.popcorn.other.setImageUrl
 import com.squareup.picasso.Callback
 import com.squareup.picasso.Picasso
 import javax.inject.Inject
@@ -50,9 +60,14 @@ class CastRecyclerViewAdapter @Inject constructor(
     }
 
     private fun setImages(url:String,imageView:ImageView,layout: View){
-        Constants.picasso.load("https://image.tmdb.org/t/p/original$url").fit().centerCrop().placeholder(
-            R.drawable.baseline_account_circle_24).into(imageView,object: Callback {
-            override fun onSuccess() {
+        Glide.with(imageView.context).load(base_img_url+url).apply(RequestOptions().placeholder(R.drawable.baseline_account_circle_24).centerCrop().diskCacheStrategy(
+            DiskCacheStrategy.AUTOMATIC)).listener(object :
+            RequestListener<Drawable> {
+            override fun onLoadFailed(e: GlideException?, model: Any?, target: Target<Drawable>?, isFirstResource: Boolean): Boolean {
+                return false
+            }
+
+            override fun onResourceReady(resource: Drawable?, model: Any?, target: Target<Drawable>?, dataSource: DataSource?, isFirstResource: Boolean): Boolean {
                 if (layout.visibility != View.VISIBLE){
                     layout.visibility = View.VISIBLE
                 }
@@ -60,9 +75,9 @@ class CastRecyclerViewAdapter @Inject constructor(
                     castAdapterListener.setImages(true)
                     onlyOnce=true
                 }
+                return false
             }
-            override fun onError(e: java.lang.Exception?) =Unit
-        })
+        }).into(imageView)
     }
 
     override fun onDetachedFromRecyclerView(recyclerView: RecyclerView) {

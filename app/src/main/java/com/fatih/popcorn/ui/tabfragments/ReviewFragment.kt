@@ -116,6 +116,7 @@ class ReviewFragment:Fragment(R.layout.fragment_review) {
         adapter=null
         recyclerView=null
         viewModel=null
+        _binding=null
         super.onDestroyView()
     }
 

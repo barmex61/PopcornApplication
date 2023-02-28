@@ -21,7 +21,7 @@ class AboutFragment:Fragment() {
     private lateinit var detailResponse:DetailResponse
 
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding= DataBindingUtil.inflate(inflater,R.layout.fragment_about,container,false)
         detailResponse=arguments?.getSerializable("detailResponse")?.let {
             it as DetailResponse

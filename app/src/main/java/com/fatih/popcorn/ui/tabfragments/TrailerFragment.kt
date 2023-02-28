@@ -1,6 +1,7 @@
 package com.fatih.popcorn.ui.tabfragments
 
 import android.annotation.SuppressLint
+import android.content.pm.ActivityInfo
 import android.content.res.Configuration
 import android.content.res.Resources
 import android.os.Bundle
@@ -25,6 +26,7 @@ import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.PlayerConstan
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.YouTubePlayer
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.listeners.AbstractYouTubePlayerListener
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.listeners.YouTubePlayerCallback
+import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.listeners.YouTubePlayerFullScreenListener
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.options.IFramePlayerOptions
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.utils.YouTubePlayerTracker
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.views.YouTubePlayerView
@@ -112,6 +114,19 @@ class TrailerFragment @Inject constructor(): Fragment(R.layout.fragment_trailer)
             }
             val iFramePlayerOptions=IFramePlayerOptions.Builder().controls(0).build()
             youtubePlayerView.initialize(listener as AbstractYouTubePlayerListener,iFramePlayerOptions)
+            youtubePlayerView.addFullScreenListener(object :YouTubePlayerFullScreenListener{
+                override fun onYouTubePlayerEnterFullScreen() {
+                    youtubePlayerView.removeYouTubePlayerListener(listener as AbstractYouTubePlayerListener)
+                    youtubePlayerView.addYouTubePlayerListener(listener as AbstractYouTubePlayerListener)
+                    requireActivity().requestedOrientation= ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
+                }
+
+                override fun onYouTubePlayerExitFullScreen() {
+                    youtubePlayerView.removeYouTubePlayerListener(listener as AbstractYouTubePlayerListener)
+                    youtubePlayerView.addYouTubePlayerListener(listener as AbstractYouTubePlayerListener)
+                    requireActivity().requestedOrientation=ActivityInfo.SCREEN_ORIENTATION_FULL_SENSOR
+                }
+            })
             youtubeVideoAdapter= YoutubeVideoAdapter(R.layout.fragment_trailer_row)
 
             youtubeVideoAdapter!!.setOnItemClickListener {position,item->
@@ -179,6 +194,7 @@ class TrailerFragment @Inject constructor(): Fragment(R.layout.fragment_trailer)
                             resources.data?.let { it->
                                viewModel.itemList.value=it.items.toMutableList()
                                youtubeVideoAdapter?.list=it.items
+
                             }
                         }
                         else->Unit
@@ -198,11 +214,11 @@ class TrailerFragment @Inject constructor(): Fragment(R.layout.fragment_trailer)
         if (!isRotated){
             viewModel.resetData()
         }
+        requireActivity().requestedOrientation=ActivityInfo.SCREEN_ORIENTATION_FULL_SENSOR
         youtubeVideoAdapter=null
         isThereAnyVideoUrl=false
         myYoutubePlayer?.removeListener(listener as AbstractYouTubePlayerListener)
         _binding=null
-        youtubePlayerView.release()
         super.onDestroy()
     }
 

@@ -1,6 +1,6 @@
 <resources>
     <string name="app_name">PopcornApp</string>
-    <string name="p0pc0rn_time">P0PC0RN Time</string>
+    <string name="p0pc0rn_time">P0PC0RN\u0020Box</string>
     <string name="movies">MOVIES</string>
     <string name="tv_shows">TV SHOWS</string>
     <string name="tv_show">TV SHOWS</string>
@@ -14,7 +14,7 @@
     <string name="downloads">Downloads</string>
     <string name="settings">Settings</string>
     <string name="version_1_0">Version 1.0</string>
-    <string name="popcorn_time">POPCORN Time</string>
+    <string name="popcorn_time">POPCORN\u0020Box</string>
     <string name="enter_tv_show">Search…</string>
     <string name="reviews">REVIEWS</string>
     <string name="trailer">TRAILER</string>
@@ -54,5 +54,52 @@
     <string name="added_history">Added\u0020to\u0020history</string>
     <string name="delete_history">Deleted\u0020from\u0020history</string>
     <string name="watch_list">Watch\u0020list</string>
+    <string name="api_key">09e3910a800e40ffb245537447169476</string>
+    <string name="youtube_api_key">AIzaSyAt9EbRTdpB_H5aDwyDihIyavcppLm_8vk</string>
+    <string-array name="movie_genre_list">
+        <item>Action</item>
+        <item>Adventure</item>
+        <item>Animation</item>
+        <item>Comedy</item>
+        <item>Crime</item>
+        <item>Documentary</item>
+        <item>Drama</item>
+        <item>Family</item>
+        <item>Fantasy</item>
+        <item>History</item>
+        <item>Horror</item>
+        <item>Music</item>
+        <item>Mystery</item>
+        <item>Romance</item>
+        <item>Science Fiction</item>
+        <item>TV Movie</item>
+        <item>Thriller</item>
+        <item>War</item>
+        <item>Western</item>
+    </string-array>
 
+    <string-array name="sort_array">
+        <item>Popularity</item>
+        <item>First Air Date</item>
+        <item>Vote Average</item>
+    </string-array>
+
+    <string-array name="tv_show_genre_list">
+        <item>Action</item>
+        <item>Animation</item>
+        <item>Comedy</item>
+        <item>Crime</item>
+        <item>Documentary</item>
+        <item>Drama</item>
+        <item>Family</item>
+        <item>Kids</item>
+        <item>Mystery</item>
+        <item>News</item>
+        <item>Reality</item>
+        <item>Science Fiction</item>
+        <item>Soap</item>
+        <item>Talk</item>
+        <item>War</item>
+        <item>Western</item>
+    </string-array>
 </resources>

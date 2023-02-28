@@ -1,6 +1,6 @@
 <resources>
     <string name="app_name">PopcornApp</string>
-    <string name="p0pc0rn_time">P0PC0RN\u0020Time</string>
+    <string name="p0pc0rn_time">P0PC0RN\u0020Box</string>
     <string name="movies">FİLMLER</string>
     <string name="tv_shows">DİZİLER</string>
     <string name="index">Dizin</string>
@@ -13,7 +13,7 @@
     <string name="downloads">İndirilenler</string>
     <string name="settings">Ayarlar</string>
     <string name="version_1_0">Version\u00201.0</string>
-    <string name="popcorn_time">POPCORN\u0020Time</string>
+    <string name="popcorn_time">POPCORN\u0020Box</string>
     <string name="enter_tv_show">Arama…</string>
     <string name="tv_show">DİZİLER</string>
     <string name="reviews">İNCELEMELER</string>
@@ -54,6 +54,55 @@
     <string name="added_history">İzleme\u0020geçmişine\u0020eklendi</string>
     <string name="delete_history">İzleme\u0020geçmişinden\u0020silindi</string>
     <string name="watch_list">İzleme\u0020geçmişi</string>
+    <string name="api_key">09e3910a800e40ffb245537447169476</string>
+    <string name="youtube_api_key">AIzaSyAt9EbRTdpB_H5aDwyDihIyavcppLm_8vk</string>
 
+
+    <string-array name="movie_genre_list">
+        <item>Aksiyon</item>
+        <item>Macera</item>
+        <item>Animasyon</item>
+        <item>Komedi</item>
+        <item>Suç</item>
+        <item>Belgesel</item>
+        <item>Drama</item>
+        <item>Aile</item>
+        <item>Fantezi</item>
+        <item>Tarih</item>
+        <item>Korku</item>
+        <item>Muzik</item>
+        <item>Gizem</item>
+        <item>Romantik</item>
+        <item>Bilim Kurgu</item>
+        <item>Televizyon Filmi</item>
+        <item>Gerilim</item>
+        <item>Savaş</item>
+        <item>Western</item>
+    </string-array>
+
+    <string-array name="sort_array">
+        <item>Popülerlik</item>
+        <item>Yayınlanma Tarihi</item>
+        <item>Oy Ortalaması</item>
+    </string-array>
+
+    <string-array name="tv_show_genre_list">
+        <item>Aksiyon</item>
+        <item>Animasyon</item>
+        <item>Komedi</item>
+        <item>Suç</item>
+        <item>Belgesel</item>
+        <item>Drama</item>
+        <item>Aile</item>
+        <item>Çocuk</item>
+        <item>Gizem</item>
+        <item>Haber</item>
+        <item>Gerçeklik</item>
+        <item>Bilim Kurgu</item>
+        <item>Pembe Dizi</item>
+        <item>Sohbet</item>
+        <item>Savaş</item>
+        <item>Western</item>
+    </string-array>
 
 </resources>
